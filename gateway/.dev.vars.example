@@ -1,0 +1,14 @@
+# Salin ke .dev.vars untuk `npm run dev` (wrangler dev). Jangan di-commit.
+
+# Domain induk saat lokal: buka http://cahya-wahyu.localhost:8787
+ROOT_DOMAIN=localhost
+
+# Pilih SALAH SATU:
+# (a) Pakai database sungguhan
+SUPABASE_URL=https://your-project-ref.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+# (b) Tanpa database — petakan slug ke template lokal secara manual
+# STATIC_ROUTES={"cahya-wahyu":"http://localhost:3005"}
+
+# Sama persis dengan GATEWAY_SECRET di setiap app template (min. 32 karakter).
+GATEWAY_SECRET=

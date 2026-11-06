@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 4rem;
+  }
+  body {
+    @apply bg-ivory font-sans text-ink antialiased;
+    font-feature-settings: "kern", "liga", "onum";
+  }
+  ::selection {
+    @apply bg-champagne text-ink;
+  }
+  :focus-visible {
+    @apply outline-none ring-1 ring-ink ring-offset-4 ring-offset-ivory;
+  }
+}
+
+@layer components {
+  /* Rubrik majalah: kapital kecil renggang. */
+  .rubric {
+    @apply font-sans text-[0.64rem] font-medium uppercase tracking-rubric text-stone;
+  }
+
+  /* Paragraf artikel: serif, nyaman dibaca, rata kiri-kanan dengan pemenggalan. */
+  .article {
+    @apply font-serif text-[1.05rem] leading-[1.75] text-ink/85;
+    hyphens: auto;
+    text-wrap: pretty;
+  }
+  .article p + p {
+    text-indent: 1.5em;
+  }
+
+  /* Huruf awal besar (drop cap) di paragraf pertama artikel. */
+  .drop-cap::first-letter {
+    @apply float-left mr-3 mt-1 font-serif text-[4.6rem] font-light leading-[0.78] text-ink;
+  }
+
+  /* Garis rambut pemisah. */
+  .rule {
+    @apply border-t border-rule;
+  }
+
+  .btn-ink {
+    @apply inline-flex items-center justify-center gap-3 bg-ink px-7 py-3.5 font-sans text-[0.68rem] font-medium uppercase tracking-[0.28em] text-ivory transition duration-500 ease-editorial hover:bg-gold active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-3 border border-ink/80 px-7 py-3.5 font-sans text-[0.68rem] font-medium uppercase tracking-[0.28em] text-ink transition duration-500 ease-editorial hover:bg-ink hover:text-ivory active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50;
+  }
+  .link-underline {
+    @apply bg-[linear-gradient(currentColor,currentColor)] bg-[length:0%_1px] bg-left-bottom bg-no-repeat pb-0.5 transition-[background-size] duration-500 ease-editorial hover:bg-[length:100%_1px];
+  }
+  .field {
+    @apply w-full border-0 border-b border-ink/25 bg-transparent px-0 py-3 font-serif text-lg text-ink placeholder:italic placeholder:text-stone/70 transition focus:border-ink focus:outline-none focus:ring-0;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-antique font-serif text-ink antialiased;
+    font-feature-settings: "kern", "liga", "onum";
+  }
+  ::selection {
+    @apply bg-burgundy/20 text-wine;
+  }
+  :focus-visible {
+    @apply outline-none ring-1 ring-burgundy ring-offset-4 ring-offset-antique;
+  }
+}
+
+@layer components {
+  /*
+   * Tekstur kertas: serat halus (turbulensi frekuensi rendah) + bintik
+   * (frekuensi tinggi), dikalikan di atas warna dasar. Statis — tidak beranimasi.
+   */
+  .paper {
+    position: relative;
+    isolation: isolate;
+  }
+  .paper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.55;
+    mix-blend-mode: multiply;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .09' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .45 0 0 0 0 .32 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .4 0 0 0 0 .32 0 0 0 0 .25 0 0 0 .14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Bingkai cetak: garis ganda (tebal + tipis) khas undangan engraved. */
+  .engraved-frame {
+    @apply relative border border-burgundy/70 p-1.5;
+  }
+  .engraved-frame > .inner {
+    @apply relative h-full border-[3px] border-double border-burgundy/60;
+  }
+
+  /* Foto bernuansa film lama: sepia lembut, kontras turun sedikit. */
+  .film {
+    filter: sepia(0.38) saturate(0.85) contrast(0.95) brightness(0.98);
+  }
+
+  /* Label kapital kecil ala kartu cetak. */
+  .smallcaps {
+    @apply font-fell-sc text-[0.95rem] tracking-[0.14em] text-umber;
+  }
+
+  .btn-burgundy {
+    @apply inline-flex items-center justify-center gap-3 border border-burgundy bg-burgundy px-7 py-3 font-fell-sc text-base tracking-[0.12em] text-antique shadow-[inset_0_0_0_3px_#6B1E2A,inset_0_0_0_4px_rgba(243,235,221,0.45)] transition duration-500 hover:bg-wine disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-plain {
+    @apply inline-flex items-center justify-center gap-3 border border-burgundy/60 px-6 py-2.5 font-fell-sc text-base tracking-[0.12em] text-burgundy transition duration-500 hover:bg-burgundy hover:text-antique disabled:pointer-events-none disabled:opacity-50;
+  }
+  .ruled {
+    @apply w-full border-0 border-b border-dotted border-umber/60 bg-transparent px-1 py-2 font-serif text-lg text-ink placeholder:italic placeholder:text-sepia/70 focus:border-solid focus:border-burgundy focus:outline-none focus:ring-0;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

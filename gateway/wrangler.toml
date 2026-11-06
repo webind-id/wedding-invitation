@@ -1,0 +1,35 @@
+# KudoStack Gateway — Cloudflare Worker untuk subdomain undangan.
+# Panduan lengkap: ../admin/docs/SUBDOMAIN.md (juga di menu "Panduan" panel admin).
+
+name = "kudo-gateway"
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
+
+# Worker menangani SEMUA subdomain kudostack.com. Subdomain sistem
+# (www, admin, tpl-*, dst.) diteruskan apa adanya ke origin DNS-nya.
+routes = [
+  { pattern = "*.kudostack.com/*", zone_name = "kudostack.com" },
+]
+
+[vars]
+ROOT_DOMAIN = "kudostack.com"
+# ROOT_DOMAIN harus sama dengan "Domain induk" di admin (menu Domain).
+# Nama tambahan yang dicadangkan diatur di admin (menu Domain) dan dibaca dari
+# database. Variabel ini hanya cadangan statis opsional, dipisah koma.
+RESERVED_SUBDOMAINS = ""
+
+# Rahasia — JANGAN ditulis di sini. Atur dengan:
+#   npx wrangler secret put SUPABASE_URL
+#   npx wrangler secret put SUPABASE_ANON_KEY
+#   npx wrangler secret put GATEWAY_SECRET
+
+# ── Pengembangan lokal: `npm run dev` ─────────────────────────────────────
+# Tanpa `routes`, wrangler dev tidak menulis ulang Host ke kudostack.com,
+# sehingga http://cahya-wahyu.localhost:8787 terbaca sebagai subdomain undangan.
+# (`routes` tidak diwariskan ke env lain.) Nilai lain dibaca dari .dev.vars.
+[env.dev]
+name = "kudo-gateway-dev"
+
+[env.dev.vars]
+ROOT_DOMAIN = "localhost"
+RESERVED_SUBDOMAINS = ""

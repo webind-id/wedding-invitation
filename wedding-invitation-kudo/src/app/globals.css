@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 1.5rem;
+  }
+  body {
+    @apply bg-linen font-sans text-bark antialiased;
+  }
+  ::selection {
+    @apply bg-clay/25 text-forest;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-clay ring-offset-2 ring-offset-linen;
+  }
+}
+
+@layer components {
+  /* Paper grain — an inline SVG noise tile layered over flat colour. */
+  .grain {
+    position: relative;
+    isolation: isolate;
+  }
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .45 0 0 0 0 .35 0 0 0 .18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Small-caps eyebrow label used above headings. */
+  .eyebrow {
+    @apply font-sans text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-clay;
+  }
+
+  /* Ticket card with two punched notches on its stub seam. */
+  .ticket {
+    --notch: 0.85rem;
+    -webkit-mask:
+      radial-gradient(circle var(--notch) at var(--seam) 0, transparent 98%, #000) top / 100% 51% no-repeat,
+      radial-gradient(circle var(--notch) at var(--seam) 100%, transparent 98%, #000) bottom / 100% 51% no-repeat;
+    mask:
+      radial-gradient(circle var(--notch) at var(--seam) 0, transparent 98%, #000) top / 100% 51% no-repeat,
+      radial-gradient(circle var(--notch) at var(--seam) 100%, transparent 98%, #000) bottom / 100% 51% no-repeat;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition duration-200 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-clay {
+    @apply btn bg-clay text-linen shadow-[0_8px_20px_-10px_rgba(180,98,58,0.9)] hover:bg-[#9f5530];
+  }
+  .btn-ghost {
+    @apply btn border border-forest/25 text-forest hover:border-forest hover:bg-forest hover:text-linen;
+  }
+  .btn-light {
+    @apply btn border border-linen/40 text-linen hover:bg-linen hover:text-forest;
+  }
+
+  .field {
+    @apply w-full rounded-xl border border-forest/15 bg-white/70 px-4 py-3 text-sm text-bark placeholder:text-bark/40 transition focus:border-clay focus:bg-white focus:outline-none focus:ring-2 focus:ring-clay/20;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
