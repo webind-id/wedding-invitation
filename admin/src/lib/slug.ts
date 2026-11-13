@@ -27,7 +27,7 @@ export function invitationUrl(baseUrl: string, slug: string): string {
 // Daftar & awalan ini HARUS sama dengan gateway/src/routing.ts.
 
 /** Subdomain sistem yang tidak boleh dipakai sebagai slug. */
-export const RESERVED_SUBDOMAINS = ["www", "admin", "api", "app", "mail", "gateway", "static", "cdn", "assets", "dev", "staging"];
+export const RESERVED_SUBDOMAINS = ["www", "admin", "ews", "router", "api", "app", "mail", "gateway", "static", "cdn", "assets", "dev", "staging"];
 /** Awalan subdomain milik app template, mis. tpl-kudo3.kudostack.com. */
 export const RESERVED_PREFIX = "tpl-";
 

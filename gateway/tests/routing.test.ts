@@ -18,7 +18,7 @@ describe("matchHost", () => {
   });
 
   it("protects system subdomains, the tpl- prefix and extra reserved names", () => {
-    for (const host of ["www.kudostack.com", "admin.kudostack.com", "api.kudostack.com", "tpl-kudo3.kudostack.com"]) {
+    for (const host of ["www.kudostack.com", "admin.kudostack.com", "ews.kudostack.com", "router.kudostack.com", "api.kudostack.com", "tpl-kudo3.kudostack.com"]) {
       expect(matchHost(host, root)).toEqual({ kind: "passthrough" });
     }
     expect(matchHost("promo.kudostack.com", root, ["promo"])).toEqual({ kind: "passthrough" });

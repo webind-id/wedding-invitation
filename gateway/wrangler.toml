@@ -20,7 +20,7 @@ ROOT_DOMAIN = "kudostack.my.id"
 # Daftar yang sama juga diisi di admin (menu Domain → nama yang dicadangkan) agar
 # tidak bisa dipakai sebagai slug. Tes gateway memeriksa daftar ini.
 # Menambah template baru (wedding9, …)? Tambahkan di sini DAN di menu Domain.
-RESERVED_SUBDOMAINS = "undangan,wedding1,wedding2,wedding3,wedding4,wedding5,wedding6,wedding7,wedding8,wedding9"
+RESERVED_SUBDOMAINS = "undangan,ews,router,wedding1,wedding2,wedding3,wedding4,wedding5,wedding6,wedding7,wedding8,wedding9"
 
 # Rahasia — JANGAN ditulis di sini. Atur dengan:
 #   npx wrangler secret put SUPABASE_URL

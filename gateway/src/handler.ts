@@ -12,6 +12,8 @@ export interface Env {
   GATEWAY_SECRET?: string;
   /** Opsional, JSON {"slug": "https://template"} — pengembangan lokal tanpa DB. */
   STATIC_ROUTES?: string;
+  /** Opsional, JSON {"admin": "http://admin:3000", "ews": "http://ews:3000", "router": "http://router:3000"}. */
+  ORIGIN_ROUTES?: string;
 }
 
 export interface Deps {

@@ -10,7 +10,7 @@
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 /** Subdomain sistem yang tidak pernah dianggap undangan. */
-export const DEFAULT_RESERVED = ["www", "admin", "api", "app", "mail", "gateway", "static", "cdn", "assets", "dev", "staging"];
+export const DEFAULT_RESERVED = ["www", "admin", "ews", "router", "api", "app", "mail", "gateway", "static", "cdn", "assets", "dev", "staging"];
 
 /** Semua subdomain berawalan ini milik sistem (mis. tpl-kudo3.kudostack.com untuk app template). */
 export const RESERVED_PREFIX = "tpl-";
