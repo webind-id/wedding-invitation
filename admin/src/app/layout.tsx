@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+// Sembunyikan isi <phantom-ui loading> sejak HTML pertama (sebelum komponennya aktif) — lihat components/ui/Skeleton.
+import "@aejkatappaja/phantom-ui/ssr.css";
 import "./globals.css";
 
 const fraunces = Fraunces({ subsets: ["latin"], style: ["normal", "italic"], variable: "--font-fraunces", display: "swap" });

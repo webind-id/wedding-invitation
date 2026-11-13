@@ -13,6 +13,7 @@
     "shared:sync": "node scripts/sync-shared.mjs"
   },
   "dependencies": {
+    "@aejkatappaja/phantom-ui": "^1.6.1",
     "@supabase/supabase-js": "^2.47.10",
     "clsx": "^2.1.1",
     "lucide-react": "^0.469.0",
