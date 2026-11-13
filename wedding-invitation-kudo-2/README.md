@@ -4,7 +4,7 @@ Undangan pernikahan bergaya **pemutaran perdana film**: hitam pekat, emas sampan
 
 ```
 https://kudo2.domain-anda.com/                     → demo (konten contoh)
-https://kudo2.domain-anda.com/Cahya-Wahyu?to=Budi   → undangan "Cahya-Wahyu"
+https://kudo2.domain-anda.com/Cahya-Wahyu?to=Budi&k=…   → undangan "Cahya-Wahyu"
 ```
 
 ## Alur tampilan

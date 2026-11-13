@@ -5,14 +5,18 @@ import { attempt, failure, success, type ActionResult } from "@/lib/action";
 import { requireAdmin } from "@/lib/auth";
 import { toCsv } from "@/lib/csv";
 import { messageTemplateSchema } from "@/lib/forms";
+import { withGuestLinks, type LinkedInvitee } from "@/lib/guest-link";
 import { ATTENDANCE_LABEL } from "@/lib/guestbook";
 import { isUuid, prepareInvitees, type Invitee } from "@/lib/invitee";
+import { publicInvitationUrl } from "@/lib/public-url";
 import { allGuestbookEntries, deleteGuestbookEntry } from "@/lib/repo/guestbook";
-import { updateInvitation } from "@/lib/repo/invitations";
+import { getInvitation, updateInvitation } from "@/lib/repo/invitations";
 import { clearInvitees, deleteInvitee, insertInvitees, setInviteeSent } from "@/lib/repo/invitees";
+import { previewSecret } from "@/shared/preview-token";
 
 export interface AddResult {
-  invitees: Invitee[];
+  /** Tamu baru beserta tautan pribadinya (ditandatangani di server). */
+  invitees: LinkedInvitee[];
   inserted: number;
   invalid: number;
   duplicate: number;
@@ -22,10 +26,18 @@ export async function addInviteesAction(id: string, rows: unknown): Promise<Acti
   await requireAdmin();
   return attempt(async () => {
     if (!isUuid(id)) return failure("ID tidak valid.");
+    const invitation = await getInvitation(id);
+    if (!invitation) return failure("Undangan tidak ditemukan.");
     const { valid, invalid } = prepareInvitees(rows);
     const inserted = await insertInvitees(id, valid);
+    const baseLink = await publicInvitationUrl(invitation.template.base_url, invitation.slug);
     revalidatePath(`/undangan/${id}/tamu`);
-    return success({ invitees: inserted, inserted: inserted.length, invalid, duplicate: valid.length - inserted.length });
+    return success({
+      invitees: withGuestLinks(inserted, baseLink, invitation.slug, previewSecret()),
+      inserted: inserted.length,
+      invalid,
+      duplicate: valid.length - inserted.length,
+    });
   });
 }
 

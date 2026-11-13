@@ -3,7 +3,7 @@
 ## Commands
 
 ```bash
-npm run dev            # http://localhost:3005 (demo) — /<slug>?to=Nama for a real invitation
+npm run dev            # http://localhost:3005 (demo) — /<slug>?to=Nama&k=<sig> for a real invitation (copy a guest link from admin → Tamu)
 npm run build
 npm test               # vitest, tests/ covers src/lib/** and src/shared/**
 npm run typecheck
@@ -15,6 +15,7 @@ The **"kudo-5" template** ("Old Money": classic engraved stationery, aristocrati
 
 - `/` = demo from `sampleContent`; `/[slug]` = `loadInvitation()` in `src/lib/invitation.ts` (template code must equal `TEMPLATE_CODE` = `kudo-5`; drafts need a valid `?preview=` token). `/api/ucapan` = guestbook scoped by slug.
 - **`src/shared/` is a copy from `../admin/src/shared/`** — never edit here; run `npm run shared:sync` in admin.
+- **Guest name** (`?to=`) is shown only with a valid `?k=` — an HMAC the admin adds to each guest link (`src/shared/guest-token.ts`, keyed by `PREVIEW_SECRET`, prefix `guest:`). Typed/edited names or links without `k` fall back to `content.defaultGuest`. The demo `/` still accepts any `?to=`.
 - Components read content via `useInvitation()`; `photos` is the de-duplicated pool from `photoPool()`, picked with `photoAt(photos, i)`. The `.ics` download is generated on click (`downloadIcs`) — never render it into HTML.
 - `src/lib/words.ts` writes dates/times in Indonesian words (`terbilang`, `dateInWords`, `timeInWords`), builds the Monday-first month grid (`monthGrid`, computed in the event's time zone), and the R.S.V.P. deadline. Fully unit-tested — keep it that way.
 

@@ -6,6 +6,7 @@ import { clearInviteesAction, deleteInviteeAction, setSentAction } from "@/app/(
 import { cn } from "@/lib/cn";
 import { toCsv } from "@/lib/csv";
 import { downloadFile } from "@/lib/download";
+import type { LinkedInvitee } from "@/lib/guest-link";
 import type { Invitee } from "@/lib/invitee";
 import { AddInvitees } from "./AddInvitees";
 import { InviteeRow } from "./InviteeRow";
@@ -22,14 +23,15 @@ const FILTERS: { id: Filter; label: string }[] = [
 
 interface GuestManagerProps {
   invitationId: string;
-  /** URL undangan tanpa ?to= */
-  baseLink: string;
   isPublished: boolean;
-  initialInvitees: Invitee[];
+  /** false bila PREVIEW_SECRET belum diatur — tautan tanpa tanda tangan tidak menampilkan nama. */
+  canSignLinks: boolean;
+  /** Setiap tamu membawa tautan pribadi bertanda tangan (dibuat di server). */
+  initialInvitees: LinkedInvitee[];
   initialMessage: string;
 }
 
-export function GuestManager({ invitationId, baseLink, isPublished, initialInvitees, initialMessage }: GuestManagerProps) {
+export function GuestManager({ invitationId, isPublished, canSignLinks, initialInvitees, initialMessage }: GuestManagerProps) {
   const [invitees, setInvitees] = useState(initialInvitees);
   const [message, setMessage] = useState(initialMessage);
   const [query, setQuery] = useState("");
@@ -53,12 +55,12 @@ export function GuestManager({ invitationId, baseLink, isPublished, initialInvit
 
   const total = invitees.length;
   const sent = invitees.filter((g) => g.is_sent).length;
-  const linkFor = (name: string) => `${baseLink}?to=${encodeURIComponent(name)}`;
 
   async function toggleSent(invitee: Invitee, isSent: boolean) {
     const result = await setSentAction(invitationId, invitee.id, isSent);
     if (!result.ok) return setNotice({ tone: "err", text: result.error });
-    setInvitees((list) => list.map((g) => (g.id === result.data.id ? result.data : g)));
+    // Gabungkan, bukan ganti: hasil server tidak membawa `link`.
+    setInvitees((list) => list.map((g) => (g.id === result.data.id ? { ...g, ...result.data } : g)));
   }
 
   async function remove(invitee: Invitee) {
@@ -82,7 +84,7 @@ export function GuestManager({ invitationId, baseLink, isPublished, initialInvit
       g.contact,
       g.channel === "whatsapp" ? "WhatsApp" : "Instagram",
       g.inviter ?? "",
-      linkFor(g.name),
+      g.link,
       g.is_sent ? "Ya" : "Belum",
     ]);
     downloadFile("daftar-tamu.csv", toCsv(["Nama", "Kontak", "Saluran", "Pengundang", "Tautan", "Terkirim"], rows));
@@ -107,6 +109,12 @@ export function GuestManager({ invitationId, baseLink, isPublished, initialInvit
           <p className="mb-4 flex items-start gap-2 rounded-xl bg-clay/10 px-3.5 py-2.5 text-xs text-clay">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
             Undangan masih draft — tamu akan melihat halaman tidak ditemukan. Terbitkan dulu di tab Pengaturan sebelum mengirim.
+          </p>
+        )}
+        {!canSignLinks && (
+          <p className="mb-4 flex items-start gap-2 rounded-xl bg-danger/10 px-3.5 py-2.5 text-xs text-danger">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+            PREVIEW_SECRET belum diatur di server admin — tautan tidak bertanda tangan, sehingga undangan menampilkan sapaan umum, bukan nama tamu.
           </p>
         )}
         <div className="flex flex-wrap items-center gap-2">
@@ -153,7 +161,7 @@ export function GuestManager({ invitationId, baseLink, isPublished, initialInvit
               <InviteeRow
                 key={g.id}
                 invitee={g}
-                link={linkFor(g.name)}
+                link={g.link}
                 template={message}
                 onToggleSent={toggleSent}
                 onRemove={remove}

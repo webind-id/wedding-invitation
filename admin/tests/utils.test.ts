@@ -21,7 +21,6 @@ describe("slug", () => {
 
   it("builds public URLs", () => {
     expect(invitationUrl("https://kudo.test/", "cahya-wahyu")).toBe("https://kudo.test/cahya-wahyu");
-    expect(invitationUrl("https://kudo.test", "na", "Pak Budi")).toBe("https://kudo.test/na?to=Pak%20Budi");
   });
 });
 
@@ -145,9 +144,8 @@ describe("action helpers", () => {
 describe("subdomain URLs", () => {
   it("builds subdomain URLs from a pattern, falling back to the template domain", () => {
     expect(publicUrl("https://{slug}.kudostack.com", "https://tpl-kudo3.kudostack.com", "cahya-wahyu")).toBe("https://cahya-wahyu.kudostack.com");
-    expect(publicUrl("https://{slug}.kudostack.com/", "x", "a-b-c", "Pak Budi")).toBe("https://a-b-c.kudostack.com?to=Pak%20Budi");
+    expect(publicUrl("https://{slug}.kudostack.com/", "x", "a-b-c")).toBe("https://a-b-c.kudostack.com");
     expect(publicUrl(null, "https://tpl-kudo3.kudostack.com/", "cahya-wahyu")).toBe("https://tpl-kudo3.kudostack.com/cahya-wahyu");
-    expect(publicUrl(null, "https://kudo.test", "na", "A&B")).toBe("https://kudo.test/na?to=A%26B");
   });
 
   it("reserves system subdomains and the tpl- prefix", () => {

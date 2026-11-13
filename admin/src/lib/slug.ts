@@ -18,10 +18,9 @@ export function isValidSlug(value: string, min: number = SLUG_MIN, max: number =
   return value.length >= min && value.length <= max && SLUG_PATTERN.test(value);
 }
 
-/** URL publik undangan di domain template. */
-export function invitationUrl(baseUrl: string, slug: string, guestName?: string): string {
-  const url = `${baseUrl.replace(/\/+$/, "")}/${slug}`;
-  return guestName ? `${url}?to=${encodeURIComponent(guestName)}` : url;
+/** URL publik undangan di domain template. Tautan per tamu dibuat lewat lib/guest-link (bertanda tangan). */
+export function invitationUrl(baseUrl: string, slug: string): string {
+  return `${baseUrl.replace(/\/+$/, "")}/${slug}`;
 }
 
 // ── Subdomain per undangan (gateway Cloudflare) ─────────────────────────
@@ -39,8 +38,8 @@ export function isReservedSlug(slug: string, extra: string[] = []): boolean {
 /**
  * URL publik undangan. Dengan pola (mis. "https://{slug}.kudostack.com")
  * hasilnya subdomain per undangan; tanpa pola, kembali ke {domain template}/{slug}.
+ * Tautan per tamu dibuat lewat lib/guest-link (bertanda tangan), bukan di sini.
  */
-export function publicUrl(pattern: string | null, templateBaseUrl: string, slug: string, guestName?: string): string {
-  const url = pattern ? pattern.replace("{slug}", slug).replace(/\/+$/, "") : invitationUrl(templateBaseUrl, slug);
-  return guestName ? `${url}${url.includes("?") ? "&" : "?"}to=${encodeURIComponent(guestName)}` : url;
+export function publicUrl(pattern: string | null, templateBaseUrl: string, slug: string): string {
+  return pattern ? pattern.replace("{slug}", slug).replace(/\/+$/, "") : invitationUrl(templateBaseUrl, slug);
 }

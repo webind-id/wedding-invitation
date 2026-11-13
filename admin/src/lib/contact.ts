@@ -46,11 +46,6 @@ export function displayContact(contact: ParsedContact): string {
   return contact.channel === "whatsapp" ? `+${contact.value}` : `@${contact.value}`;
 }
 
-export function invitationLink(baseUrl: string, guestName: string): string {
-  const base = baseUrl.trim().replace(/\/+$/, "");
-  return `${base}/?to=${encodeURIComponent(guestName)}`;
-}
-
 export interface TemplateVars {
   nama: string;
   link: string;

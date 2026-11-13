@@ -3,7 +3,7 @@
 ## Commands
 
 ```bash
-npm run dev            # http://localhost:3003 (demo) — /<slug>?to=Nama for a real invitation
+npm run dev            # http://localhost:3003 (demo) — /<slug>?to=Nama&k=<sig> for a real invitation (copy a guest link from admin → Tamu)
 npm run build
 npm test               # vitest, tests/ covers src/lib/** and src/shared/**
 npm run typecheck
@@ -15,6 +15,7 @@ The **"kudo-3" template** ("Chiaroscuro": cinematic, moody, photo-led) of a mult
 
 - `/` = demo from `sampleContent`; `/[slug]` = `loadInvitation()` in `src/lib/invitation.ts` (template code must equal `TEMPLATE_CODE` = `kudo-3`; drafts need a valid `?preview=` token). `/api/ucapan` = guestbook scoped by slug.
 - **`src/shared/` is a copy from `../admin/src/shared/`** — never edit here; run `npm run shared:sync` in admin.
+- **Guest name** (`?to=`) is shown only with a valid `?k=` — an HMAC the admin adds to each guest link (`src/shared/guest-token.ts`, keyed by `PREVIEW_SECRET`, prefix `guest:`). Typed/edited names or links without `k` fall back to `content.defaultGuest`. The demo `/` still accepts any `?to=`.
 - Components read content via `useInvitation()`; `photos` is the de-duplicated pool from `photoPool()`, picked with `photoAt(photos, i)`.
 
 ### The stage (core mechanic)

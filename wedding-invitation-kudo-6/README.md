@@ -9,12 +9,12 @@ Template undangan pernikahan yang terasa seperti memasuki dunia romantis digital
 ```bash
 cp .env.local.example .env.local   # isi Supabase, PREVIEW_SECRET, GATEWAY_SECRET (sama dengan admin)
 npm install
-npm run dev     # http://localhost:3006 → contoh; /<slug>?to=Nama%20Tamu → undangan sungguhan
+npm run dev     # http://localhost:3006 → contoh; /<slug>?to=Nama%20Tamu&k=… → undangan sungguhan (salin tautan tamu dari admin → Tamu)
 ```
 
 Daftarkan di admin lewat menu **Template**:
 - Kode: `kudo-6`.
-- Alamat: alamat app ini, mis. `https://tpl-kudo6.kudostack.com`.
+- Alamat: `https://wedding6.kudostack.my.id` (lihat docs/SETUP-DOMAIN.md).
 
 ## Pengalaman
 

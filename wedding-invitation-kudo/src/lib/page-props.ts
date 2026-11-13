@@ -1,20 +1,31 @@
 import type { Metadata } from "next";
 import { coupleLabel, type InvitationContent } from "@/shared/contract";
+import { normalizeGuestName, verifyGuestName } from "@/shared/guest-token";
 
-const GUEST_NAME_MAX = 80;
+type Param = string | string[] | undefined;
 
-export type SearchParams = Promise<{ to?: string | string[]; preview?: string | string[] }>;
+export type SearchParams = Promise<{ to?: Param; k?: Param; preview?: Param }>;
 
-function first(value: string | string[] | undefined): string | undefined {
+function first(value: Param): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
-/** Nama tamu dari ?to=…, dipotong & dirapikan; fallback ke sapaan bawaan. */
-export function guestNameFrom(to: string | string[] | undefined, fallback: string): string {
-  return first(to)?.trim().slice(0, GUEST_NAME_MAX) || fallback;
+/** Halaman demo: nama tamu dari ?to=… apa adanya (dirapikan); fallback ke sapaan bawaan. */
+export function guestNameFrom(to: Param, fallback: string): string {
+  return normalizeGuestName(first(to) ?? "") || fallback;
 }
 
-export function previewFrom(preview: string | string[] | undefined): string | undefined {
+/**
+ * Undangan sungguhan: nama dari ?to=… hanya ditampilkan bila ?k=… adalah tanda tangan
+ * admin untuk nama & undangan ini (lihat shared/guest-token.ts). Nama yang diketik
+ * sendiri, diubah, atau tautan tanpa k → sapaan bawaan.
+ */
+export function verifiedGuestName(slug: string, to: Param, k: Param, fallback: string, secret: string | undefined): string {
+  const name = normalizeGuestName(first(to) ?? "");
+  return name && verifyGuestName(slug, name, first(k), secret) ? name : fallback;
+}
+
+export function previewFrom(preview: Param): string | undefined {
   return first(preview);
 }
 

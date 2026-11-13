@@ -6,11 +6,11 @@ import { addInviteesAction, type AddResult } from "@/app/(panel)/undangan/[id]/_
 import { parseContact } from "@/lib/contact";
 import { csvToGuests, toCsv } from "@/lib/csv";
 import { downloadFile } from "@/lib/download";
-import type { Invitee } from "@/lib/invitee";
+import type { LinkedInvitee } from "@/lib/guest-link";
 
 interface AddInviteesProps {
   invitationId: string;
-  onAdded: (invitees: Invitee[], summary: string) => void;
+  onAdded: (invitees: LinkedInvitee[], summary: string) => void;
   onError: (message: string) => void;
 }
 

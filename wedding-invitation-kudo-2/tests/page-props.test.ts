@@ -1,8 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { guestNameFrom, metadataFor, previewFrom } from "@/lib/page-props";
+import { guestNameFrom, metadataFor, previewFrom, verifiedGuestName } from "@/lib/page-props";
+import { signGuestName } from "@/shared/guest-token";
 import { sampleContent } from "@/shared/sample";
 
-describe("guestNameFrom", () => {
+const SECRET = "s".repeat(40);
+const SLUG = "cahya-wahyu";
+
+describe("guestNameFrom (demo page)", () => {
   it("uses the first trimmed ?to value, capped at 80 chars", () => {
     expect(guestNameFrom("  Pak Budi  ", "Tamu")).toBe("Pak Budi");
     expect(guestNameFrom(["A", "B"], "Tamu")).toBe("A");
@@ -17,6 +21,26 @@ describe("guestNameFrom", () => {
   it("reads the preview token", () => {
     expect(previewFrom(["t1", "t2"])).toBe("t1");
     expect(previewFrom(undefined)).toBeUndefined();
+  });
+});
+
+describe("verifiedGuestName (real invitation)", () => {
+  const k = signGuestName(SLUG, "Pak Budi & Keluarga", SECRET);
+
+  it("shows the name only when the admin signature matches", () => {
+    expect(verifiedGuestName(SLUG, "Pak Budi & Keluarga", k, "Tamu", SECRET)).toBe("Pak Budi & Keluarga");
+    expect(verifiedGuestName(SLUG, ["  Pak Budi & Keluarga ", "x"], [k], "Tamu", SECRET)).toBe("Pak Budi & Keluarga");
+  });
+
+  it("falls back to the default greeting for typed, edited or foreign names", () => {
+    expect(verifiedGuestName(SLUG, "Nama Palsu", undefined, "Tamu", SECRET)).toBe("Tamu");
+    expect(verifiedGuestName(SLUG, "Nama Palsu", k, "Tamu", SECRET)).toBe("Tamu");
+    expect(verifiedGuestName("arini-andra", "Pak Budi & Keluarga", k, "Tamu", SECRET)).toBe("Tamu");
+  });
+
+  it("fails closed without a secret, and stays on the greeting without ?to", () => {
+    expect(verifiedGuestName(SLUG, "Pak Budi & Keluarga", k, "Tamu", undefined)).toBe("Tamu");
+    expect(verifiedGuestName(SLUG, undefined, k, "Tamu", SECRET)).toBe("Tamu");
   });
 });
 

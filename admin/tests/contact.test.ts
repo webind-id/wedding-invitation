@@ -3,7 +3,6 @@ import {
   displayContact,
   fillTemplate,
   instagramDmLink,
-  invitationLink,
   normalizeInstagram,
   normalizePhone,
   parseContact,
@@ -57,12 +56,6 @@ describe("links and templates", () => {
   it("formats contacts for display", () => {
     expect(displayContact({ channel: "whatsapp", value: "628123" })).toBe("+628123");
     expect(displayContact({ channel: "instagram", value: "Wahyu" })).toBe("@Wahyu");
-  });
-
-  it("builds an invitation link with an encoded guest name", () => {
-    expect(invitationLink("https://site.id///", "Pak Budi & Keluarga")).toBe(
-      "https://site.id/?to=Pak%20Budi%20%26%20Keluarga",
-    );
   });
 
   it("fills every placeholder", () => {

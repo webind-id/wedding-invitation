@@ -6,7 +6,7 @@ Isi undangan dikelola di app **[admin](../admin/)**. Template ini hanya menampil
 
 ```
 https://kudo4.domain-anda.com/                     → demo (konten contoh)
-https://kudo4.domain-anda.com/Cahya-Wahyu?to=Budi   → undangan "Cahya-Wahyu"
+https://kudo4.domain-anda.com/Cahya-Wahyu?to=Budi&k=…   → undangan "Cahya-Wahyu"
 ```
 
 ## Undangan sebagai satu edisi majalah
