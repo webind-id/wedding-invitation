@@ -37,7 +37,7 @@ Admin ──► undangan.kudostack.my.id ───────┤  Cloudflare Tu
 ## Kebutuhan server
 
 - Linux 64-bit (x86_64), Docker Engine 24+ dengan plugin Compose v2.
-- RAM minimal **2 GB** (9 app Node.js ±120–200 MB per app saat jalan; tiap container dibatasi 512 MB). Saat **build**, siapkan 4 GB atau tambahkan swap, atau build image di mesin lain (lihat bagian *Build di mesin lain*).
+- RAM minimal **2 GB** (9 app Node.js ±120–200 MB per app saat jalan; tiap container dibatasi 512 MB). Image dibangun oleh GitHub Actions, jadi server tidak perlu RAM besar untuk proses build.
 - Disk ±5 GB untuk image.
 - Akses internet keluar (build mengunduh paket npm & Google Fonts).
 
@@ -46,11 +46,16 @@ Admin ──► undangan.kudostack.my.id ───────┤  Cloudflare Tu
 | File | Isi |
 | --- | --- |
 | [`Dockerfile`](../Dockerfile) | Satu Dockerfile multi-stage untuk semua app (`--build-arg APP=<folder>`), hasil `next build` mode `standalone`, berjalan sebagai user non-root. |
-| [`docker-compose.yml`](../docker-compose.yml) | 9 app + `cloudflared`. `TEMPLATE_CODE` sudah diisi per layanan. |
+| [`docker-compose.yml`](../docker-compose.yml) | 10 app yang mengambil image dari Docker Hub. `TEMPLATE_CODE` sudah diisi per layanan. |
 | [`docker.env.example`](../docker.env.example) | Contoh `.env`, berisi semua rahasia di satu tempat. |
 | [`.dockerignore`](../.dockerignore) | Memastikan `node_modules`, `.next`, dan file `.env*` lokal tidak ikut masuk image. |
 
 Rahasia **tidak** dimasukkan ke image. Semuanya dibaca dari `.env` saat container berjalan.
+
+Workflow [`.github/workflows/docker-publish.yml`](../.github/workflows/docker-publish.yml)
+membangun dan mengunggah 10 image ke Docker Hub. Di repository GitHub, buat secrets
+`DOCKERHUB_USERNAME` dan `DOCKERHUB_TOKEN`. Repository image harus public agar server
+tidak perlu login ke Docker Hub.
 
 ---
 
@@ -64,11 +69,23 @@ sudo usermod -aG docker $USER   # logout/login sekali
 git clone <repo> kudostack && cd kudostack
 ```
 
-### 2. Buat Cloudflare Tunnel
-Dashboard Cloudflare → **Zero Trust → Networks → Tunnels → Create a tunnel** → pilih **Cloudflared** → beri nama `kudostack` → pilih lingkungan **Docker**.
-- [ ] Salin **token** (string panjang setelah `--token`). Simpan untuk langkah 3.
+### 2. Hubungkan Cloudflare Tunnel yang sudah ada
+Gunakan Tunnel yang sudah berjalan di server. Jangan membuat atau menjalankan
+container `cloudflared` baru dari Compose ini. Connector `cloudflared` yang lama
+harus terhubung ke network Docker eksternal `cloudflare_net`, sama seperti
+container aplikasi pada Compose ini.
 
-Lalu tab **Public Hostname** → tambahkan satu per baris:
+Jika network belum ada:
+```bash
+docker network create cloudflare_net
+```
+
+Pastikan container connector lama bergabung ke network tersebut:
+```bash
+docker network connect cloudflare_net <nama-container-cloudflared>
+```
+
+Di Tunnel yang sama, buka **Public Hostname** lalu tambahkan:
 
 | Subdomain | Domain | Service |
 | --- | --- | --- |
@@ -95,14 +112,15 @@ nano .env
 - [ ] `SESSION_SECRET`, `PREVIEW_SECRET`, `GATEWAY_SECRET`: nilai acak min. 32 karakter (`openssl rand -base64 32`).
   - Pindah dari Vercel? Pakai **nilai lama** agar sesi admin, tautan pratinjau, dan gateway tetap jalan.
   - `GATEWAY_SECRET` **harus sama** dengan secret di Worker (`npx wrangler secret put GATEWAY_SECRET`).
-- [ ] `CLOUDFLARE_TUNNEL_TOKEN`: token dari langkah 2.
+- [ ] `IMAGE_NAMESPACE` sama dengan username/organisasi Docker Hub yang dipakai GitHub Actions.
 - [ ] `chmod 600 .env`
 
 ### 4. Build & jalankan
 ```bash
-docker compose up -d --build     # build pertama ±10–20 menit
+docker compose pull             # ambil image hasil GitHub Actions
+docker compose up -d
 docker compose ps                # semua "healthy" setelah ±1 menit
-docker compose logs -f cloudflared   # harus ada "Registered tunnel connection"
+docker logs -f <nama-container-cloudflared>  # harus ada "Registered tunnel connection"
 ```
 
 ### 5. Admin panel
@@ -124,8 +142,8 @@ docker compose logs -f cloudflared   # harus ada "Registered tunnel connection"
 
 | Kebutuhan | Perintah |
 | --- | --- |
-| Update setelah `git pull` | `docker compose up -d --build` |
-| Update satu app saja | `docker compose up -d --build kudo-8` |
+| Update setelah image baru di-push | `docker compose pull && docker compose up -d` |
+| Update satu app saja | `docker compose pull kudo-8 && docker compose up -d kudo-8` |
 | Lihat log | `docker compose logs -f --tail=100 admin` |
 | Restart semua | `docker compose restart` |
 | Hentikan | `docker compose down` |
@@ -134,17 +152,6 @@ docker compose logs -f cloudflared   # harus ada "Registered tunnel connection"
 **Menambah template baru** (mis. kudo-10): buat folder app-nya dengan `output: "standalone"` di `next.config.mjs` → tambahkan layanan `kudo-10` di `docker-compose.yml` (salin blok `kudo-9`, ganti `APP` & `TEMPLATE_CODE`) → tambah public hostname `wedding10` → `http://kudo-10:3000` di tunnel → tambahkan `wedding10` ke `RESERVED_SUBDOMAINS` di `gateway/wrangler.toml` (lalu `npm run deploy`) **dan** ke nama cadangan di menu **Domain** → isi `https://wedding10.kudostack.my.id` di menu **Template**.
 
 **Data**: semua data (undangan, ucapan, foto unggahan) ada di **Supabase**, bukan di server. Container bisa dihapus dan dibangun ulang kapan saja tanpa kehilangan data. Yang perlu dicadangkan di server hanya `.env`.
-
-### Build di mesin lain (server kecil)
-Jika RAM server < 4 GB, build di laptop/CI lalu kirim image-nya:
-```bash
-# di mesin build (x86_64 — atau tambahkan --platform linux/amd64)
-docker compose build
-docker save $(docker compose config --images | grep -v cloudflared) | gzip > kudostack-images.tar.gz
-# di server
-gunzip -c kudostack-images.tar.gz | docker load
-docker compose up -d --no-build
-```
 
 ---
 

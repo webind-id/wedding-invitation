@@ -151,7 +151,7 @@ Buka `https://undangan.kudostack.my.id` lalu login.
 | "Sedang ada gangguan" (502) | Alamat template di menu **Template** salah, atau container template tidak *healthy* (`docker compose ps`). |
 | "Sedang ada gangguan" (503) | Secret `SUPABASE_URL` / `SUPABASE_ANON_KEY` di gateway belum diatur atau salah. |
 | *Uji gateway*: "Domain cocok" merah | `ROOT_DOMAIN` di `wrangler.toml` berbeda dengan menu **Domain**. Samakan, lalu `npm run deploy`. |
-| `undangan.kudostack.my.id` error 1033 / 502 | `cloudflared` belum terhubung (`docker compose logs cloudflared`), atau Service hostname salah ketik (`http://admin:3000`, bukan `https`). |
+| `undangan.kudostack.my.id` error 1033 / 502 | Connector `cloudflared` lama belum terhubung (cek `docker logs <nama-container-cloudflared>`), atau Service hostname salah ketik (`http://admin:3000`, bukan `https`). |
 | Tamu sering ditolak "Terlalu banyak kiriman" | `GATEWAY_SECRET` di `.env` server kosong, kurang dari 32 karakter, atau berbeda dengan secret di Worker. |
 | Nama tamu tidak muncul | Tautan tidak berasal dari tab **Tamu**, tamu sudah dihapus dari daftar, atau migrasi `003_invitee_code.sql` belum dijalankan (tab **Tamu** menampilkan peringatan). Untuk tautan format lama `?to=…&k=…`: `PREVIEW_SECRET` berbeda antara admin dan template. |
 
