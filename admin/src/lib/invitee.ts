@@ -12,6 +12,8 @@ export interface Invitee {
   is_sent: boolean;
   sent_at: string | null;
   created_at: string;
+  /** Kode tautan (?untuk=…), dibuat trigger DB. Kosong bila migrasi 003 belum dijalankan. */
+  code?: string | null;
 }
 
 export interface InviteeDraft {

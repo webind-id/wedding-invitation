@@ -67,3 +67,23 @@ export async function publishedInvitationId(slug: string): Promise<string | null
   if (error) console.error("[undangan] gagal memuat id", error);
   return (data?.id as string | undefined) ?? null;
 }
+
+/**
+ * Nama tamu untuk tautan ?untuk=<kode> — hanya dari daftar tamu undangan ini.
+ * null bila kode tidak dikenal, atau migrasi 003 (kolom invitees.code) belum dijalankan.
+ */
+export const inviteeNameByCode = cache(async (invitationId: string, code: string): Promise<string | null> => {
+  const client = db();
+  if (!client) return null;
+  const { data, error } = await client
+    .from("invitees")
+    .select("name")
+    .eq("invitation_id", invitationId)
+    .eq("code", code)
+    .maybeSingle();
+  if (error) {
+    console.error("[undangan] gagal memuat tamu dari kode", error.message);
+    return null;
+  }
+  return (data?.name as string | undefined) ?? null;
+});

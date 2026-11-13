@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { guestLink, withGuestLinks } from "@/lib/guest-link";
+import { guestLink, guestLinkNotice, withGuestLinks } from "@/lib/guest-link";
 import type { Invitee } from "@/lib/invitee";
 import { GUEST_NAME_MAX, normalizeGuestName, signGuestName, verifyGuestName } from "@/shared/guest-token";
 
@@ -55,25 +55,31 @@ describe("guest token", () => {
 });
 
 describe("guestLink", () => {
-  it("appends the encoded name and its signature", () => {
-    const link = guestLink("https://cahya-wahyu.kudostack.my.id", SLUG, "Pak Budi & Keluarga", SECRET);
-    const url = new URL(link);
-    expect(url.searchParams.get("to")).toBe("Pak Budi & Keluarga");
-    expect(url.searchParams.get("k")).toBe(signGuestName(SLUG, "Pak Budi & Keluarga", SECRET));
-    expect(link).toContain("?to=Pak%20Budi%20%26%20Keluarga&k=");
+  it("uses the short guest code when the invitee has one (?untuk=…)", () => {
+    const guest = { name: "Pak Budi & Keluarga", code: "pak-budi-keluarga-k7q2" };
+    expect(guestLink("https://wahyu-cahya.kudostack.my.id", SLUG, guest, SECRET)).toBe(
+      "https://wahyu-cahya.kudostack.my.id/?untuk=pak-budi-keluarga-k7q2",
+    );
+    expect(guestLink("https://wedding6.kudostack.my.id/wahyu-cahya", SLUG, guest, undefined)).toBe(
+      "https://wedding6.kudostack.my.id/wahyu-cahya?untuk=pak-budi-keluarga-k7q2",
+    );
   });
 
   it("joins with & when the base already has a query", () => {
-    expect(guestLink("https://x.test/a?ref=1", SLUG, "Budi", SECRET)).toMatch(/^https:\/\/x\.test\/a\?ref=1&to=Budi&k=/);
+    expect(guestLink("https://x.test/a?ref=1", SLUG, { name: "Budi", code: "budi-k7q2" }, SECRET)).toBe("https://x.test/a?ref=1&untuk=budi-k7q2");
   });
 
-  it("leaves the link unsigned when no secret is configured", () => {
-    expect(guestLink("https://x.test/a", SLUG, "Budi", undefined)).toBe("https://x.test/a?to=Budi");
+  it("falls back to the signed ?to=&k= link before migration 003 adds codes", () => {
+    const link = guestLink("https://cahya-wahyu.kudostack.my.id", SLUG, { name: "Pak Budi & Keluarga" }, SECRET);
+    const url = new URL(link);
+    expect(url.searchParams.get("to")).toBe("Pak Budi & Keluarga");
+    expect(url.searchParams.get("k")).toBe(signGuestName(SLUG, "Pak Budi & Keluarga", SECRET));
+    expect(guestLink("https://x.test/a", SLUG, { name: "Budi", code: null }, undefined)).toBe("https://x.test/a?to=Budi");
   });
 });
 
 describe("withGuestLinks", () => {
-  it("adds a signed link to every invitee without touching the rest", () => {
+  it("adds each invitee's link without touching the rest", () => {
     const invitee: Invitee = {
       id: "1",
       invitation_id: "inv",
@@ -84,8 +90,24 @@ describe("withGuestLinks", () => {
       is_sent: false,
       sent_at: null,
       created_at: "2027-01-01T00:00:00Z",
+      code: "budi-k7q2",
     };
     const [linked] = withGuestLinks([invitee], "https://x.test/a", SLUG, SECRET);
-    expect(linked).toEqual({ ...invitee, link: guestLink("https://x.test/a", SLUG, "Budi", SECRET) });
+    expect(linked).toEqual({ ...invitee, link: "https://x.test/a?untuk=budi-k7q2" });
+  });
+});
+
+describe("guestLinkNotice", () => {
+  const withCode = { name: "A", code: "a-k7q2" };
+  const withoutCode = { name: "B", code: null };
+
+  it("is silent when every guest has a short code", () => {
+    expect(guestLinkNotice([withCode], undefined)).toBeNull();
+    expect(guestLinkNotice([], undefined)).toBeNull();
+  });
+
+  it("asks for migration 003 when codes are missing, and warns harder without a secret", () => {
+    expect(guestLinkNotice([withCode, withoutCode], SECRET)).toMatch(/003/);
+    expect(guestLinkNotice([withoutCode], undefined)).toMatch(/PREVIEW_SECRET/);
   });
 });

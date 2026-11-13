@@ -6,12 +6,12 @@ Template ini hanya **menampilkan** undangan. Isi undangan, daftar tamu, pengirim
 
 ```
 https://kudo.domain-anda.com/                     → demo (konten contoh)
-https://kudo.domain-anda.com/Cahya-Wahyu?to=Budi&k=…   → undangan "Cahya-Wahyu" untuk tamu Budi
+https://kudo.domain-anda.com/Cahya-Wahyu?untuk=budi-k7q2   → undangan "Cahya-Wahyu" untuk tamu Budi
 ```
 
 ## Fitur tampilan
 
-- Sampul amplop dengan segel lilin dan nama tamu dari tautan bertanda tangan (`?to=…&k=…`)
+- Sampul amplop dengan segel lilin dan nama tamu dari tautan admin (`?untuk=…`)
 - Poster tipografi + hitung mundur di layar lebar, dock navigasi di HP
 - Ayat, profil mempelai, linimasa kisah, galeri masonry + lightbox
 - Kartu acara bergaya tiket, peta, Google Calendar dan file `.ics`

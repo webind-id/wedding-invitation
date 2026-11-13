@@ -37,7 +37,7 @@ tamu ─► arini-andra.kudostack.com
 - Alamat undangan **tidak berubah saat templatenya diganti**. Tautan yang sudah dikirim ke tamu tetap berlaku.
 - Tamu tidak pernah melihat alamat app template (`tpl-…`).
 - Yang diteruskan gateway hanya halaman undangan (`/`), aset (`/_next/…`, `/images/…`, `/audio/…`), dan API buku tamu (`/api/ucapan`). Path lain mendapat 404.
-- Seluruh query string ikut diteruskan, termasuk nama tamu bertanda tangan `?to=Nama&k=…` dan tautan pratinjau `?preview=…`.
+- Seluruh query string ikut diteruskan, termasuk kode tamu `?untuk=…`, tautan tamu format lama `?to=Nama&k=…`, dan tautan pratinjau `?preview=…`.
 
 ## Nama yang dicadangkan
 
@@ -77,6 +77,7 @@ Buka Supabase → **SQL Editor**, lalu jalankan berurutan:
 
 1. `supabase/migrations/001_subdomain_gateway.sql`
 2. `supabase/migrations/002_domain_settings.sql`
+3. `supabase/migrations/003_invitee_code.sql` (kode tautan tamu)
 
 Migrasi ini membuat tabel `domain_settings` (pengaturan menu **Domain**) dan fungsi `resolve_invitation_host`. Fungsi itu hanya mengembalikan alamat app template untuk sebuah slug (tanpa isi undangan), atau tanda bahwa nama tersebut dicadangkan. Karena itu gateway cukup memakai **anon key**, bukan service role.
 
@@ -133,7 +134,7 @@ Tidak perlu restart. Semua tautan di admin langsung memakai subdomain: tombol *B
 ### 8. Uji
 1. Buat undangan dengan slug `uji-coba`, lalu terbitkan.
 2. Buka `https://uji-coba.kudostack.com`. Undangan harus tampil.
-3. Di tab **Tamu**, tambahkan "Budi" lalu buka tautan yang disalin (`…/?to=Budi&k=…`). Nama tamu harus muncul. Tanpa `&k=…` atau dengan nama yang diubah, yang tampil sapaan umum.
+3. Di tab **Tamu**, tambahkan "Budi" lalu buka tautan yang disalin (`…/?untuk=budi-k7q2`). Nama tamu harus muncul. Dengan kode yang diubah, yang tampil sapaan umum.
 4. Kirim satu ucapan dari halaman undangan. Ucapan harus muncul di tab **RSVP & ucapan** di admin.
 5. Buka `https://tidak-ada-123.kudostack.com`. Harus tampil "Undangan tidak ditemukan".
 6. Buka `https://admin.kudostack.com`. Halaman login admin harus tetap tampil.

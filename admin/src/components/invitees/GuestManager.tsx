@@ -24,14 +24,14 @@ const FILTERS: { id: Filter; label: string }[] = [
 interface GuestManagerProps {
   invitationId: string;
   isPublished: boolean;
-  /** false bila PREVIEW_SECRET belum diatur — tautan tanpa tanda tangan tidak menampilkan nama. */
-  canSignLinks: boolean;
-  /** Setiap tamu membawa tautan pribadi bertanda tangan (dibuat di server). */
+  /** Peringatan soal format tautan (mis. migrasi 003 belum dijalankan); null bila beres. */
+  linkNotice: string | null;
+  /** Setiap tamu membawa tautan pribadinya (dibuat di server). */
   initialInvitees: LinkedInvitee[];
   initialMessage: string;
 }
 
-export function GuestManager({ invitationId, isPublished, canSignLinks, initialInvitees, initialMessage }: GuestManagerProps) {
+export function GuestManager({ invitationId, isPublished, linkNotice, initialInvitees, initialMessage }: GuestManagerProps) {
   const [invitees, setInvitees] = useState(initialInvitees);
   const [message, setMessage] = useState(initialMessage);
   const [query, setQuery] = useState("");
@@ -111,10 +111,10 @@ export function GuestManager({ invitationId, isPublished, canSignLinks, initialI
             Undangan masih draft — tamu akan melihat halaman tidak ditemukan. Terbitkan dulu di tab Pengaturan sebelum mengirim.
           </p>
         )}
-        {!canSignLinks && (
+        {linkNotice && (
           <p className="mb-4 flex items-start gap-2 rounded-xl bg-danger/10 px-3.5 py-2.5 text-xs text-danger">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-            PREVIEW_SECRET belum diatur di server admin — tautan tidak bertanda tangan, sehingga undangan menampilkan sapaan umum, bukan nama tamu.
+            {linkNotice}
           </p>
         )}
         <div className="flex flex-wrap items-center gap-2">

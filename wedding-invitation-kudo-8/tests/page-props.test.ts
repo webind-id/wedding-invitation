@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { guestNameFrom, metadataFor, previewFrom, verifiedGuestName } from "@/lib/page-props";
+import { guestCodeFrom, guestNameFrom, metadataFor, previewFrom, resolveGuestName, verifiedGuestName } from "@/lib/page-props";
 import { signGuestName } from "@/shared/guest-token";
 import { sampleContent } from "@/shared/sample";
 
@@ -41,6 +41,36 @@ describe("verifiedGuestName (real invitation)", () => {
   it("fails closed without a secret, and stays on the greeting without ?to", () => {
     expect(verifiedGuestName(SLUG, "Pak Budi & Keluarga", k, "Tamu", undefined)).toBe("Tamu");
     expect(verifiedGuestName(SLUG, undefined, k, "Tamu", SECRET)).toBe("Tamu");
+  });
+});
+
+describe("guestCodeFrom (?untuk=)", () => {
+  it("accepts well-formed guest codes only", () => {
+    expect(guestCodeFrom("pak-budi-keluarga-k7q2")).toBe("pak-budi-keluarga-k7q2");
+    expect(guestCodeFrom(["budi-k7q2", "x"])).toBe("budi-k7q2");
+  });
+
+  it("rejects anything that is not a lowercase slug of sane length", () => {
+    for (const bad of [undefined, "", "Budi", "budi k7q2", "budi--k7q2", "-budi", "budi%27", "a".repeat(65), "x,y"]) {
+      expect(guestCodeFrom(bad)).toBeUndefined();
+    }
+  });
+});
+
+describe("resolveGuestName", () => {
+  const k = signGuestName(SLUG, "Pak Budi & Keluarga", SECRET);
+
+  it("prefers the name found for ?untuk=, normalized for display", () => {
+    expect(resolveGuestName({ invitedName: "  Pak Budi & Keluarga ", slug: SLUG, fallback: "Tamu", secret: SECRET })).toBe("Pak Budi & Keluarga");
+  });
+
+  it("falls back to the default when a code was given but not found — never to ?to=", () => {
+    expect(resolveGuestName({ invitedName: null, hasCode: true, slug: SLUG, to: "Pak Budi & Keluarga", k, fallback: "Tamu", secret: SECRET })).toBe("Tamu");
+  });
+
+  it("still honours legacy signed ?to=&k= links when no code is present", () => {
+    expect(resolveGuestName({ invitedName: null, slug: SLUG, to: "Pak Budi & Keluarga", k, fallback: "Tamu", secret: SECRET })).toBe("Pak Budi & Keluarga");
+    expect(resolveGuestName({ invitedName: null, slug: SLUG, to: "Nama Palsu", k, fallback: "Tamu", secret: SECRET })).toBe("Tamu");
   });
 });
 

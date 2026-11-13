@@ -86,6 +86,11 @@ describe("upstreamUrl", () => {
     expect(url.searchParams.get("k")).toBe("Ab3_x-9QzLm2Pq7R");
   });
 
+  it("forwards the short guest code (?untuk=) untouched", () => {
+    const url = upstreamUrl(base, "wahyu-cahya", new URL("https://wahyu-cahya.kudostack.my.id/?untuk=pak-budi-keluarga-k7q2"), { kind: "page" });
+    expect(url.toString()).toBe("https://tpl-kudo3.kudostack.com/wahyu-cahya?untuk=pak-budi-keluarga-k7q2");
+  });
+
   it("keeps the path for proxied requests", () => {
     const url = upstreamUrl(base, "cahya-wahyu", new URL("https://cahya-wahyu.kudostack.com/api/ucapan?slug=cahya-wahyu"), { kind: "proxy" });
     expect(url.toString()).toBe("https://tpl-kudo3.kudostack.com/api/ucapan?slug=cahya-wahyu");

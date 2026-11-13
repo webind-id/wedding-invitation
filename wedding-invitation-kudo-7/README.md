@@ -9,7 +9,7 @@ Template undangan pernikahan bernuansa Jawa. Tamu berdiri di depan **rumah joglo
 ```bash
 cp .env.local.example .env.local   # isi Supabase, PREVIEW_SECRET, GATEWAY_SECRET (sama dengan admin)
 npm install
-npm run dev     # http://localhost:3007 → contoh; /<slug>?to=Nama%20Tamu&k=… → undangan sungguhan (salin tautan tamu dari admin → Tamu)
+npm run dev     # http://localhost:3007 → contoh; /<slug>?untuk=<kode-tamu> → undangan sungguhan (salin tautan tamu dari admin → Tamu)
 ```
 
 Daftarkan di admin lewat menu **Template**:

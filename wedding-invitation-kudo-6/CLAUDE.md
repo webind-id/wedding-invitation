@@ -3,7 +3,7 @@
 ## Commands
 
 ```bash
-npm run dev            # http://localhost:3006 (demo) — /<slug>?to=Nama&k=<sig> for a real invitation (copy a guest link from admin → Tamu)
+npm run dev            # http://localhost:3006 (demo) — /<slug>?untuk=<guest-code> for a real invitation (copy a guest link from admin → Tamu)
 npm run build
 npm test               # vitest, tests/ covers src/lib/** and src/shared/**
 npm run typecheck
@@ -18,7 +18,7 @@ This is the **"kudo-6" template** ("Immersive Romance": a 3D envelope, sculptura
 - `/api/ucapan` is the guestbook. `GATEWAY_SECRET` lets the subdomain gateway pass the guest's real IP.
 - **`src/shared/` is a copy of `../admin/src/shared/`.** Never edit it here; run `npm run shared:sync` in admin instead.
 - `.ics` files are built on click (`downloadIcs`) and never rendered into the HTML.
-- **Guest name** (`?to=`) is shown only with a valid `?k=` — an HMAC the admin adds to each guest link (`src/shared/guest-token.ts`, keyed by `PREVIEW_SECRET`, prefix `guest:`). Typed/edited names or links without `k` fall back to `content.defaultGuest`. The demo `/` still accepts any `?to=`.
+- **Guest name**: `?untuk=<code>` → name looked up in the admin guest list (`inviteeNameByCode()` in `src/lib/invitation.ts`, scoped to this invitation; unknown code → `content.defaultGuest`). Legacy links `?to=<name>&k=<sig>` still work: shown only when `k` verifies (`src/shared/guest-token.ts`, `PREVIEW_SECRET`). Typed/edited names fall back to `defaultGuest`. Logic: `resolveGuestName()` in `src/lib/page-props.ts`. The demo `/` still accepts any `?to=`.
 
 Shell order is `EnvelopeCover` → `Hero` → `Verse` → `Couple` → `Story` → `Events` → `Gallery` → `Gifts` → `Rsvp` → `Closing`.
 - `EnvelopeCover` is fixed and locks scroll. A GSAP timeline runs, then `onOpen` fires.

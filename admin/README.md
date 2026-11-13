@@ -4,7 +4,7 @@ Panel admin untuk mengelola **banyak template** undangan dan **banyak undangan**
 
 ```
 admin/                      ← app ini: template, undangan, konten, tamu, RSVP, upload media
-wedding-invitation-kudo/    ← template "kudo"  → https://kudo.domain.com/<slug>?to=Nama&k=<tanda tangan>
+wedding-invitation-kudo/    ← template "kudo"  → https://kudo.domain.com/<slug>?untuk=<kode-tamu>
 wedding-invitation-…/       ← template berikutnya, pola yang sama
             │
             └──► satu Supabase: templates · invitations · guestbook · invitees · admin_users
