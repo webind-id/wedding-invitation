@@ -7,6 +7,7 @@ import { parseContact } from "@/lib/contact";
 import { csvToGuests, toCsv } from "@/lib/csv";
 import { downloadFile } from "@/lib/download";
 import type { LinkedInvitee } from "@/lib/guest-link";
+import { spreadsheetToGuests } from "@/lib/spreadsheet";
 
 interface AddInviteesProps {
   invitationId: string;
@@ -14,7 +15,7 @@ interface AddInviteesProps {
   onError: (message: string) => void;
 }
 
-const MAX_CSV_BYTES = 1024 * 1024;
+const MAX_IMPORT_BYTES = 5 * 1024 * 1024;
 
 function summaryOf(r: AddResult): string {
   const parts = [`${r.inserted} tamu ditambahkan`];
@@ -64,10 +65,16 @@ export function AddInvitees({ invitationId, onAdded, onError }: AddInviteesProps
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
-    if (file.size > MAX_CSV_BYTES) return onError("File CSV maksimal 1 MB.");
-    const rows = csvToGuests(await file.text());
-    if (rows.length === 0) return onError("Tidak ada baris tamu di file ini.");
-    await submit(rows);
+    if (file.size > MAX_IMPORT_BYTES) return onError("File impor maksimal 5 MB.");
+
+    try {
+      const extension = file.name.toLowerCase().split(".").pop();
+      const rows = extension === "csv" ? csvToGuests(await file.text()) : spreadsheetToGuests(await file.arrayBuffer());
+      if (rows.length === 0) return onError("Tidak ada baris tamu di file ini.");
+      await submit(rows);
+    } catch {
+      onError("File tidak dapat dibaca. Pastikan file berisi tabel daftar tamu.");
+    }
   }
 
   return (
@@ -99,9 +106,9 @@ export function AddInvitees({ invitationId, onAdded, onError }: AddInviteesProps
       </form>
 
       <div className="mt-4 flex gap-2 border-t border-line pt-4">
-        <input ref={fileRef} type="file" accept=".csv,text/csv" onChange={handleFile} className="hidden" />
+        <input ref={fileRef} type="file" onChange={handleFile} className="hidden" />
         <button type="button" onClick={() => fileRef.current?.click()} disabled={isBusy} className="btn-outline btn-sm flex-1">
-          <FileUp className="h-3.5 w-3.5" aria-hidden /> Impor CSV
+          <FileUp className="h-3.5 w-3.5" aria-hidden /> Impor file
         </button>
         <button
           type="button"
@@ -111,6 +118,7 @@ export function AddInvitees({ invitationId, onAdded, onError }: AddInviteesProps
           <FileDown className="h-3.5 w-3.5" aria-hidden /> Template CSV
         </button>
       </div>
+      <p className="mt-2 text-xs text-muted">Kolom boleh memiliki nama berbeda dan kolom tambahan akan diabaikan otomatis.</p>
     </section>
   );
 }

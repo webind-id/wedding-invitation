@@ -1,7 +1,9 @@
 /**
- * Impor/ekspor daftar tamu dalam CSV tanpa dependensi tambahan. Mendukung
- * pemisah koma maupun titik koma (ekspor Excel berlocale Indonesia).
+ * Impor/ekspor daftar tamu dalam CSV. Mendukung pemisah koma maupun titik
+ * koma (ekspor Excel berlocale Indonesia).
  */
+
+import { parseContact } from "./contact";
 
 export interface CsvGuestRow {
   name: string;
@@ -10,10 +12,37 @@ export interface CsvGuestRow {
 }
 
 const HEADER_ALIASES: Record<keyof CsvGuestRow, string[]> = {
-  name: ["nama", "name", "nama tamu", "tamu"],
-  contact: ["kontak", "contact", "wa", "whatsapp", "no hp", "nomor", "hp", "telepon", "instagram", "ig"],
-  inviter: ["pengundang", "inviter", "dari", "diundang oleh"],
+  name: ["nama", "name", "nama tamu", "nama lengkap", "tamu", "guest", "guest name", "full name", "invitee", "penerima"],
+  contact: [
+    "kontak",
+    "contact",
+    "wa",
+    "whatsapp",
+    "no hp",
+    "nomor",
+    "nomor hp",
+    "nomor wa",
+    "phone",
+    "phone number",
+    "mobile",
+    "mobile number",
+    "telepon",
+    "instagram",
+    "ig",
+    "username",
+  ],
+  inviter: ["pengundang", "inviter", "dari", "diundang oleh", "invited by", "keluarga", "pihak"],
 };
+
+function normalizeHeader(value: string): string {
+  return value
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/^\uFEFF/, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
 
 /** Pecah teks CSV jadi baris-baris sel, menghormati tanda kutip ganda. */
 export function parseCsv(text: string): string[][] {
@@ -58,14 +87,27 @@ export function parseCsv(text: string): string[][] {
 }
 
 function findColumn(header: string[], key: keyof CsvGuestRow): number {
-  return header.findIndex((h) => HEADER_ALIASES[key].includes(h.toLowerCase()));
+  const aliases = HEADER_ALIASES[key].map(normalizeHeader);
+  return header.findIndex((value) => {
+    const candidate = normalizeHeader(value);
+    return aliases.some((alias) => candidate === alias || (alias.length >= 4 && candidate.includes(alias)));
+  });
+}
+
+function inferColumn(rows: string[][], key: keyof CsvGuestRow, excluded: Set<number>): number {
+  if (key === "contact") {
+    return rows[0]?.findIndex((_, index) => {
+      if (excluded.has(index)) return false;
+      const values = rows.slice(0, 10).map((row) => row[index] ?? "").filter(Boolean);
+      return values.length > 0 && values.some((value) => parseContact(value) !== null);
+    }) ?? -1;
+  }
+  return -1;
 }
 
 /** Ubah CSV jadi baris tamu. Tanpa header dikenali: kolom A=nama, B=kontak, C=pengundang. */
-export function csvToGuests(text: string): CsvGuestRow[] {
-  const rows = parseCsv(text);
+export function rowsToGuests(rows: string[][]): CsvGuestRow[] {
   if (rows.length === 0) return [];
-
   const header = rows[0];
   const cols = {
     name: findColumn(header, "name"),
@@ -73,16 +115,25 @@ export function csvToGuests(text: string): CsvGuestRow[] {
     inviter: findColumn(header, "inviter"),
   };
   const hasHeader = Object.values(cols).some((i) => i !== -1);
+  if (hasHeader) {
+    const excluded = new Set(Object.values(cols).filter((index) => index !== -1));
+    if (cols.contact === -1) cols.contact = inferColumn(rows.slice(1), "contact", excluded);
+  }
   const body = hasHeader ? rows.slice(1) : rows;
   const at = (r: string[], i: number, fallback: number) => r[i !== -1 ? i : fallback] ?? "";
 
   return body
     .map((r) => ({
-      name: at(r, cols.name, 0),
-      contact: at(r, cols.contact, 1),
-      inviter: at(r, cols.inviter, 2),
+      name: at(r, cols.name, hasHeader ? -1 : 0),
+      contact: at(r, cols.contact, hasHeader ? -1 : 1),
+      inviter: at(r, cols.inviter, hasHeader ? -1 : 2),
     }))
     .filter((g) => g.name || g.contact);
+}
+
+/** Ubah CSV jadi baris tamu. Tanpa header dikenali: kolom A=nama, B=kontak, C=pengundang. */
+export function csvToGuests(text: string): CsvGuestRow[] {
+  return rowsToGuests(parseCsv(text));
 }
 
 function escapeCell(value: string): string {
