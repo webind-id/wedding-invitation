@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply bg-mist;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-mist font-sans text-[15px] leading-relaxed text-ink antialiased;
+    overflow-x: clip;
+  }
+  ::selection {
+    @apply bg-lilac text-ink;
+  }
+  :focus-visible {
+    @apply outline outline-2 outline-offset-4 outline-plum;
+  }
+}
+
+@layer components {
+  /* Label kecil berjarak lebar — penanda adegan. */
+  .label {
+    @apply font-sans text-[0.66rem] font-medium uppercase tracking-[0.36em] text-plum-deep;
+  }
+
+  /*
+   * Kertas kabut senja: mist dengan semburat lilac, aprikot, dan sage yang sangat lembut,
+   * ditambah butiran halus. Diam — tidak beranimasi.
+   */
+  .mist-paper {
+    background-color: #f4f1f6;
+    background-image:
+      radial-gradient(ellipse 65% 45% at 88% 6%, rgba(205, 188, 221, 0.45), transparent 70%),
+      radial-gradient(ellipse 50% 38% at 6% 40%, rgba(233, 180, 138, 0.16), transparent 70%),
+      radial-gradient(ellipse 55% 45% at 70% 92%, rgba(157, 176, 155, 0.2), transparent 70%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.18 0 0 0 0 0.15 0 0 0 0 0.2 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Lapisan senja: gradasi lilac → aprikot pucat, untuk adegan yang lebih "hangat". */
+  .dusk-paper {
+    background-color: #efe9f3;
+    background-image:
+      linear-gradient(180deg, rgba(231, 224, 238, 0.9) 0%, rgba(244, 241, 246, 0.6) 45%, rgba(249, 230, 214, 0.55) 100%),
+      radial-gradient(ellipse 70% 40% at 50% 100%, rgba(233, 180, 138, 0.25), transparent 70%);
+  }
+
+  /* Kartu kaca kabut: permukaan setengah bening, tepi terang, bayangan plum lembut. */
+  .veil-card {
+    @apply relative bg-white/60 backdrop-blur-[6px];
+    background-image: linear-gradient(160deg, rgba(255, 255, 255, 0.85) 0%, rgba(231, 224, 238, 0.45) 60%, rgba(249, 230, 214, 0.35) 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.85),
+      0 0 0 1px rgba(94, 61, 107, 0.07),
+      0 30px 60px -32px rgba(78, 49, 89, 0.38);
+  }
+
+  /* Bingkai kapsul tegak: membulat penuh di atas dan bawah. */
+  .capsule {
+    border-radius: 999px;
+  }
+
+  /* Bingkai kelopak: dua sudut membulat penuh, dua sudut lancip. */
+  .petal-frame {
+    border-radius: 62% 4px 62% 4px / 62% 4px 62% 4px;
+  }
+  .petal-frame-alt {
+    border-radius: 4px 62% 4px 62% / 4px 62% 4px 62%;
+  }
+
+  .btn-plum {
+    @apply inline-flex items-center justify-center gap-2.5 rounded-full bg-plum px-7 py-3.5 text-[0.72rem] font-medium uppercase tracking-[0.26em] text-mist shadow-[0_14px_30px_-14px_rgba(78,49,89,0.7)] transition duration-500 ease-silk hover:bg-plum-deep active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-plum/25 px-6 py-3 text-[0.7rem] font-medium uppercase tracking-[0.22em] text-ink transition duration-500 ease-silk hover:border-plum hover:bg-lilac/30 active:scale-[0.98];
+  }
+
+  .field {
+    @apply w-full rounded-2xl border border-plum/15 bg-white/70 px-4 py-3 text-ink placeholder:text-ink/35 transition focus:border-plum focus:outline-none focus:ring-4 focus:ring-lilac/50;
+  }
+}
+
+/* ── 3D ───────────────────────────────────────────────────────────── */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Bunga: tiap cincin kelopak berada di kedalaman berbeda (--spread diatur scroll). */
+.flower {
+  --spread: 8px;
+  --tilt: 34deg;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--tilt));
+}
+.flower-ring {
+  position: absolute;
+  inset: 0;
+  transform: translateZ(calc(var(--i) * var(--spread))) scale(var(--s));
+  filter: drop-shadow(0 3px 4px rgba(46, 39, 51, 0.14));
+}
+
+/* Untaian wisteria: tiap untai di lapisan kedalaman sendiri. */
+.wisteria-strand {
+  transform-origin: 50% 0%;
+  filter: drop-shadow(0 4px 5px rgba(78, 49, 89, 0.14));
+}
+
+/* Lapisan dalam kartu lipat. */
+.gate-liner {
+  background-color: #e7e0ee;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(168, 147, 194, 0.35) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.7) 0 1.5px, transparent 2px);
+  background-size: 16px 16px;
+}
+
+/* Muncul sekali saat halaman dibuka. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise-in {
+  animation: rise-in 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise-in {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}

@@ -16,11 +16,11 @@ ROOT_DOMAIN = "kudostack.my.id"
 # ROOT_DOMAIN harus sama dengan "Domain induk" di admin (menu Domain).
 # Subdomain milik sistem yang BUKAN undangan, dipisah koma:
 #   undangan            → panel admin
-#   wedding1 … wedding8 → app template kudo … kudo-8
+#   wedding1 … wedding9 → app template kudo … kudo-9
 # Daftar yang sama juga diisi di admin (menu Domain → nama yang dicadangkan) agar
 # tidak bisa dipakai sebagai slug. Tes gateway memeriksa daftar ini.
 # Menambah template baru (wedding9, …)? Tambahkan di sini DAN di menu Domain.
-RESERVED_SUBDOMAINS = "undangan,wedding1,wedding2,wedding3,wedding4,wedding5,wedding6,wedding7,wedding8"
+RESERVED_SUBDOMAINS = "undangan,wedding1,wedding2,wedding3,wedding4,wedding5,wedding6,wedding7,wedding8,wedding9"
 
 # Rahasia — JANGAN ditulis di sini. Atur dengan:
 #   npx wrangler secret put SUPABASE_URL
@@ -28,11 +28,13 @@ RESERVED_SUBDOMAINS = "undangan,wedding1,wedding2,wedding3,wedding4,wedding5,wed
 #   npx wrangler secret put GATEWAY_SECRET
 
 # ── Pengembangan lokal: `npm run dev` ─────────────────────────────────────
-# Tanpa `routes`, wrangler dev tidak menulis ulang Host ke kudostack.my.id,
-# sehingga http://cahya-wahyu.localhost:8787 terbaca sebagai subdomain undangan.
-# (`routes` tidak diwariskan ke env lain.) Nilai lain dibaca dari .dev.vars.
+# `routes` DIWARISKAN ke env lain, jadi harus dikosongkan di sini. Bila tidak,
+# wrangler dev menulis ulang Host ke kudostack.my.id dan meneruskan request ke situs
+# produksi. Dengan routes kosong, http://cahya-wahyu.localhost:8787 terbaca sebagai
+# subdomain undangan. Nilai lain dibaca dari .dev.vars.
 [env.dev]
 name = "kudo-gateway-dev"
+routes = []
 
 [env.dev.vars]
 ROOT_DOMAIN = "localhost"

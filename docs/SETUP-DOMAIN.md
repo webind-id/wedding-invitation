@@ -17,9 +17,10 @@ Penjelasan teknis lengkap (cara kerja, nama yang dicadangkan, troubleshooting) a
 | `wedding6.kudostack.my.id` | Template kudo-6 | `kudo-6` |
 | `wedding7.kudostack.my.id` | Template kudo-7 | `kudo-7` |
 | `wedding8.kudostack.my.id` | Template kudo-8 | `kudo-8` |
+| `wedding9.kudostack.my.id` | Template kudo-9 | `kudo-9` |
 | `<slug>.kudostack.my.id` | Undangan (lewat gateway) | — (Cloudflare Worker) |
 
-> **`undangan` dan `wedding1`–`wedding8` wajib dicadangkan.** Gateway menganggap setiap subdomain satu tingkat sebagai slug undangan, kecuali yang dicadangkan. Tanpa pencadangan, `wedding1.kudostack.my.id` akan dibaca sebagai undangan bernama "wedding1" dan admin/template tidak bisa dibuka. Daftar ini sudah diisi di [`gateway/wrangler.toml`](../gateway/wrangler.toml) dan dijaga tes gateway; isi juga di menu **Domain** admin (langkah 7) agar nama-nama itu tidak bisa dipakai sebagai slug.
+> **`undangan` dan `wedding1`–`wedding9` wajib dicadangkan.** Gateway menganggap setiap subdomain satu tingkat sebagai slug undangan, kecuali yang dicadangkan. Tanpa pencadangan, `wedding1.kudostack.my.id` akan dibaca sebagai undangan bernama "wedding1" dan admin/template tidak bisa dibuka. Daftar ini sudah diisi di [`gateway/wrangler.toml`](../gateway/wrangler.toml) dan dijaga tes gateway; isi juga di menu **Domain** admin (langkah 7) agar nama-nama itu tidak bisa dipakai sebagai slug.
 
 ---
 
@@ -30,8 +31,8 @@ Server sendiri (Docker)                          Cloudflare (sekali pasang)
 ───────────────────────                          ──────────────────────────
 admin   ┐                                         DNS wildcard *.kudostack.my.id → Worker "kudo-gateway"
 kudo    │  cloudflared (Tunnel, koneksi keluar)   Tunnel: undangan.kudostack.my.id → admin
-…       ├────────────────────────────────────►            wedding1…8.kudostack.my.id → kudo…kudo-8
-kudo-8  ┘
+…       ├────────────────────────────────────►            wedding1…9.kudostack.my.id → kudo…kudo-9
+kudo-9  ┘
                                                   tamu buka arini-andra.kudostack.my.id
                                                     → Worker tanya Supabase: undangan ini pakai template apa?
                                                     → ambil halaman dari wedding8.kudostack.my.id/arini-andra
@@ -49,10 +50,10 @@ Hal penting:
 - [`gateway/wrangler.toml`](../gateway/wrangler.toml):
   - `routes = [{ pattern = "*.kudostack.my.id/*", zone_name = "kudostack.my.id" }]`
   - `ROOT_DOMAIN = "kudostack.my.id"`
-  - `RESERVED_SUBDOMAINS = "undangan,wedding1,…,wedding8"`
+  - `RESERVED_SUBDOMAINS = "undangan,wedding1,…,wedding9"`
 - Tes di [`gateway/tests/routing.test.ts`](../gateway/tests/routing.test.ts) memastikan:
   - `arini-andra.kudostack.my.id` → undangan `arini-andra`
-  - `undangan.`, `wedding1.`–`wedding8.` (dibaca langsung dari `wrangler.toml`), `admin.`, `tpl-…`, `a.b.kudostack.my.id`, dan domain `.my.id` lain → diteruskan apa adanya
+  - `undangan.`, `wedding1.`–`wedding9.` (dibaca langsung dari `wrangler.toml`), `admin.`, `tpl-…`, `a.b.kudostack.my.id`, dan domain `.my.id` lain → diteruskan apa adanya
 
 Domain induk dan nama cadangan juga diatur dari menu **Domain** di admin (tersimpan di database).
 
@@ -69,12 +70,13 @@ Domain induk dan nama cadangan juga diatur dari menu **Domain** di admin (tersim
 ### 2. Server: jalankan admin & template
 Ikuti [`SETUP-KudoStack.md`](SETUP-KudoStack.md) (Docker + Cloudflare Tunnel). Hasil akhirnya:
 - [ ] `docker compose ps` → semua container *healthy*.
-- [ ] Public hostname tunnel sudah dibuat: `undangan` → `http://admin:3000`, `wedding1` … `wedding8` → `http://kudo:3000` … `http://kudo-8:3000`.
+- [ ] Public hostname tunnel sudah dibuat: `undangan` → `http://admin:3000`, `wedding1` … `wedding9` → `http://kudo:3000` … `http://kudo-9:3000`.
 
 ### 3. Supabase: jalankan migrasi
 Buka Supabase → **SQL Editor**, lalu jalankan berurutan:
 - [ ] `admin/supabase/migrations/001_subdomain_gateway.sql`
 - [ ] `admin/supabase/migrations/002_domain_settings.sql`
+- [ ] `admin/supabase/migrations/003_invitee_code.sql` (kode tautan tamu `?untuk=…`)
 
 Lewati langkah ini kalau database dibuat dari `schema.sql` terbaru.
 
@@ -107,13 +109,13 @@ npm run deploy
 | AAAA | `*` | `100::` | **Proxied (oranye)**, wajib agar Worker berjalan |
 
 - [ ] Record wildcard `*` sudah dibuat.
-- [ ] Record `undangan` dan `wedding1`–`wedding8` sudah ada (dibuat otomatis oleh Tunnel di langkah 2, tipe CNAME → `….cfargotunnel.com`, Proxied). Record spesifik ini mengalahkan wildcard.
+- [ ] Record `undangan` dan `wedding1`–`wedding9` sudah ada (dibuat otomatis oleh Tunnel di langkah 2, tipe CNAME → `….cfargotunnel.com`, Proxied). Record spesifik ini mengalahkan wildcard.
 
 ### 7. Admin panel
 Buka `https://undangan.kudostack.my.id` lalu login.
 - [ ] Menu **Domain**:
   - Nyalakan **Subdomain per undangan**, protokol `https`, domain induk `kudostack.my.id`.
-  - **Nama yang dicadangkan (tambahan)**: `undangan, wedding1, wedding2, wedding3, wedding4, wedding5, wedding6, wedding7, wedding8`
+  - **Nama yang dicadangkan (tambahan)**: `undangan, wedding1, wedding2, wedding3, wedding4, wedding5, wedding6, wedding7, wedding8, wedding9`
   - Klik **Simpan pengaturan**, lalu **Uji sekarang**. Semua pemeriksaan harus hijau.
 - [ ] Menu **Template**: isi "Alamat app template" setiap template:
 
@@ -127,13 +129,14 @@ Buka `https://undangan.kudostack.my.id` lalu login.
 | `kudo-6` | `https://wedding6.kudostack.my.id` |
 | `kudo-7` | `https://wedding7.kudostack.my.id` |
 | `kudo-8` | `https://wedding8.kudostack.my.id` |
+| `kudo-9` | `https://wedding9.kudostack.my.id` |
 
 ### 8. Uji
 - [ ] `https://wedding8.kudostack.my.id` → halaman demo template tampil (bukan "Undangan tidak ditemukan").
 - [ ] Buat undangan dengan slug `uji-coba`, lalu terbitkan.
 - [ ] `https://uji-coba.kudostack.my.id` → undangan tampil.
-- [ ] Tab **Tamu**: tambahkan tamu "Budi", lalu salin tautannya (berbentuk `…/?to=Budi&k=…`) → nama tamu muncul.
-- [ ] Ubah nama di tautan itu (mis. `?to=Andi&k=…`) atau hapus `&k=…` → yang tampil sapaan umum, bukan nama.
+- [ ] Tab **Tamu**: tambahkan tamu "Pak Budi & Keluarga", lalu salin tautannya (berbentuk `https://uji-coba.kudostack.my.id/?untuk=pak-budi-keluarga-k7q2`) → nama tamu muncul persis seperti di admin.
+- [ ] Ubah kodenya (mis. `?untuk=pak-andi-k7q2`) → yang tampil sapaan umum, bukan nama.
 - [ ] Kirim satu ucapan → ucapan muncul di tab **RSVP & ucapan** di admin.
 - [ ] `https://tidak-ada-123.kudostack.my.id` → tampil "Undangan tidak ditemukan".
 - [ ] Coba buat undangan dengan slug `wedding1` atau `undangan` → admin menolak (nama dicadangkan).
@@ -150,7 +153,7 @@ Buka `https://undangan.kudostack.my.id` lalu login.
 | *Uji gateway*: "Domain cocok" merah | `ROOT_DOMAIN` di `wrangler.toml` berbeda dengan menu **Domain**. Samakan, lalu `npm run deploy`. |
 | `undangan.kudostack.my.id` error 1033 / 502 | `cloudflared` belum terhubung (`docker compose logs cloudflared`), atau Service hostname salah ketik (`http://admin:3000`, bukan `https`). |
 | Tamu sering ditolak "Terlalu banyak kiriman" | `GATEWAY_SECRET` di `.env` server kosong, kurang dari 32 karakter, atau berbeda dengan secret di Worker. |
-| Nama tamu tidak muncul | Tautan tidak berasal dari tab **Tamu** (tanpa `&k=…`), atau `PREVIEW_SECRET` berbeda antara admin dan template. |
+| Nama tamu tidak muncul | Tautan tidak berasal dari tab **Tamu**, tamu sudah dihapus dari daftar, atau migrasi `003_invitee_code.sql` belum dijalankan (tab **Tamu** menampilkan peringatan). Untuk tautan format lama `?to=…&k=…`: `PREVIEW_SECRET` berbeda antara admin dan template. |
 
 Tabel lengkap ada di [`admin/docs/SUBDOMAIN.md`](../admin/docs/SUBDOMAIN.md#mengatasi-masalah).
 
@@ -160,6 +163,6 @@ Tabel lengkap ada di [`admin/docs/SUBDOMAIN.md`](../admin/docs/SUBDOMAIN.md#meng
 
 Admin dan template juga bisa di-deploy ke Vercel (satu project per folder, atur **Root Directory** ke nama foldernya) sebagai pengganti langkah 2. Bedanya:
 
-- Tambahkan domain `undangan.kudostack.my.id` dan `wedding1…8.kudostack.my.id` di **Settings → Domains** masing-masing project, lalu buat record DNS `CNAME → cname.vercel-dns.com` dengan **DNS only (abu-abu)** agar SSL Vercel bisa terbit.
+- Tambahkan domain `undangan.kudostack.my.id` dan `wedding1…9.kudostack.my.id` di **Settings → Domains** masing-masing project, lalu buat record DNS `CNAME → cname.vercel-dns.com` dengan **DNS only (abu-abu)** agar SSL Vercel bisa terbit.
 - `GATEWAY_SECRET`, `PREVIEW_SECRET`, dan variabel lain diisi di **Settings → Environment Variables** setiap project (nilainya sama dengan `docker.env.example`), lalu redeploy.
 - Nama cadangan (langkah 7) tetap wajib.

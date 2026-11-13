@@ -7,7 +7,7 @@
 # Tidak ada port yang dibuka ke internet. Satu-satunya jalan masuk adalah Cloudflare
 # Tunnel (layanan `cloudflared`):
 #   undangan.kudostack.my.id                    → admin
-#   wedding1.kudostack.my.id … wedding8.kudostack.my.id → kudo … kudo-8
+#   wedding1.kudostack.my.id … wedding9.kudostack.my.id → kudo … kudo-9
 # Subdomain undangan (<slug>.kudostack.my.id) tetap dilayani Cloudflare Worker di
 # gateway/, yang mengambil halaman dari wedding1…8.
 
@@ -89,18 +89,24 @@ services:
     image: kudostack/kudo-8:latest
     environment: { <<: *template-env, TEMPLATE_CODE: kudo-8 }
 
+  kudo-9:
+    <<: *app
+    build: { context: ., args: { APP: wedding-invitation-kudo-9 } }
+    image: kudostack/kudo-9:latest
+    environment: { <<: *template-env, TEMPLATE_CODE: kudo-9 }
+
   # Cloudflare Tunnel: koneksi keluar ke Cloudflare, tanpa port masuk.
   # Public hostname diatur di dashboard Zero Trust (lihat panduan), mis.
   #   undangan.kudostack.my.id → http://admin:3000
   #   wedding1.kudostack.my.id → http://kudo:3000
-  #   wedding8.kudostack.my.id → http://kudo-8:3000
+  #   wedding9.kudostack.my.id → http://kudo-9:3000
   cloudflared:
     image: cloudflare/cloudflared:2024.12.2
     restart: unless-stopped
     command: tunnel --no-autoupdate run
     environment:
       TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:?isi CLOUDFLARE_TUNNEL_TOKEN di .env}
-    depends_on: [admin, kudo, kudo-2, kudo-3, kudo-4, kudo-5, kudo-6, kudo-7, kudo-8]
+    depends_on: [admin, kudo, kudo-2, kudo-3, kudo-4, kudo-5, kudo-6, kudo-7, kudo-8, kudo-9]
     logging:
       driver: json-file
       options: { max-size: "10m", max-file: "3" }

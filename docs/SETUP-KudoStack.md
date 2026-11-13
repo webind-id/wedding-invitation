@@ -5,7 +5,7 @@ Panduan memasang **admin + 8 template** di server sendiri memakai Docker, dengan
 | Alamat | Container |
 | --- | --- |
 | `undangan.kudostack.my.id` (admin) | `admin` |
-| `wedding1.kudostack.my.id` … `wedding8.kudostack.my.id` | `kudo` … `kudo-8` |
+| `wedding1.kudostack.my.id` … `wedding9.kudostack.my.id` | `kudo` … `kudo-9` |
 | `<slug>.kudostack.my.id` (undangan) | — dilayani Cloudflare Worker |
 
 ---
@@ -21,7 +21,7 @@ Tamu ──► arini-andra.kudostack.my.id ──► Cloudflare Worker "kudo-gat
 Admin ──► undangan.kudostack.my.id ───────┤  Cloudflare Tunnel (koneksi keluar dari server)
                                           ▼
                     ┌──────────────── Server kamu (Docker) ────────────────┐
-                    │ cloudflared ──► admin:3000, kudo:3000 … kudo-8:3000  │
+                    │ cloudflared ──► admin:3000, kudo:3000 … kudo-9:3000  │
                     │ (tidak ada port yang dibuka ke internet)             │
                     └──────────────────────────────────────────────────────┘
 ```
@@ -29,8 +29,8 @@ Admin ──► undangan.kudostack.my.id ───────┤  Cloudflare Tu
 **Gateway tetap di Cloudflare Worker.** Alasannya:
 
 - Worker menangani **wildcard** `*.kudostack.my.id` dan SSL-nya di edge, gratis. Di server sendiri, ini butuh reverse proxy + sertifikat wildcard (DNS challenge) + kode routing ke Supabase.
-- Gateway hanya butuh alamat template yang bisa dijangkau dari internet. Alamat itu tidak harus di Vercel; `wedding1…8.kudostack.my.id` lewat Tunnel juga bisa.
-- `undangan` dan `wedding1`–`wedding8` sudah dicadangkan di `gateway/wrangler.toml` (`RESERVED_SUBDOMAINS`), sehingga gateway meneruskannya apa adanya dan tidak menganggapnya slug undangan. Isi daftar yang sama di menu **Domain** admin.
+- Gateway hanya butuh alamat template yang bisa dijangkau dari internet. Alamat itu tidak harus di Vercel; `wedding1…9.kudostack.my.id` lewat Tunnel juga bisa.
+- `undangan` dan `wedding1`–`wedding9` sudah dicadangkan di `gateway/wrangler.toml` (`RESERVED_SUBDOMAINS`), sehingga gateway meneruskannya apa adanya dan tidak menganggapnya slug undangan. Isi daftar yang sama di menu **Domain** admin.
 
 **Cloudflare Tunnel** (`cloudflared`) membuat koneksi keluar dari server ke Cloudflare, jadi server tidak perlu IP publik, port 80/443 terbuka, atau Nginx/Certbot. Container app tidak membuka port ke luar; hanya `cloudflared` yang bisa menjangkaunya.
 
@@ -81,6 +81,7 @@ Lalu tab **Public Hostname** → tambahkan satu per baris:
 | `wedding6` | `kudostack.my.id` | `http://kudo-6:3000` |
 | `wedding7` | `kudostack.my.id` | `http://kudo-7:3000` |
 | `wedding8` | `kudostack.my.id` | `http://kudo-8:3000` |
+| `wedding9` | `kudostack.my.id` | `http://kudo-9:3000` |
 
 - [ ] Cloudflare otomatis membuat record DNS `CNAME → <id>.cfargotunnel.com` (Proxied) untuk tiap hostname. Record spesifik ini mengalahkan wildcard `*`, jadi undangan tetap ke Worker.
 - [ ] Jika sudah ada record lain bernama `undangan` atau `wedding…` (mis. sisa Vercel `cname.vercel-dns.com`), **hapus dulu** sebelum menambah hostname-nya.
@@ -106,14 +107,14 @@ docker compose logs -f cloudflared   # harus ada "Registered tunnel connection"
 
 ### 5. Admin panel
 - [ ] Buka `https://undangan.kudostack.my.id` → login.
-- [ ] Menu **Domain**: domain induk `kudostack.my.id`, dan **Nama yang dicadangkan (tambahan)** `undangan, wedding1, wedding2, wedding3, wedding4, wedding5, wedding6, wedding7, wedding8` → Simpan.
-- [ ] Menu **Template**: isi "Alamat app template": kudo → `https://wedding1.kudostack.my.id`, kudo-2 → `https://wedding2.kudostack.my.id`, … kudo-8 → `https://wedding8.kudostack.my.id`.
+- [ ] Menu **Domain**: domain induk `kudostack.my.id`, dan **Nama yang dicadangkan (tambahan)** `undangan, wedding1, wedding2, wedding3, wedding4, wedding5, wedding6, wedding7, wedding8, wedding9` → Simpan.
+- [ ] Menu **Template**: isi "Alamat app template": kudo → `https://wedding1.kudostack.my.id`, kudo-2 → `https://wedding2.kudostack.my.id`, … kudo-9 → `https://wedding9.kudostack.my.id`.
 - [ ] Menu **Domain** → **Uji sekarang**. Semua pemeriksaan harus hijau.
 
 ### 6. Uji
 - [ ] `https://wedding8.kudostack.my.id` → demo template tampil.
-- [ ] Buat undangan slug `uji-coba` → terbitkan → tab **Tamu**: tambahkan "Budi" → buka tautan yang disalin (`…/?to=Budi&k=…`) → nama tamu tampil.
-- [ ] Ubah nama di tautan itu atau hapus `&k=…` → tampil sapaan umum (nama hanya muncul dari tautan admin).
+- [ ] Buat undangan slug `uji-coba` → terbitkan → tab **Tamu**: tambahkan "Budi" → buka tautan yang disalin (`…/?untuk=budi-k7q2`) → nama tamu tampil.
+- [ ] Ubah kode di tautan itu → tampil sapaan umum (nama hanya muncul dari tautan admin).
 - [ ] Kirim satu ucapan → muncul di admin (tab **RSVP & ucapan**).
 - [ ] Coba buka `http://<IP-server>:3000` dari luar → **harus gagal** (tidak ada port terbuka).
 
@@ -130,7 +131,7 @@ docker compose logs -f cloudflared   # harus ada "Registered tunnel connection"
 | Hentikan | `docker compose down` |
 | Bersihkan image lama | `docker image prune -f` |
 
-**Menambah template baru** (mis. kudo-9): buat folder app-nya dengan `output: "standalone"` di `next.config.mjs` → tambahkan layanan `kudo-9` di `docker-compose.yml` (salin blok `kudo-8`, ganti `APP` & `TEMPLATE_CODE`) → tambah public hostname `wedding9` → `http://kudo-9:3000` di tunnel → tambahkan `wedding9` ke `RESERVED_SUBDOMAINS` di `gateway/wrangler.toml` (lalu `npm run deploy`) **dan** ke nama cadangan di menu **Domain** → isi `https://wedding9.kudostack.my.id` di menu **Template**.
+**Menambah template baru** (mis. kudo-10): buat folder app-nya dengan `output: "standalone"` di `next.config.mjs` → tambahkan layanan `kudo-10` di `docker-compose.yml` (salin blok `kudo-9`, ganti `APP` & `TEMPLATE_CODE`) → tambah public hostname `wedding10` → `http://kudo-10:3000` di tunnel → tambahkan `wedding10` ke `RESERVED_SUBDOMAINS` di `gateway/wrangler.toml` (lalu `npm run deploy`) **dan** ke nama cadangan di menu **Domain** → isi `https://wedding10.kudostack.my.id` di menu **Template**.
 
 **Data**: semua data (undangan, ucapan, foto unggahan) ada di **Supabase**, bukan di server. Container bisa dihapus dan dibangun ulang kapan saja tanpa kehilangan data. Yang perlu dicadangkan di server hanya `.env`.
 
