@@ -1,4 +1,5 @@
 import "server-only";
+import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import { checkSlugLocally, subdomainPattern, type SlugAvailability } from "./domain";
 import { loadDomainSettings } from "./repo/domain";
@@ -9,9 +10,21 @@ import { isReservedSlug, publicUrl } from "./slug";
  * Alamat publik undangan menurut pengaturan di menu "Domain" (tabel domain_settings):
  *   subdomain aktif   → https://{slug}.kudostack.com
  *   subdomain nonaktif → {alamat app template}/{slug}
- * Dibaca sekali per permintaan. Lihat docs/SUBDOMAIN.md.
+ * Lihat docs/SUBDOMAIN.md.
+ *
+ * Hampir tidak pernah berubah tapi dibaca di banyak halaman, dan setiap query ke Supabase
+ * memakan ratusan ms — jadi disimpan lintas permintaan (maks. 5 menit) dan dibuang seketika
+ * saat menu Domain disimpan (revalidateTag(DOMAIN_SETTINGS_TAG)).
  */
-export const getDomain = cache(loadDomainSettings);
+export const DOMAIN_SETTINGS_TAG = "domain-settings";
+const DOMAIN_CACHE_SECONDS = 300;
+
+const cachedDomainSettings = unstable_cache(loadDomainSettings, [DOMAIN_SETTINGS_TAG], {
+  tags: [DOMAIN_SETTINGS_TAG],
+  revalidate: DOMAIN_CACHE_SECONDS,
+});
+
+export const getDomain = cache(cachedDomainSettings);
 
 export async function urlPattern(): Promise<string | null> {
   return subdomainPattern((await getDomain()).settings);

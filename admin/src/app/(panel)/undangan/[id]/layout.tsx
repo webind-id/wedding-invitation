@@ -4,7 +4,8 @@ import { InvitationTabs } from "@/components/invitations/InvitationTabs";
 import { CopyButton } from "@/components/ui/CopyButton";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { loadInvitation } from "@/lib/load";
-import { publicInvitationUrl } from "@/lib/public-url";
+import { urlPattern } from "@/lib/public-url";
+import { publicUrl as publicUrlFor } from "@/lib/slug";
 import { createPreviewToken, previewSecret } from "@/shared/preview-token";
 
 export default async function InvitationLayout({
@@ -15,8 +16,9 @@ export default async function InvitationLayout({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const inv = await loadInvitation(id);
-  const publicUrl = await publicInvitationUrl(inv.template.base_url, inv.slug);
+  // Paralel, bukan berurutan: pengaturan domain tidak bergantung pada undangan.
+  const [inv, pattern] = await Promise.all([loadInvitation(id), urlPattern()]);
+  const publicUrl = publicUrlFor(pattern, inv.template.base_url, inv.slug);
   const secret = previewSecret();
   const previewUrl = secret ? `${publicUrl}?preview=${createPreviewToken(inv.slug, secret)}` : null;
 

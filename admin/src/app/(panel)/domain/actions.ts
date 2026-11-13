@@ -1,9 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { attempt, failure, success, type ActionResult } from "@/lib/action";
 import { requireAdmin } from "@/lib/auth";
 import { domainSettingsSchema, formToObject } from "@/lib/forms";
+import { DOMAIN_SETTINGS_TAG } from "@/lib/public-url";
 import { loadDomainSettings, saveDomainSettings } from "@/lib/repo/domain";
 import { slugsInUse } from "@/lib/repo/invitations";
 import { fieldErrors } from "@/shared/contract";
@@ -22,7 +23,8 @@ export async function saveDomainAction(_prev: ActionResult | null, form: FormDat
     }
 
     await saveDomainSettings({ enabled, scheme, rootDomain, reserved });
-    // Semua tautan undangan di admin ikut berubah.
+    // Buang cache pengaturan domain; semua tautan undangan di admin ikut berubah.
+    revalidateTag(DOMAIN_SETTINGS_TAG);
     revalidatePath("/", "layout");
     return success(undefined);
   });

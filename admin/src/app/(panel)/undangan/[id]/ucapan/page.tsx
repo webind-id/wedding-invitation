@@ -4,6 +4,7 @@ import { DeleteEntryButton } from "@/components/guestbook/DeleteEntryButton";
 import { cn } from "@/lib/cn";
 import { formatDateTime } from "@/lib/format";
 import { ATTENDANCE_LABEL, type Attendance } from "@/lib/guestbook";
+import { isUuid } from "@/lib/invitee";
 import { loadInvitation } from "@/lib/load";
 import { GUESTBOOK_PAGE_SIZE, guestbookPage } from "@/lib/repo/guestbook";
 
@@ -24,8 +25,10 @@ export default async function GuestbookPage({
 }) {
   const { id } = await params;
   const page = Math.max(1, Number.parseInt((await searchParams).hal ?? "1", 10) || 1);
-  const inv = await loadInvitation(id);
-  const { entries, total, summary } = await guestbookPage(inv.id, page);
+  // Paralel: ucapan cukup butuh id. id tidak valid → loadInvitation() memanggil notFound().
+  const [inv, guestbook] = await Promise.all([loadInvitation(id), isUuid(id) ? guestbookPage(id, page) : null]);
+  if (!guestbook) return null;
+  const { entries, total, summary } = guestbook;
   const pages = Math.max(1, Math.ceil(total / GUESTBOOK_PAGE_SIZE));
 
   const tiles = [
