@@ -61,7 +61,9 @@ describe("media check", () => {
 
   it("rejects spoofed, oversized, empty, or wrong-kind files", () => {
     expect(checkMedia("image/png", 100, jpg, "image").ok).toBe(false);
-    expect(checkMedia("image/jpeg", 6 * 1024 * 1024, jpg, "image").ok).toBe(false);
+    // Foto dikompres ke WebP setelah diunggah, jadi foto HP sampai 10 MB diterima.
+    expect(checkMedia("image/jpeg", 9 * 1024 * 1024, jpg, "image").ok).toBe(true);
+    expect(checkMedia("image/jpeg", 11 * 1024 * 1024, jpg, "image").ok).toBe(false);
     expect(checkMedia("image/jpeg", 0, jpg, "image").ok).toBe(false);
     expect(checkMedia("image/svg+xml", 100, jpg, "image").ok).toBe(false);
     expect(checkMedia("audio/mpeg", 100, mp3, "image").ok).toBe(false);

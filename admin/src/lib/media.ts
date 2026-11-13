@@ -13,20 +13,22 @@ interface MediaType {
 }
 
 const MB = 1024 * 1024;
+/** Foto dikompres ke WebP setelah diunggah (lib/image.ts), jadi foto HP besar tetap diterima. */
+const IMAGE_INPUT_MAX = 10 * MB;
 const startsWith = (b: Uint8Array, sig: number[], offset = 0) => sig.every((v, i) => b[offset + i] === v);
 
 export const MEDIA_TYPES: Record<string, MediaType> = {
-  "image/jpeg": { ext: "jpg", kind: "image", maxBytes: 5 * MB, matches: (b) => startsWith(b, [0xff, 0xd8, 0xff]) },
+  "image/jpeg": { ext: "jpg", kind: "image", maxBytes: IMAGE_INPUT_MAX, matches: (b) => startsWith(b, [0xff, 0xd8, 0xff]) },
   "image/png": {
     ext: "png",
     kind: "image",
-    maxBytes: 5 * MB,
+    maxBytes: IMAGE_INPUT_MAX,
     matches: (b) => startsWith(b, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
   },
   "image/webp": {
     ext: "webp",
     kind: "image",
-    maxBytes: 5 * MB,
+    maxBytes: IMAGE_INPUT_MAX,
     matches: (b) => startsWith(b, [0x52, 0x49, 0x46, 0x46]) && startsWith(b, [0x57, 0x45, 0x42, 0x50], 8),
   },
   "audio/mpeg": {

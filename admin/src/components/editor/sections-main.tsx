@@ -20,7 +20,7 @@ function PersonFields({ who }: { who: "bride" | "groom" }) {
         <TextInput label="Nama ibu" path={p("mother")} />
         <TextInput label="Instagram (opsional)" path={p("instagram")} placeholder="tanpa @" />
       </div>
-      <MediaInput label="Foto" path={p("photo")} aspect="aspect-[3/4]" hint="Potret 3:4, maks. 5 MB" />
+      <MediaInput label="Foto" path={p("photo")} aspect="aspect-[3/4]" hint="Potret 3:4, maks. 10 MB (otomatis dikompres ke WebP)" />
     </div>
   );
 }
