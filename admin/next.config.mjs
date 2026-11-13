@@ -9,6 +9,8 @@ const securityHeaders = [
 
 const nextConfig = {
   poweredByHeader: false,
+  // Server mandiri (.next/standalone) untuk image Docker; Vercel tetap berjalan seperti biasa.
+  output: "standalone",
   // Halaman /panduan membaca docs/SUBDOMAIN.md saat runtime.
   outputFileTracingIncludes: { "/panduan": ["./docs/**/*"] },
   experimental: {

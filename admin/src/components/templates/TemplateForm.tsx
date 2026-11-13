@@ -49,10 +49,10 @@ export function TemplateForm({ template }: { template?: TemplateRow | TemplateWi
           <Field
             label="Alamat app template"
             error={errors.base_url}
-            hint="Mis. https://tpl-kudo3.kudostack.com. Dengan subdomain aktif, tamu tidak melihat alamat ini — lihat menu Panduan."
+            hint="Mis. https://wedding3.kudostack.my.id. Pastikan nama subdomainnya (mis. wedding3) masuk daftar nama yang dicadangkan di menu Domain. Dengan subdomain aktif, tamu tidak melihat alamat ini — lihat menu Panduan."
           >
             {(p) => (
-              <input {...p} name="base_url" type="url" defaultValue={template?.base_url} placeholder="https://tpl-kudo.kudostack.com" required />
+              <input {...p} name="base_url" type="url" defaultValue={template?.base_url} placeholder="https://wedding1.kudostack.my.id" required />
             )}
           </Field>
           <Field label="Deskripsi" error={errors.description}>

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { decidePath, matchHost, parseList, rewriteLocation, upstreamHeaders, upstreamUrl } from "../src/routing";
+import wranglerToml from "../wrangler.toml?raw";
 
 describe("matchHost", () => {
   const root = "kudostack.com";
@@ -27,6 +28,24 @@ describe("matchHost", () => {
     for (const sub of ["ab", "-cahya", "cahya-", "ca--hya", "a".repeat(61)]) {
       expect(matchHost(`${sub}.kudostack.com`, root)).toEqual({ kind: "passthrough" });
     }
+  });
+
+  it("supports multi-label root domains like kudostack.my.id", () => {
+    const myId = "kudostack.my.id";
+    expect(matchHost("arini-andra.kudostack.my.id", myId)).toEqual({ kind: "invitation", slug: "arini-andra" });
+    for (const host of ["kudostack.my.id", "a.b.kudostack.my.id", "admin.kudostack.my.id", "tpl-kudo5.kudostack.my.id", "other.my.id"]) {
+      expect(matchHost(host, myId)).toEqual({ kind: "passthrough" });
+    }
+  });
+
+  it("never routes the admin (undangan.) or template (wedding1–8.) hosts from wrangler.toml as invitations", () => {
+    const root = /^ROOT_DOMAIN = "(.+)"/m.exec(wranglerToml)?.[1] ?? "";
+    const reserved = parseList(/^RESERVED_SUBDOMAINS = "(.*)"/m.exec(wranglerToml)?.[1]);
+    expect(root).toBe("kudostack.my.id");
+    for (const sub of ["undangan", ...Array.from({ length: 8 }, (_, i) => `wedding${i + 1}`)]) {
+      expect(matchHost(`${sub}.${root}`, root, reserved)).toEqual({ kind: "passthrough" });
+    }
+    expect(matchHost(`arini-andra.${root}`, root, reserved)).toEqual({ kind: "invitation", slug: "arini-andra" });
   });
 
   it("parses comma lists", () => {
@@ -59,6 +78,12 @@ describe("upstreamUrl", () => {
   it("rewrites / to /{slug} and keeps the query", () => {
     const url = upstreamUrl(base, "cahya-wahyu", new URL("https://cahya-wahyu.kudostack.com/?to=Pak%20Budi"), { kind: "page" });
     expect(url.toString()).toBe("https://tpl-kudo3.kudostack.com/cahya-wahyu?to=Pak%20Budi");
+  });
+
+  it("forwards the guest-name signature (k) untouched — templates need it to show the name", () => {
+    const url = upstreamUrl(base, "cahya-wahyu", new URL("https://cahya-wahyu.kudostack.com/?to=Pak%20Budi&k=Ab3_x-9QzLm2Pq7R"), { kind: "page" });
+    expect(url.searchParams.get("to")).toBe("Pak Budi");
+    expect(url.searchParams.get("k")).toBe("Ab3_x-9QzLm2Pq7R");
   });
 
   it("keeps the path for proxied requests", () => {

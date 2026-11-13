@@ -1,0 +1,106 @@
+# KudoStack — self-hosting admin + semua template di satu server.
+# Panduan: docs/SETUP-KudoStack.md (Docker) & docs/SETUP-DOMAIN.md (domain & gateway)
+#
+#   cp docker.env.example .env      # isi rahasia
+#   docker compose up -d --build
+#
+# Tidak ada port yang dibuka ke internet. Satu-satunya jalan masuk adalah Cloudflare
+# Tunnel (layanan `cloudflared`):
+#   undangan.kudostack.my.id                    → admin
+#   wedding1.kudostack.my.id … wedding8.kudostack.my.id → kudo … kudo-8
+# Subdomain undangan (<slug>.kudostack.my.id) tetap dilayani Cloudflare Worker di
+# gateway/, yang mengambil halaman dari wedding1…8.
+
+name: kudostack
+
+# Pengaturan bersama setiap app Next.js.
+x-app: &app
+  restart: unless-stopped
+  init: true
+  mem_limit: 512m
+  logging:
+    driver: json-file
+    options: { max-size: "10m", max-file: "3" }
+
+# Variabel yang dipakai semua template (TEMPLATE_CODE ditambahkan per layanan).
+x-template-env: &template-env
+  SUPABASE_URL: ${SUPABASE_URL:?isi SUPABASE_URL di .env}
+  SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:?isi SUPABASE_SERVICE_ROLE_KEY di .env}
+  PREVIEW_SECRET: ${PREVIEW_SECRET:?isi PREVIEW_SECRET di .env}
+  GATEWAY_SECRET: ${GATEWAY_SECRET:?isi GATEWAY_SECRET di .env}
+
+services:
+  admin:
+    <<: *app
+    build: { context: ., args: { APP: admin } }
+    image: kudostack/admin:latest
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL:?isi SUPABASE_URL di .env}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:?isi SUPABASE_SERVICE_ROLE_KEY di .env}
+      SESSION_SECRET: ${SESSION_SECRET:?isi SESSION_SECRET di .env}
+      PREVIEW_SECRET: ${PREVIEW_SECRET:?isi PREVIEW_SECRET di .env}
+    # Untuk uji di server tanpa tunnel, buka sementara: ports: ["127.0.0.1:3001:3000"]
+
+  kudo:
+    <<: *app
+    build: { context: ., args: { APP: wedding-invitation-kudo } }
+    image: kudostack/kudo:latest
+    environment: { <<: *template-env, TEMPLATE_CODE: kudo }
+
+  kudo-2:
+    <<: *app
+    build: { context: ., args: { APP: wedding-invitation-kudo-2 } }
+    image: kudostack/kudo-2:latest
+    environment: { <<: *template-env, TEMPLATE_CODE: kudo-2 }
+
+  kudo-3:
+    <<: *app
+    build: { context: ., args: { APP: wedding-invitation-kudo-3 } }
+    image: kudostack/kudo-3:latest
+    environment: { <<: *template-env, TEMPLATE_CODE: kudo-3 }
+
+  kudo-4:
+    <<: *app
+    build: { context: ., args: { APP: wedding-invitation-kudo-4 } }
+    image: kudostack/kudo-4:latest
+    environment: { <<: *template-env, TEMPLATE_CODE: kudo-4 }
+
+  kudo-5:
+    <<: *app
+    build: { context: ., args: { APP: wedding-invitation-kudo-5 } }
+    image: kudostack/kudo-5:latest
+    environment: { <<: *template-env, TEMPLATE_CODE: kudo-5 }
+
+  kudo-6:
+    <<: *app
+    build: { context: ., args: { APP: wedding-invitation-kudo-6 } }
+    image: kudostack/kudo-6:latest
+    environment: { <<: *template-env, TEMPLATE_CODE: kudo-6 }
+
+  kudo-7:
+    <<: *app
+    build: { context: ., args: { APP: wedding-invitation-kudo-7 } }
+    image: kudostack/kudo-7:latest
+    environment: { <<: *template-env, TEMPLATE_CODE: kudo-7 }
+
+  kudo-8:
+    <<: *app
+    build: { context: ., args: { APP: wedding-invitation-kudo-8 } }
+    image: kudostack/kudo-8:latest
+    environment: { <<: *template-env, TEMPLATE_CODE: kudo-8 }
+
+  # Cloudflare Tunnel: koneksi keluar ke Cloudflare, tanpa port masuk.
+  # Public hostname diatur di dashboard Zero Trust (lihat panduan), mis.
+  #   undangan.kudostack.my.id → http://admin:3000
+  #   wedding1.kudostack.my.id → http://kudo:3000
+  #   wedding8.kudostack.my.id → http://kudo-8:3000
+  cloudflared:
+    image: cloudflare/cloudflared:2024.12.2
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:?isi CLOUDFLARE_TUNNEL_TOKEN di .env}
+    depends_on: [admin, kudo, kudo-2, kudo-3, kudo-4, kudo-5, kudo-6, kudo-7, kudo-8]
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }

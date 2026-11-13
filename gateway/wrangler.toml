@@ -5,18 +5,22 @@ name = "kudo-gateway"
 main = "src/index.ts"
 compatibility_date = "2024-11-01"
 
-# Worker menangani SEMUA subdomain kudostack.com. Subdomain sistem
-# (www, admin, tpl-*, dst.) diteruskan apa adanya ke origin DNS-nya.
+# Worker menangani SEMUA subdomain kudostack.my.id. Subdomain sistem
+# (www, admin, tpl-*, undangan, wedding1–8, dst.) diteruskan apa adanya ke origin DNS-nya.
 routes = [
-  { pattern = "*.kudostack.com/*", zone_name = "kudostack.com" },
+  { pattern = "*.kudostack.my.id/*", zone_name = "kudostack.my.id" },
 ]
 
 [vars]
-ROOT_DOMAIN = "kudostack.com"
+ROOT_DOMAIN = "kudostack.my.id"
 # ROOT_DOMAIN harus sama dengan "Domain induk" di admin (menu Domain).
-# Nama tambahan yang dicadangkan diatur di admin (menu Domain) dan dibaca dari
-# database. Variabel ini hanya cadangan statis opsional, dipisah koma.
-RESERVED_SUBDOMAINS = ""
+# Subdomain milik sistem yang BUKAN undangan, dipisah koma:
+#   undangan            → panel admin
+#   wedding1 … wedding8 → app template kudo … kudo-8
+# Daftar yang sama juga diisi di admin (menu Domain → nama yang dicadangkan) agar
+# tidak bisa dipakai sebagai slug. Tes gateway memeriksa daftar ini.
+# Menambah template baru (wedding9, …)? Tambahkan di sini DAN di menu Domain.
+RESERVED_SUBDOMAINS = "undangan,wedding1,wedding2,wedding3,wedding4,wedding5,wedding6,wedding7,wedding8"
 
 # Rahasia — JANGAN ditulis di sini. Atur dengan:
 #   npx wrangler secret put SUPABASE_URL
@@ -24,7 +28,7 @@ RESERVED_SUBDOMAINS = ""
 #   npx wrangler secret put GATEWAY_SECRET
 
 # ── Pengembangan lokal: `npm run dev` ─────────────────────────────────────
-# Tanpa `routes`, wrangler dev tidak menulis ulang Host ke kudostack.com,
+# Tanpa `routes`, wrangler dev tidak menulis ulang Host ke kudostack.my.id,
 # sehingga http://cahya-wahyu.localhost:8787 terbaca sebagai subdomain undangan.
 # (`routes` tidak diwariskan ke env lain.) Nilai lain dibaca dari .dev.vars.
 [env.dev]
