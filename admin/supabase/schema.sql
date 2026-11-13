@@ -164,6 +164,27 @@ create table if not exists public.admin_users (
 );
 alter table public.admin_users enable row level security;
 
+-- ── Formulir klien (tautan /isi/<token>) ────────────────────
+-- Lihat migrations/004_client_forms.sql. Kiriman ditinjau admin sebelum diimpor.
+create table if not exists public.client_forms (
+  id            uuid primary key default gen_random_uuid(),
+  invitation_id uuid not null references public.invitations (id) on delete cascade,
+  token         text not null unique check (token ~ '^[A-Za-z0-9_-]{32}$'),
+  status        text not null default 'open' check (status in ('open', 'submitted', 'imported')),
+  expires_at    timestamptz not null,
+  revoked_at    timestamptz,
+  draft         jsonb,
+  guests        jsonb not null default '[]'::jsonb,
+  submitted_at  timestamptz,
+  imported_at   timestamptz,
+  created_at    timestamptz not null default now(),
+  updated_at    timestamptz not null default now(),
+  check (pg_column_size(draft) <= 400000),
+  check (jsonb_typeof(guests) = 'array')
+);
+create index if not exists client_forms_invitation_idx on public.client_forms (invitation_id, created_at desc);
+alter table public.client_forms enable row level security;
+
 -- ── Storage: foto & musik undangan (publik untuk dibaca) ────
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (

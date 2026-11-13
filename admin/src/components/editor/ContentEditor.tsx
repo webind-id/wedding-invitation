@@ -5,8 +5,10 @@ import { useCallback, useEffect, useMemo, useState, useTransition } from "react"
 import { saveContentAction } from "@/app/(panel)/undangan/[id]/_actions/content";
 import { cn } from "@/lib/cn";
 import { getIn, setIn, type Path } from "@/lib/immutable";
+import type { MediaKind } from "@/lib/media";
 import type { InvitationContent } from "@/shared/contract";
 import { EditorContext, type EditorContextValue } from "./EditorContext";
+import { uploadFile } from "./MediaInput";
 import { CoupleSection, EventsSection, StorySection, TextsSection } from "./sections-main";
 import { GallerySection, GiftSection, MediaSection } from "./sections-media";
 
@@ -75,8 +77,10 @@ export function ContentEditor({ invitationId, initial }: { invitationId: string;
     };
   }, [isDirty, save]);
 
-  const ctx = useMemo<EditorContextValue>(() => ({ invitationId, content, errors, set, update }),
-    [invitationId, content, errors, set, update],);
+  const upload = useCallback((file: File, kind: MediaKind) => uploadFile(invitationId, file, kind), [invitationId]);
+
+  const ctx = useMemo<EditorContextValue>(() => ({ invitationId, content, errors, set, update, upload }),
+    [invitationId, content, errors, set, update, upload],);
   const errorCount = Object.keys(errors).length;
 
   return (

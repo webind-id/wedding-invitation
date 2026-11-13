@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 
 const TABS = [
   { slug: "", label: "Konten" },
+  { slug: "formulir", label: "Formulir klien" },
   { slug: "tamu", label: "Tamu & kirim" },
   { slug: "ucapan", label: "RSVP & ucapan" },
   { slug: "pengaturan", label: "Pengaturan" },

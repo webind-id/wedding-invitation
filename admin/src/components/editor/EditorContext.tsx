@@ -2,11 +2,14 @@
 
 import { createContext, useContext } from "react";
 import type { Path } from "@/lib/immutable";
+import type { MediaKind } from "@/lib/media";
 import type { InvitationContent } from "@/shared/contract";
 
 export interface EditorContextValue {
   invitationId: string;
   content: InvitationContent;
+  /** Unggah satu file, kembalikan URL publiknya (atau lempar Error berisi pesan). Admin & formulir klien beda jalur. */
+  upload: (file: File, kind: MediaKind) => Promise<string>;
   errors: Record<string, string>;
   /** Ganti nilai di path (immutable). */
   set: (path: Path, value: unknown) => void;
@@ -18,7 +21,7 @@ export const EditorContext = createContext<EditorContextValue | null>(null);
 
 export function useEditor(): EditorContextValue {
   const ctx = useContext(EditorContext);
-  if (!ctx) throw new Error("useEditor harus dipakai di dalam <ContentEditor>.");
+  if (!ctx) throw new Error("useEditor harus dipakai di dalam <ContentEditor> atau <ClientForm>.");
   return ctx;
 }
 

@@ -33,7 +33,7 @@ interface MediaInputProps {
 }
 
 export function MediaInput({ label, path, kind = "image", hint, aspect = "aspect-square" }: MediaInputProps) {
-  const { invitationId, content, errors, set } = useEditor();
+  const { content, errors, set, upload } = useEditor();
   const id = useId();
   const fileRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -46,7 +46,7 @@ export function MediaInput({ label, path, kind = "image", hint, aspect = "aspect
     setIsUploading(true);
     setUploadError(null);
     try {
-      set(path, await uploadFile(invitationId, file, kind));
+      set(path, await upload(file, kind));
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : "Gagal mengunggah.");
     } finally {

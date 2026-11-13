@@ -78,6 +78,7 @@ Buka Supabase → **SQL Editor**, lalu jalankan berurutan:
 1. `supabase/migrations/001_subdomain_gateway.sql`
 2. `supabase/migrations/002_domain_settings.sql`
 3. `supabase/migrations/003_invitee_code.sql` (kode tautan tamu)
+4. `supabase/migrations/004_client_forms.sql` (formulir klien)
 
 Migrasi ini membuat tabel `domain_settings` (pengaturan menu **Domain**) dan fungsi `resolve_invitation_host`. Fungsi itu hanya mengembalikan alamat app template untuk sebuah slug (tanpa isi undangan), atau tanda bahwa nama tersebut dicadangkan. Karena itu gateway cukup memakai **anon key**, bukan service role.
 

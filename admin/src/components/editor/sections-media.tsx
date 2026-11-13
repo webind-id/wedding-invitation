@@ -8,7 +8,7 @@ import { useEditor } from "./EditorContext";
 import { EditorSection } from "./EditorSection";
 import { SelectInput, TextArea, TextInput } from "./inputs";
 import { ListEditor } from "./ListControls";
-import { ACCEPT, MediaInput, uploadFile } from "./MediaInput";
+import { ACCEPT, MediaInput } from "./MediaInput";
 
 export function MediaSection() {
   return (
@@ -30,7 +30,7 @@ const SHAPES: { value: Moment["shape"]; label: string }[] = [
 const MAX_MOMENTS = 30;
 
 export function GallerySection() {
-  const { invitationId, content, errors, set, update } = useEditor();
+  const { content, errors, set, update, upload } = useEditor();
   const fileRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -44,7 +44,7 @@ export function GallerySection() {
     for (const [i, file] of list.entries()) {
       setProgress(`Mengunggah ${i + 1}/${list.length}…`);
       try {
-        const src = await uploadFile(invitationId, file, "image");
+        const src = await upload(file, "image");
         // Tambahkan ke daftar TERKINI — pengguna mungkin mengedit galeri selama upload.
         update(["moments"], (current) => [...(current as Moment[]), { src, alt: "", shape: "square" }]);
       } catch (err) {

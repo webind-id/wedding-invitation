@@ -13,5 +13,6 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!masuk|_next/|favicon.ico).*)"],
+  // /isi/<token> = formulir klien publik (dilindungi token, bukan sesi admin).
+  matcher: ["/((?!masuk|isi/|_next/|favicon.ico).*)"],
 };
