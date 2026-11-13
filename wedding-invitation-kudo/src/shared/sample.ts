@@ -17,7 +17,7 @@ export const sampleContent: InvitationContent = {
     father: "Bapak Hendra Wijaya",
     mother: "Ibu Ratna Sari",
     instagram: "cahya.example",
-    photo: "/images/bride.jpg",
+    photo: "/images/bride.webp",
   },
   groom: {
     nickname: "Wahyu",
@@ -27,13 +27,13 @@ export const sampleContent: InvitationContent = {
     father: "Bapak Bambang Santoso",
     mother: "Ibu Dewi Lestari",
     instagram: "wahyu.example",
-    photo: "/images/groom.jpg",
+    photo: "/images/groom.webp",
   },
   headlineOrder: "bride-first",
   timeZone: "Asia/Jakarta",
   defaultGuest: "Bapak/Ibu/Saudara/i",
-  coverPhoto: "/images/cover.jpg",
-  posterPhoto: "/images/poster.jpg",
+  coverPhoto: "/images/cover.webp",
+  posterPhoto: "/images/poster.webp",
   music: "",
   verse: {
     arabic:
@@ -84,10 +84,10 @@ export const sampleContent: InvitationContent = {
     },
   ],
   moments: [
-    { src: "/images/moment-1.jpg", alt: "Momen 1", shape: "tall" },
-    { src: "/images/moment-2.jpg", alt: "Momen 2", shape: "square" },
-    { src: "/images/moment-3.jpg", alt: "Momen 3", shape: "square" },
-    { src: "/images/moment-4.jpg", alt: "Momen 4", shape: "tall" },
+    { src: "/images/moment-1.webp", alt: "Momen 1", shape: "tall" },
+    { src: "/images/moment-2.webp", alt: "Momen 2", shape: "square" },
+    { src: "/images/moment-3.webp", alt: "Momen 3", shape: "square" },
+    { src: "/images/moment-4.webp", alt: "Momen 4", shape: "tall" },
   ],
   gift: {
     intro:
