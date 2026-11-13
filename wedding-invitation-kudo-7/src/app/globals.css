@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply bg-gading;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-gading font-serif text-[17px] leading-relaxed text-ink antialiased;
+    overflow-x: clip;
+  }
+  ::selection {
+    @apply bg-prada-light text-ink;
+  }
+  :focus-visible {
+    @apply outline outline-2 outline-offset-4 outline-prada;
+  }
+}
+
+@layer components {
+  /* Label kecil berhuruf prasasti — penanda adegan. */
+  .label {
+    @apply font-display text-[0.7rem] uppercase tracking-[0.34em] text-prada-deep;
+  }
+
+  /*
+   * Kertas gading dengan batik kawung yang samar (empat kelopak buah aren —
+   * lambang kesucian & keadilan) + serat halus. Diam, tidak beranimasi.
+   */
+  .gading-paper {
+    background-color: #f5eee1;
+    background-image:
+      radial-gradient(ellipse 70% 50% at 50% 0%, rgba(220, 192, 138, 0.22), transparent 70%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cg fill='none' stroke='%236E4426' stroke-opacity='0.05' stroke-width='1'%3E%3Cellipse cx='22' cy='11' rx='6.5' ry='10'/%3E%3Cellipse cx='22' cy='33' rx='6.5' ry='10'/%3E%3Cellipse cx='11' cy='22' rx='10' ry='6.5'/%3E%3Cellipse cx='33' cy='22' rx='10' ry='6.5'/%3E%3C/g%3E%3Ccircle cx='22' cy='22' r='1.4' fill='%236E4426' fill-opacity='0.1'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.24 0 0 0 0 0.15 0 0 0 0 0.08 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /*
+   * Langit malam berbatik truntum (bunga-bunga kecil yang "tumbuh kembali" —
+   * motif yang dikenakan orang tua mempelai). Cahaya blencong hangat dari tengah.
+   */
+  .malam-sky {
+    background-color: #1a120c;
+    background-image:
+      radial-gradient(ellipse 65% 55% at 50% 42%, rgba(184, 145, 78, 0.28), transparent 72%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cg fill='%23DCC08A' fill-opacity='0.13'%3E%3Ccircle cx='14' cy='9' r='1.3'/%3E%3Ccircle cx='14' cy='19' r='1.3'/%3E%3Ccircle cx='9' cy='14' r='1.3'/%3E%3Ccircle cx='19' cy='14' r='1.3'/%3E%3Ccircle cx='10.5' cy='10.5' r='1'/%3E%3Ccircle cx='17.5' cy='10.5' r='1'/%3E%3Ccircle cx='10.5' cy='17.5' r='1'/%3E%3Ccircle cx='17.5' cy='17.5' r='1'/%3E%3Ccircle cx='14' cy='14' r='1.6'/%3E%3Ccircle cx='42' cy='38' r='1.1'/%3E%3Ccircle cx='42' cy='46' r='1.1'/%3E%3Ccircle cx='38' cy='42' r='1.1'/%3E%3Ccircle cx='46' cy='42' r='1.1'/%3E%3Ccircle cx='42' cy='42' r='1.3'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Pita sogan berbatik parang (garis miring berombak) — pemisah adegan. */
+  .parang-band {
+    background-color: #3e2615;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath d='M-6 30 Q0 18 6 18 T18 6 T30 -6' fill='none' stroke='%23B8914E' stroke-opacity='0.55' stroke-width='2.2'/%3E%3Cpath d='M6 30 Q12 24 18 18 T30 6' fill='none' stroke='%23DCC08A' stroke-opacity='0.3' stroke-width='1'/%3E%3C/svg%3E");
+  }
+
+  /* Panel kertas berbingkai ganda prada — seperti papan berukir yang dilapis emas. */
+  .panel {
+    @apply relative bg-[#FAF5EA];
+    background-image: linear-gradient(160deg, rgba(255, 255, 255, 0.75) 0%, rgba(237, 227, 209, 0.5) 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(184, 145, 78, 0.55),
+      inset 0 0 0 5px #faf5ea,
+      inset 0 0 0 6px rgba(184, 145, 78, 0.28),
+      0 30px 60px -32px rgba(62, 38, 21, 0.45);
+  }
+  /* Panel gelap (di atas latar malam/sogan). */
+  .panel-dark {
+    @apply relative bg-sogan-deep/80 text-gading;
+    box-shadow:
+      inset 0 0 0 1px rgba(220, 192, 138, 0.5),
+      inset 0 0 0 5px rgba(62, 38, 21, 0.9),
+      inset 0 0 0 6px rgba(220, 192, 138, 0.22),
+      0 30px 60px -30px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Bingkai gapura: puncak bertingkat seperti candi bentar / kori agung. */
+  .gapura {
+    clip-path: polygon(0 14%, 10% 14%, 10% 8%, 22% 8%, 22% 3%, 36% 3%, 36% 0, 64% 0, 64% 3%, 78% 3%, 78% 8%, 90% 8%, 90% 14%, 100% 14%, 100% 100%, 0 100%);
+  }
+
+  /* Tombol bersudut potong (chamfer), sogan dengan garis prada. */
+  .btn-prada {
+    @apply inline-flex items-center justify-center gap-2.5 bg-sogan-deep px-8 py-3.5 font-display text-[0.74rem] uppercase tracking-[0.26em] text-gading transition duration-500 ease-silk hover:bg-sogan disabled:pointer-events-none disabled:opacity-50;
+    clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%);
+    box-shadow: inset 0 0 0 1px rgba(220, 192, 138, 0.55);
+    padding-inline: 2.4rem;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 border border-prada/60 px-5 py-2.5 font-display text-[0.7rem] uppercase tracking-[0.22em] text-ink transition duration-500 ease-silk hover:border-sogan hover:bg-prada-light/30;
+  }
+  .btn-ghost-dark {
+    @apply inline-flex items-center justify-center gap-2 border border-prada-light/50 px-5 py-2.5 font-display text-[0.7rem] uppercase tracking-[0.22em] text-gading transition duration-500 ease-silk hover:border-prada-light hover:bg-prada/20;
+  }
+
+  .field {
+    @apply w-full border border-sogan/20 bg-white/60 px-4 py-3 text-ink placeholder:text-ink/35 transition focus:border-prada focus:outline-none focus:ring-4 focus:ring-prada-light/40;
+  }
+}
+
+/* ── 3D ───────────────────────────────────────────────────────────── */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Gunungan: tiap lapisan tepi berada sedikit di belakang muka depan — ketebalan kulit. */
+.gunungan-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: translateZ(calc(var(--i) * -0.9px));
+}
+
+/* Muncul sekali saat halaman dibuka. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise-in {
+  animation: rise-in 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise-in {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
