@@ -42,9 +42,10 @@ export interface OgCardProps {
   photo: string | null;
 }
 
+/** Kedua nama sebaris, jadi ukuran mengikuti panjang gabungan; nama yang sangat panjang turun ke baris kedua. */
 function nameSize(a: string, b: string): number {
-  const longest = Math.max(a.length, b.length);
-  return longest > 12 ? 70 : longest > 9 ? 84 : 104;
+  const total = a.length + b.length;
+  return total > 18 ? 64 : total > 12 ? 84 : 104;
 }
 
 export function OgCard({ first, second, date, venue, photo }: OgCardProps) {
@@ -78,7 +79,7 @@ export function OgCard({ first, second, date, venue, photo }: OgCardProps) {
       </div>
 
       <div style={{ position: "relative", flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", maxWidth: 1100 }}>
           <div style={{ fontFamily: "Cormorant", fontWeight: 300, fontSize: size, letterSpacing: 10, color: C.seluloid, textTransform: "uppercase" }}>{first}</div>
           <div style={{ fontFamily: "Cormorant", fontStyle: "italic", fontSize: Math.round(size * 0.7), color: C.amber, margin: "0 28px" }}>&amp;</div>
           <div style={{ fontFamily: "Cormorant", fontWeight: 300, fontSize: size, letterSpacing: 10, color: C.seluloid, textTransform: "uppercase" }}>{second}</div>
