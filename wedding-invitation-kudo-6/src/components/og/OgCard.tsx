@@ -4,6 +4,22 @@
  */
 export const OG_PHOTO = { width: 470, height: 630 } as const;
 
+/** Berkas di public/og/fonts (WOFF statis Fontsource, OFL). Bentuk & nama diekspor untuk lib/og-image.ts. */
+export interface OgFontFile {
+  file: string;
+  name: string;
+  weight: 300 | 400 | 500 | 600 | 700;
+  style: "normal" | "italic";
+}
+
+export const OG_FONTS: OgFontFile[] = [
+  { file: "allura-latin-400-normal.woff", name: "Allura", weight: 400, style: "normal" },
+  { file: "cormorant-garamond-latin-500-normal.woff", name: "Cormorant", weight: 500, style: "normal" },
+  { file: "cormorant-garamond-latin-500-italic.woff", name: "Cormorant", weight: 500, style: "italic" },
+  { file: "manrope-latin-500-normal.woff", name: "Manrope", weight: 500, style: "normal" },
+  { file: "manrope-latin-700-normal.woff", name: "Manrope", weight: 700, style: "normal" },
+];
+
 const C = {
   ivory: "#F8F5EF",
   pearl: "#E9E3DA",

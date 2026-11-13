@@ -2,6 +2,7 @@ import "server-only";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
+import { OG_FONTS, type OgFontFile } from "@/components/og/OgCard";
 
 /**
  * Bahan gambar pratinjau tautan: huruf, foto sampul yang sudah dipotong, dan konversi ke JPEG.
@@ -16,24 +17,16 @@ const JPEG_QUALITY = 82;
 export interface OgFont {
   name: string;
   data: ArrayBuffer;
-  weight: 400 | 500 | 700;
-  style: "normal" | "italic";
+  weight: OgFontFile["weight"];
+  style: OgFontFile["style"];
 }
-
-const FONT_FILES: { file: string; name: string; weight: OgFont["weight"]; style: OgFont["style"] }[] = [
-  { file: "allura-latin-400-normal.woff", name: "Allura", weight: 400, style: "normal" },
-  { file: "cormorant-garamond-latin-500-normal.woff", name: "Cormorant", weight: 500, style: "normal" },
-  { file: "cormorant-garamond-latin-500-italic.woff", name: "Cormorant", weight: 500, style: "italic" },
-  { file: "manrope-latin-500-normal.woff", name: "Manrope", weight: 500, style: "normal" },
-  { file: "manrope-latin-700-normal.woff", name: "Manrope", weight: 700, style: "normal" },
-];
 
 let fontsPromise: Promise<OgFont[]> | null = null;
 
-/** Huruf untuk renderer gambar (WOFF statis di public/og/fonts), dimuat sekali per proses. */
+/** Huruf untuk renderer gambar (WOFF statis di public/og/fonts, daftar per template di OgCard), dimuat sekali per proses. */
 export function ogFonts(): Promise<OgFont[]> {
   fontsPromise ??= Promise.all(
-    FONT_FILES.map(async ({ file, ...meta }) => {
+    OG_FONTS.map(async ({ file, ...meta }) => {
       const buf = await readFile(path.join(PUBLIC_DIR, "og", "fonts", file));
       return { ...meta, data: buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer };
     }),

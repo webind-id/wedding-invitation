@@ -41,13 +41,18 @@ const MIN_GATEWAY_SECRET = 32;
  * x-kudo-gateway-secret cocok dengan GATEWAY_SECRET (dibandingkan waktu-konstan).
  */
 function gatewayClientIp(headers: Headers): string | null {
+  if (!isGatewayRequest(headers)) return null;
+  return headers.get("x-kudo-client-ip")?.trim() || null;
+}
+
+/** true bila permintaan datang dari gateway subdomain (x-kudo-gateway-secret = GATEWAY_SECRET, waktu-konstan). */
+export function isGatewayRequest(headers: Headers): boolean {
   const secret = process.env.GATEWAY_SECRET;
   const given = headers.get("x-kudo-gateway-secret");
-  if (!secret || secret.length < MIN_GATEWAY_SECRET || !given) return null;
+  if (!secret || secret.length < MIN_GATEWAY_SECRET || !given) return false;
   const a = Buffer.from(given);
   const b = Buffer.from(secret);
-  if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
-  return headers.get("x-kudo-client-ip")?.trim() || null;
+  return a.length === b.length && timingSafeEqual(a, b);
 }
 
 /**
