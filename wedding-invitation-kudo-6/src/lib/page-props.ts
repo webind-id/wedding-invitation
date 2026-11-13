@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { coupleLabel, type InvitationContent } from "@/shared/contract";
 import { normalizeGuestName, verifyGuestName } from "@/shared/guest-token";
+import { OG_SIZE, ogText } from "./og-meta";
 
 type Param = string | string[] | undefined;
 
@@ -63,14 +64,25 @@ export function previewFrom(preview: Param): string | undefined {
   return first(preview);
 }
 
-export function metadataFor(content: InvitationContent): Metadata {
-  const title = content.seo.title || coupleLabel(content);
-  const description = content.seo.description || `Undangan pernikahan ${coupleLabel(content)}.`;
-  const image = content.coverPhoto.startsWith("https://") ? [content.coverPhoto] : undefined;
+export interface MetadataOptions {
+  /** Nama tamu dari tautan pribadi — disapa di deskripsi pratinjau. */
+  guestName?: string | null;
+  /** Alamat halaman yang dilihat tamu (og:url). */
+  pageUrl?: string;
+  /** Gambar pratinjau 1200×630 dari /<slug>/og (absolut). Tanpa ini: kartu teks saja. */
+  imageUrl?: string;
+}
+
+/** Meta halaman & pratinjau tautan (WhatsApp, Telegram, Instagram, X, …). */
+export function metadataFor(content: InvitationContent, { guestName = null, pageUrl, imageUrl }: MetadataOptions = {}): Metadata {
+  const { title, description } = ogText(content, guestName);
+  const couple = coupleLabel(content);
+  const images = imageUrl ? [{ url: imageUrl, width: OG_SIZE.width, height: OG_SIZE.height, type: "image/jpeg", alt: `Undangan pernikahan ${couple}` }] : undefined;
   return {
     title,
     description,
-    openGraph: { title, description, type: "website", images: image },
+    openGraph: { title, description, type: "website", locale: "id_ID", siteName: couple, url: pageUrl, images },
+    twitter: { card: images ? "summary_large_image" : "summary", title, description, images: imageUrl ? [imageUrl] : undefined },
     robots: { index: false, follow: false },
   };
 }

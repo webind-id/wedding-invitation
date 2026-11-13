@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { clientIp } from "@/lib/rate-limit";
+import { clientIp, isGatewayRequest } from "@/lib/rate-limit";
 
 const SECRET = "g".repeat(40);
 const gatewayHeaders = (secret: string) =>
@@ -20,5 +20,18 @@ describe("clientIp via subdomain gateway", () => {
     expect(clientIp(gatewayHeaders(""))).toBe("9.9.9.9");
     vi.stubEnv("GATEWAY_SECRET", "pendek");
     expect(clientIp(gatewayHeaders("pendek"))).toBe("9.9.9.9");
+  });
+});
+
+describe("isGatewayRequest", () => {
+  afterEach(() => vi.unstubAllEnvs());
+
+  it("is true only with the configured shared secret", () => {
+    vi.stubEnv("GATEWAY_SECRET", SECRET);
+    expect(isGatewayRequest(gatewayHeaders(SECRET))).toBe(true);
+    expect(isGatewayRequest(gatewayHeaders("h".repeat(40)))).toBe(false);
+    expect(isGatewayRequest(new Headers())).toBe(false);
+    vi.stubEnv("GATEWAY_SECRET", "");
+    expect(isGatewayRequest(gatewayHeaders(""))).toBe(false);
   });
 });

@@ -75,17 +75,29 @@ describe("resolveGuestName", () => {
 });
 
 describe("metadataFor", () => {
-  it("uses SEO fields and only https cover images", () => {
-    const meta = metadataFor(sampleContent);
-    expect(meta.title).toBe(sampleContent.seo.title);
-    expect(meta.openGraph?.images).toBeUndefined();
-    const withRemote = metadataFor({ ...sampleContent, coverPhoto: "https://cdn.test/c.jpg" });
-    expect(withRemote.openGraph?.images).toEqual(["https://cdn.test/c.jpg"]);
+  const imageUrl = "https://wedding6.kudostack.my.id/cahya-wahyu/og?v=abc";
+
+  it("uses the generated 1200×630 preview image with a large card", () => {
+    const meta = metadataFor(sampleContent, { imageUrl, pageUrl: "https://cahya-wahyu.kudostack.my.id/" });
+    expect(meta.openGraph).toMatchObject({
+      url: "https://cahya-wahyu.kudostack.my.id/",
+      locale: "id_ID",
+      siteName: "Cahya & Wahyu",
+      images: [{ url: imageUrl, width: 1200, height: 630, type: "image/jpeg" }],
+    });
+    expect(meta.twitter).toMatchObject({ card: "summary_large_image", images: [imageUrl] });
   });
 
-  it("falls back to the couple name", () => {
+  it("personalises the description for the guest and keeps the SEO title", () => {
+    const meta = metadataFor(sampleContent, { guestName: "Pak Budi" });
+    expect(meta.title).toBe(sampleContent.seo.title);
+    expect(meta.description).toMatch(/^Kepada Yth\. Pak Budi — /);
+  });
+
+  it("falls back to a text-only card without an image", () => {
     const meta = metadataFor({ ...sampleContent, seo: { title: "", description: "" } });
-    expect(meta.title).toBe("Cahya & Wahyu");
-    expect(meta.description).toBe("Undangan pernikahan Cahya & Wahyu.");
+    expect(meta.title).toBe("Undangan Pernikahan Cahya & Wahyu");
+    expect(meta.openGraph?.images).toBeUndefined();
+    expect(meta.twitter).toMatchObject({ card: "summary" });
   });
 });
