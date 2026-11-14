@@ -3,6 +3,7 @@ import { ClientForm } from "@/components/client-form/ClientForm";
 import { clientFormAvailability, isClientFormToken, readClientPayload, restoreDraft } from "@/lib/client-form";
 import { formatDateTime } from "@/lib/format";
 import { clientFormByToken } from "@/lib/repo/client-forms";
+import { emptyContent } from "@/shared/empty-content";
 
 export const dynamic = "force-dynamic";
 
@@ -48,7 +49,7 @@ export default async function ClientFormPage({ params }: { params: Promise<{ tok
   const availability = clientFormAvailability(form);
   if (availability !== "open") return <Closed reason={availability} />;
 
-  const initialContent = restoreDraft(form.draft, form.invitation.content);
+  const initialContent = restoreDraft(form.draft, emptyContent());
   const initialGuests = readClientPayload({}, form.guests)?.guests ?? [];
 
   return (

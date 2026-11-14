@@ -61,6 +61,7 @@ function newEvent(existing: WeddingEvent[], tz: TimeZone): WeddingEvent {
     name: "",
     start: fromLocalInput(base, tz),
     end: fromLocalInput(end, tz),
+    untilFinished: false,
     venue: last?.venue ?? "",
     address: last?.address ?? "",
     mapsUrl: last?.mapsUrl ?? "",
@@ -120,7 +121,18 @@ export function EventsSection() {
               />
               <TextInput label="Catatan (opsional)" path={["events", i, "note"]} placeholder="Khusus keluarga" />
               <DateTimeInput label="Mulai" path={["events", i, "start"]} />
-              <DateTimeInput label="Selesai" path={["events", i, "end"]} />
+              <div>
+                {!e.untilFinished && <DateTimeInput label="Selesai" path={["events", i, "end"]} />}
+                <label className="mt-2 flex items-center gap-2 text-sm font-medium">
+                  <input
+                    type="checkbox"
+                    checked={e.untilFinished}
+                    onChange={(event) => set(["events", i, "untilFinished"], event.target.checked)}
+                    className="h-4 w-4 accent-clay"
+                  />
+                  S.d. selesai
+                </label>
+              </div>
               <TextInput label="Tempat" path={["events", i, "venue"]} />
               <TextInput label="Tautan Google Maps (opsional)" path={["events", i, "mapsUrl"]} placeholder="https://maps.app.goo.gl/…" />
             </div>

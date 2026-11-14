@@ -41,6 +41,13 @@ describe("csvToGuests", () => {
     expect(csvToGuests("")).toEqual([]);
   });
 
+  it("imports a name-only list", () => {
+    expect(csvToGuests("Nama\nBudi\nSiti")).toEqual([
+      { name: "Budi", contact: "", inviter: "" },
+      { name: "Siti", contact: "", inviter: "" },
+    ]);
+  });
+
   it("normalizes different header names and ignores extra columns", () => {
     expect(csvToGuests("ID,Guest Full Name,Nomor WhatsApp,Catatan\n1,Budi Santoso,0812,VIP")).toEqual([
       { name: "Budi Santoso", contact: "0812", inviter: "" },

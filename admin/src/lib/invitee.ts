@@ -7,7 +7,7 @@ export interface Invitee {
   invitation_id: string;
   name: string;
   contact: string;
-  channel: Channel;
+  channel: Channel | null;
   inviter: string | null;
   is_sent: boolean;
   sent_at: string | null;
@@ -19,7 +19,7 @@ export interface Invitee {
 export interface InviteeDraft {
   name: string;
   contact: string;
-  channel: Channel;
+  channel: Channel | null;
   inviter: string | null;
 }
 
@@ -40,16 +40,17 @@ export function prepareInvitees(raw: unknown): PreparedBatch {
   for (const row of rows) {
     const r = (typeof row === "object" && row !== null ? row : {}) as Record<string, unknown>;
     const name = typeof r.name === "string" ? truncate(cleanText(r.name), INVITEE_LIMITS.nameMax) : "";
-    const contact = typeof r.contact === "string" ? parseContact(r.contact) : null;
+    const rawContact = typeof r.contact === "string" ? r.contact.trim() : "";
+    const contact = parseContact(rawContact);
     const inviterRaw = typeof r.inviter === "string" ? truncate(cleanText(r.inviter), INVITEE_LIMITS.inviterMax) : "";
-    const key = contact ? `${contact.channel}:${contact.value}` : "";
+    const key = contact ? `${contact.channel}:${contact.value}` : `name:${name.toLowerCase()}`;
 
-    if (!name || !contact || seen.has(key)) {
+    if (!name || (rawContact !== "" && !contact) || seen.has(key)) {
       invalid++;
       continue;
     }
     seen.add(key);
-    valid.push({ name, contact: contact.value, channel: contact.channel, inviter: inviterRaw || null });
+    valid.push({ name, contact: contact?.value ?? "", channel: contact?.channel ?? null, inviter: inviterRaw || null });
   }
   return { valid, invalid };
 }

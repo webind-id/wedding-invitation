@@ -53,7 +53,7 @@ function EventEntry({ event, index }: { event: WeddingEvent; index: number }) {
   const { content, coupleLabel, timeZoneLabel } = useInvitation();
   const rows: [string, string, string?][] = [
     ["Tanggal", formatLongDate(event.start, content.timeZone)],
-    ["Waktu", `${formatClock(event.start, content.timeZone)} – ${formatClock(event.end, content.timeZone)} ${timeZoneLabel}`],
+    ["Waktu", `${formatClock(event.start, content.timeZone)} – ${event.untilFinished ? "s.d. selesai" : `${formatClock(event.end, content.timeZone)} ${timeZoneLabel}`}`],
     ["Lokasi", event.venue, event.address],
   ];
 

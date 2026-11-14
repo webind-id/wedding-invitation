@@ -9,6 +9,8 @@ export const dynamic = "force-dynamic";
 
 /** Origin admin yang sedang dipakai (mis. https://undangan.kudostack.my.id) — tautan formulir ada di app ini. */
 async function adminOrigin(): Promise<string> {
+  const configured = process.env.ADMIN_PUBLIC_ORIGIN?.trim().replace(/\/+$/, "");
+  if (configured) return configured;
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3001";
   const proto = h.get("x-forwarded-proto")?.split(",")[0]?.trim() || (host.startsWith("localhost") ? "http" : "https");

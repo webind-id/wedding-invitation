@@ -20,7 +20,7 @@ wedding-invitation-…/       ← template berikutnya, pola yang sama
   - Foto dan MP3 diunggah langsung ke Supabase Storage. Isi file dicek, tidak hanya tipe MIME-nya.
   - Validasi per field, simpan dengan Ctrl+S, dan peringatan bila meninggalkan halaman saat ada perubahan yang belum tersimpan.
 - **Tamu & kirim**:
-  - Daftar tamu per undangan, impor/ekspor CSV, dan template pesan per undangan.
+  - Daftar tamu per undangan, impor file tabel dari client (kolom dipetakan otomatis dan kolom tambahan diabaikan), ekspor CSV, dan template pesan per undangan.
   - Kirim lewat WhatsApp atau DM Instagram, lalu tandai sudah terkirim.
 - **RSVP & ucapan**: rekap kehadiran (termasuk jumlah orang), daftar ucapan, hapus ucapan (moderasi), dan ekspor CSV.
 - **Pengaturan**:
@@ -37,6 +37,7 @@ wedding-invitation-…/       ← template berikutnya, pola yang sama
    - `SUPABASE_URL` dan `SUPABASE_SERVICE_ROLE_KEY`, sama untuk semua app.
    - `SESSION_SECRET`, minimal 32 karakter.
    - `PREVIEW_SECRET`, minimal 32 karakter, dan **nilainya harus sama** di semua template.
+   - `ADMIN_PUBLIC_ORIGIN`, misalnya `https://undangan.kudostack.my.id`, agar link formulir client tidak memakai hostname lokal.
 3. **Akun**: `npm install`, lalu `npm run admin:user -- admin password-panjang-anda`.
 4. **Jalankan**: `npm run dev` lalu buka http://localhost:3001.
 5. **Daftarkan template** di menu *Template*:

@@ -38,7 +38,7 @@ export function Gallery() {
         <div data-reveal="fade" className="flex justify-center">
           <Slate scene={7} />
         </div>
-        <TitleCard id="gallery-title" kicker="Dokumentasi" title="Jejak di setiap puncak" className="mt-6" />
+        <TitleCard id="gallery-title" kicker="Dokumentasi" title={content.galleryTitle || "Jejak di setiap puncak"} className="mt-6" />
       </div>
 
       <div data-reveal="fade" className="mt-16 bg-[#0B0D0F] py-1 shadow-[0_0_0_1px_rgba(243,239,230,0.06)]">

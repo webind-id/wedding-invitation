@@ -90,7 +90,8 @@ function Lightbox({ moments, index, onClose, onStep }: { moments: Moment[]; inde
 
 /** Portofolio: foto berukuran besar dalam komposisi asimetris dengan nomor gambar. */
 export function Portfolio() {
-  const { moments } = useInvitation().content;
+  const { content } = useInvitation();
+  const { moments } = content;
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const close = useCallback(() => setOpenIndex(null), []);
   const step = useCallback(
@@ -104,7 +105,7 @@ export function Portfolio() {
     <section id="portofolio" data-rubric="portofolio" aria-labelledby="portofolio-title" className="bg-bone py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-5 sm:px-10">
         <Opener id="portofolio" titleId="portofolio-title" deck="Sebuah pilihan potret — ketuk untuk melihat lebih dekat.">
-          Port<em>ofolio</em>
+          {content.galleryTitle || "Portofolio"}
         </Opener>
 
         <ul className="mt-16 grid gap-x-10 gap-y-14 sm:mt-24 sm:gap-y-20 lg:grid-cols-12">

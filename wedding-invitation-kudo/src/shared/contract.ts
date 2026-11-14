@@ -59,6 +59,7 @@ export const eventSchema = z
     name: required(60),
     start: isoDate,
     end: isoDate,
+    untilFinished: z.boolean().optional(),
     venue: required(120),
     address: required(200),
     mapsUrl: httpsUrl,
@@ -105,6 +106,7 @@ export const invitationContentSchema = z.object({
   invitationIntro: text(400),
   events: z.array(eventSchema).min(1, "Minimal satu acara").max(6, "Maksimal 6 acara"),
   story: z.array(storyChapterSchema).max(12, "Maksimal 12 bab"),
+  galleryTitle: text(120).optional(),
   moments: z.array(momentSchema).max(30, "Maksimal 30 foto"),
   gift: z.object({
     intro: text(400),

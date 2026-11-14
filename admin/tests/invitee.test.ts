@@ -26,6 +26,14 @@ describe("prepareInvitees", () => {
     expect(result.invalid).toBe(1);
   });
 
+  it("accepts name-only rows for later contact completion", () => {
+    const result = prepareInvitees([{ name: "Budi & keluarga", contact: "" }]);
+    expect(result).toEqual({
+      valid: [{ name: "Budi & keluarga", contact: "", channel: null, inviter: null }],
+      invalid: 0,
+    });
+  });
+
   it("returns nothing for non-array input and caps batch size", () => {
     expect(prepareInvitees(null)).toEqual({ valid: [], invalid: 0 });
     const many = Array.from({ length: INVITEE_LIMITS.batchMax + 5 }, (_, i) => ({

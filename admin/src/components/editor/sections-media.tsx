@@ -56,6 +56,7 @@ export function GallerySection() {
 
   return (
     <EditorSection id="galeri" title="Galeri" description={`${moments.length}/${MAX_MOMENTS} foto`} errorPaths={["moments"]}>
+      <TextInput label="Judul galeri" path={["galleryTitle"]} placeholder="Potongan-potongan kecil kita" hint="Bisa diganti sesuai tema atau jumlah foto" />
       {moments.length > 0 && (
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
           {moments.map((m, i) => (

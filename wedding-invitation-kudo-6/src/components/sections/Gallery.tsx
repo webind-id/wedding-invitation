@@ -28,9 +28,9 @@ export function Gallery() {
 
   return (
     <section ref={ref} id="galeri" aria-labelledby="gallery-title" className="relative px-5 py-28 sm:px-8 sm:py-40">
-      <SectionHeading id="gallery-title" label="Galeri kenangan" title="Potongan-potongan kecil kita" />
+      <SectionHeading id="gallery-title" label="Galeri kenangan" title={content.galleryTitle || "Potongan-potongan kecil kita"} />
 
-      <ul data-reveal-group className="mx-auto mt-16 max-w-6xl columns-2 gap-4 sm:gap-6 md:columns-3">
+      <ul data-reveal-group className={cn("mx-auto mt-16 max-w-6xl gap-4 sm:gap-6", moments.length < 3 ? "max-w-xl columns-1" : "columns-2 md:columns-3")}>
         {moments.map((m, i) => (
           <li key={`${m.src}-${i}`} data-reveal-item className="mb-8 break-inside-avoid">
             <div data-depth={DEPTHS[i % DEPTHS.length]}>

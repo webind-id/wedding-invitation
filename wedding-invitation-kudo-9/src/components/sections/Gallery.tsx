@@ -37,9 +37,9 @@ export function Gallery() {
         </div>
       </div>
 
-      <SectionHeading id="gallery-title" label="Galeri kenangan" title="Potongan-potongan kecil kita" />
+      <SectionHeading id="gallery-title" label="Galeri kenangan" title={content.galleryTitle || "Potongan-potongan kecil kita"} />
 
-      <ul data-reveal-group className="relative mx-auto mt-16 grid max-w-5xl grid-cols-2 gap-3 [grid-auto-flow:dense] auto-rows-[40vw] sm:gap-5 md:grid-cols-4 md:auto-rows-[min(15vw,13.5rem)]">
+      <ul data-reveal-group className={cn("relative mx-auto mt-16 grid max-w-5xl gap-3 [grid-auto-flow:dense] auto-rows-[40vw] sm:gap-5 md:auto-rows-[min(15vw,13.5rem)]", moments.length < 3 ? "max-w-xl grid-cols-1" : "grid-cols-2 md:grid-cols-4")}>
         {moments.map((m, i) => {
           const tile = tileFor(moments, i);
           return (

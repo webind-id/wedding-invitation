@@ -50,6 +50,7 @@ export const sampleContent: InvitationContent = {
       name: "Akad Nikah",
       start: "2027-06-12T08:00:00+07:00",
       end: "2027-06-12T10:00:00+07:00",
+      untilFinished: false,
       venue: "Pendopo Sekar Wangi",
       address: "Jl. Contoh Raya No. 1, Bandung, Jawa Barat",
       mapsUrl: "",
@@ -60,6 +61,7 @@ export const sampleContent: InvitationContent = {
       name: "Resepsi",
       start: "2027-06-12T11:00:00+07:00",
       end: "2027-06-12T14:00:00+07:00",
+      untilFinished: false,
       venue: "Pendopo Sekar Wangi",
       address: "Jl. Contoh Raya No. 1, Bandung, Jawa Barat",
       mapsUrl: "",
@@ -83,6 +85,7 @@ export const sampleContent: InvitationContent = {
       text: "Di hadapan kedua keluarga, kami berjanji untuk melangkah ke jenjang yang lebih serius.",
     },
   ],
+  galleryTitle: "Potongan-potongan kecil kita",
   moments: [
     { src: "/images/moment-1.webp", alt: "Momen 1", shape: "tall" },
     { src: "/images/moment-2.webp", alt: "Momen 2", shape: "square" },

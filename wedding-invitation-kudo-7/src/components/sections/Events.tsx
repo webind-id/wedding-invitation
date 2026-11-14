@@ -63,7 +63,7 @@ function EventCard({ event, index }: { event: WeddingEvent; index: number }) {
               <dd className="font-serif text-xl">{formatLongDate(event.start, content.timeZone)}</dd>
               <dt className="sr-only">Waktu</dt>
               <dd className="text-ink/70">
-                {formatClock(event.start, content.timeZone)} – {formatClock(event.end, content.timeZone)} {timeZoneLabel}
+                {formatClock(event.start, content.timeZone)} – {event.untilFinished ? "s.d. selesai" : `${formatClock(event.end, content.timeZone)} ${timeZoneLabel}`}
               </dd>
               <dt className="sr-only">Tempat</dt>
               <dd className="pt-4 font-display text-lg leading-snug tracking-wide">{event.venue}</dd>

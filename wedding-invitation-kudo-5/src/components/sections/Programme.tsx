@@ -32,7 +32,7 @@ export function Programme() {
                   {timeInWords(event.start, tz)}
                   <span className="mx-2 text-umber/50">·</span>
                   <span className="not-italic tabular-nums">
-                    {formatClock(event.start, tz)}–{formatClock(event.end, tz)} {timeZoneLabel}
+                    {formatClock(event.start, tz)}–{event.untilFinished ? "s.d. selesai" : `${formatClock(event.end, tz)} ${timeZoneLabel}`}
                   </span>
                 </p>
                 <p className="smallcaps mt-4 text-burgundy">{event.venue}</p>

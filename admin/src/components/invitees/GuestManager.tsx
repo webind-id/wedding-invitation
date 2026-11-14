@@ -82,7 +82,7 @@ export function GuestManager({ invitationId, isPublished, linkNotice, initialInv
     const rows = invitees.map((g) => [
       g.name,
       g.contact,
-      g.channel === "whatsapp" ? "WhatsApp" : "Instagram",
+      g.channel === "whatsapp" ? "WhatsApp" : g.channel === "instagram" ? "Instagram" : "",
       g.inviter ?? "",
       g.link,
       g.is_sent ? "Ya" : "Belum",

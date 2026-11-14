@@ -124,8 +124,8 @@ export function Album() {
 
       {moments.length > 0 && (
         <div className="mx-auto mt-24 max-w-5xl border-t border-burgundy/25 pt-16">
-          <p className="smallcaps text-center">Dari halaman album</p>
-          <ul className="mt-10 columns-2 gap-6 sm:columns-3 sm:gap-8 [&>li]:mb-8">
+          <p className="smallcaps text-center">{content.galleryTitle || "Dari halaman album"}</p>
+          <ul className={cn("mt-10 gap-6 sm:gap-8 [&>li]:mb-8", moments.length < 3 ? "columns-1 max-w-xl mx-auto" : "columns-2 sm:columns-3")}>
             {moments.map((m, i) => (
               <Reveal as="li" key={`${m.src}-${i}`} delay={(i % 3) * 0.08} className="break-inside-avoid">
                 <button

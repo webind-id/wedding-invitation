@@ -29,7 +29,7 @@ export function EventsScene() {
                 <p className="kicker">{event.note || `Acara ${i + 1}`}</p>
                 <h3 className="mt-3 font-serif text-4xl">{event.name}</h3>
                 <p className="mt-6 font-serif text-3xl italic text-cream/90">
-                  {formatClock(event.start, tz)} <span className="text-cream/40">—</span> {formatClock(event.end, tz)}
+                  {formatClock(event.start, tz)} <span className="text-cream/40">—</span> {event.untilFinished ? "s.d. selesai" : formatClock(event.end, tz)}
                   <span className="ml-2 font-sans text-xs not-italic tracking-[0.2em] text-cream/50">{timeZoneLabel}</span>
                 </p>
                 <div className="my-6 h-px bg-cream/10" />

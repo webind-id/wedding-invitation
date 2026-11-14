@@ -30,7 +30,7 @@ export function Showtimes() {
                   <span className="font-display text-sm italic text-gold/70">{reelNumber(i + 1)}</span>
                   <p className="font-display text-5xl leading-none tabular-nums sm:mt-1">{formatClock(event.start, tz)}</p>
                   <p className="text-[0.6rem] uppercase tracking-[0.25em] text-smoke sm:mt-2">
-                    s/d {formatClock(event.end, tz)} {timeZoneLabel}
+                    {event.untilFinished ? "s.d. selesai" : `s/d ${formatClock(event.end, tz)} ${timeZoneLabel}`}
                   </p>
                 </div>
                 <div>

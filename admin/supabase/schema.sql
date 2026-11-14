@@ -88,8 +88,8 @@ create table if not exists public.invitees (
   id             uuid primary key default gen_random_uuid(),
   invitation_id  uuid not null references public.invitations (id) on delete cascade,
   name           text not null check (char_length(name) between 1 and 120),
-  contact        text not null,
-  channel        text not null check (channel in ('whatsapp', 'instagram')),
+  contact        text not null default '',
+  channel        text check (channel is null or channel in ('whatsapp', 'instagram')),
   inviter        text check (inviter is null or char_length(inviter) <= 120),
   is_sent        boolean not null default false,
   sent_at        timestamptz,
@@ -99,6 +99,8 @@ create table if not exists public.invitees (
   unique (invitation_id, channel, contact),
   constraint invitees_code_format check (code ~ '^[a-z0-9]+(-[a-z0-9]+)*$' and char_length(code) between 3 and 64),
   check (
+    (contact = '' and channel is null)
+    or
     (channel = 'whatsapp' and contact ~ '^62[0-9]{8,13}$')
     or (channel = 'instagram' and contact ~ '^[a-z0-9._]{1,30}$')
   )

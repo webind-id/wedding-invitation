@@ -49,7 +49,7 @@ export function Agenda() {
               <div className="flex items-baseline justify-between gap-4">
                 <h3 className="font-serif text-4xl font-light">{event.name}</h3>
                 <p className="shrink-0 font-serif text-xl italic text-gold">
-                  {formatClock(event.start, tz)}–{formatClock(event.end, tz)} <span className="rubric">{timeZoneLabel}</span>
+                  {formatClock(event.start, tz)}–{event.untilFinished ? "s.d. selesai" : `${formatClock(event.end, tz)} ${timeZoneLabel}`}
                 </p>
               </div>
               <p className="mt-4 font-serif text-lg">{event.venue}</p>

@@ -137,7 +137,8 @@ function Lightbox({ moments, index, onClose, onStep }: { moments: Moment[]; inde
 
 /** Galeri: roll film bergulir + mosaik bento, keduanya membuka lightbox. */
 export function Reel() {
-  const { moments } = useInvitation().content;
+  const { content } = useInvitation();
+  const { moments } = content;
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const close = useCallback(() => setOpenIndex(null), []);
   const step = useCallback(
@@ -151,7 +152,7 @@ export function Reel() {
     <section id="cuplikan" aria-labelledby="cuplikan-title" className="py-24 sm:py-32">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <Title reel="04" label="Cuplikan" id="cuplikan-title">
-          Bingkai <em className="text-gold">yang kami simpan</em>
+          {content.galleryTitle || "Bingkai yang kami simpan"}
         </Title>
       </div>
 
@@ -159,7 +160,7 @@ export function Reel() {
         <Filmstrip moments={moments} onOpen={setOpenIndex} />
       </Reveal>
 
-      <ul className="mx-auto mt-14 grid max-w-6xl grid-flow-row-dense auto-rows-[9rem] grid-cols-2 gap-2 px-5 sm:auto-rows-[12rem] sm:grid-cols-4 sm:gap-3 sm:px-8">
+      <ul className={cn("mx-auto mt-14 grid max-w-6xl grid-flow-row-dense auto-rows-[9rem] gap-2 px-5 sm:auto-rows-[12rem] sm:gap-3 sm:px-8", moments.length < 3 ? "max-w-xl grid-cols-1" : "grid-cols-2 sm:grid-cols-4")}>
         {moments.map((m, i) => (
           <Reveal as="li" key={`${m.src}-${i}`} delay={(i % 4) * 0.06} className={cn(MOSAIC_SPAN[i % MOSAIC_SPAN.length], "min-h-0")}>
             <button type="button" onClick={() => setOpenIndex(i)} aria-label={`Perbesar ${label(m, i)}`} className="group block h-full w-full overflow-hidden">

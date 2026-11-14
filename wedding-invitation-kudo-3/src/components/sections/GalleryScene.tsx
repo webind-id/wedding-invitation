@@ -18,7 +18,8 @@ const SLIDE_MS = 6000;
  * meminta gerak minimal; bisa dijeda, digeser, dan dibuka layar penuh.
  */
 export function GalleryScene() {
-  const { moments } = useInvitation().content;
+  const { content } = useInvitation();
+  const { moments } = content;
   const reduce = useReducedMotion();
   const [index, setIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -65,9 +66,7 @@ export function GalleryScene() {
   return (
     <Scene chapter="galeri" photo={null} anchor label="Galeri" fullscreen={false} className="bg-ink/80 py-28 sm:py-36">
       <div className="mx-auto max-w-6xl px-6 sm:px-10">
-        <ChapterHeading chapter="galeri">
-          Ruang <em>gelap</em>
-        </ChapterHeading>
+        <ChapterHeading chapter="galeri">{content.galleryTitle || "Ruang gelap"}</ChapterHeading>
       </div>
 
       <Reveal effect="fade" className="mx-auto mt-12 max-w-6xl px-0 sm:px-10">

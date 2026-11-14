@@ -15,7 +15,9 @@ function EventTicket({ event, index }: { event: WeddingEvent; index: number }) {
   const { content, timeZoneLabel } = useInvitation();
   const tz = content.timeZone;
   const stub = dateStub(event.start, tz);
-  const time = `${formatClock(event.start, tz)} – ${formatClock(event.end, tz)} ${timeZoneLabel}`;
+  const time = event.untilFinished
+    ? `Mulai ${formatClock(event.start, tz)} · s.d. selesai ${timeZoneLabel}`
+    : `${formatClock(event.start, tz)} – ${formatClock(event.end, tz)} ${timeZoneLabel}`;
 
   return (
     <FadeIn as="article" delay={index * 0.08}>
@@ -35,7 +37,7 @@ function EventTicket({ event, index }: { event: WeddingEvent; index: number }) {
           <h3 className="font-display text-2xl italic text-forest">{event.name}</h3>
           <p className="mt-2 flex items-center gap-2 text-xs font-semibold text-bark/80">
             <Clock className="h-3.5 w-3.5 text-clay" aria-hidden />
-            {time}
+            {event.untilFinished ? `Mulai ${formatClock(event.start, tz)} · s.d. selesai ${timeZoneLabel}` : time}
           </p>
           <p className="mt-1.5 flex items-start gap-2 text-xs text-bark/70">
             <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-clay" aria-hidden />

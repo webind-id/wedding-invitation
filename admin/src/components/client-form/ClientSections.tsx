@@ -53,7 +53,7 @@ export function ClientGuestsSection({ guests, onChange }: ClientGuestsSectionPro
   }
 
   return (
-    <EditorSection id="tamu" title="Daftar tamu" description={`${filled} tamu · nomor WhatsApp (08…) atau Instagram (@…)`} errorPaths={[]}>
+    <EditorSection id="tamu" title="Daftar tamu" description={`${filled} tamu · kontak opsional, bisa diisi nanti di panel Tamu`} errorPaths={[]}>
       <ul className="space-y-2">
         {guests.map((g, i) => {
           const contact = g.contact.trim();
@@ -93,7 +93,7 @@ export function ClientGuestsSection({ guests, onChange }: ClientGuestsSectionPro
       {isPasteOpen && (
         <div className="space-y-2 rounded-xl bg-paper p-3">
           <label htmlFor="tempel-tamu" className="label">
-            Satu tamu per baris: nama, kontak, pengundang (opsional)
+            Satu tamu per baris: nama saja, atau nama, kontak, pengundang (opsional)
           </label>
           <textarea
             id="tempel-tamu"

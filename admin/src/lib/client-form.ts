@@ -115,8 +115,13 @@ const kindOf = (v: unknown) => (Array.isArray(v) ? "array" : v === null ? "null"
 export function restoreDraft(draft: unknown, fallback: InvitationContent): InvitationContent {
   if (kindOf(draft) !== "object") return fallback;
   const d = draft as Record<string, unknown>;
-  const matches = Object.entries(fallback).every(([key, value]) => key in d && kindOf(d[key]) === kindOf(value));
-  return matches ? (draft as InvitationContent) : fallback;
+  const optionalKeys = new Set(["galleryTitle"]);
+  const matches = Object.entries(fallback).every(
+    ([key, value]) => (optionalKeys.has(key) && !(key in d)) || (key in d && kindOf(d[key]) === kindOf(value)),
+  );
+  if (!matches) return fallback;
+  const complete = Object.keys(fallback).every((key) => key in d);
+  return complete ? (draft as InvitationContent) : ({ ...fallback, ...d } as InvitationContent);
 }
 
 export type PreparedSubmission =

@@ -20,6 +20,7 @@ const ICON_BTN =
 export function InviteeRow({ invitee, link, template, onToggleSent, onRemove, onNotice }: InviteeRowProps) {
   const message = fillTemplate(template, { nama: invitee.name, link, pengundang: invitee.inviter });
   const isWhatsApp = invitee.channel === "whatsapp";
+  const canSend = Boolean(invitee.contact && invitee.channel);
 
   async function copy(text: string, label: string) {
     try {
@@ -31,6 +32,10 @@ export function InviteeRow({ invitee, link, template, onToggleSent, onRemove, on
   }
 
   async function send() {
+    if (!canSend) {
+      onNotice("Tambahkan kontak terlebih dahulu untuk mengirim pesan.");
+      return;
+    }
     if (isWhatsApp) {
       window.open(whatsappLink(invitee.contact, message), "_blank", "noopener,noreferrer");
     } else {
@@ -46,8 +51,8 @@ export function InviteeRow({ invitee, link, template, onToggleSent, onRemove, on
       <div className="min-w-0 flex-1">
         <p className="truncate font-semibold">{invitee.name}</p>
         <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted">
-          {isWhatsApp ? <MessageCircle className="h-3 w-3" aria-hidden /> : <AtSign className="h-3 w-3" aria-hidden />}
-          {displayContact({ channel: invitee.channel, value: invitee.contact })}
+          {canSend ? (isWhatsApp ? <MessageCircle className="h-3 w-3" aria-hidden /> : <AtSign className="h-3 w-3" aria-hidden />) : <span className="h-3 w-3" />}
+          {canSend ? displayContact({ channel: invitee.channel!, value: invitee.contact }) : "Kontak belum diisi"}
           {invitee.inviter && <span className="text-muted/70">· dari {invitee.inviter}</span>}
         </p>
       </div>
@@ -66,8 +71,8 @@ export function InviteeRow({ invitee, link, template, onToggleSent, onRemove, on
         <button type="button" onClick={() => onRemove(invitee)} className={cn(ICON_BTN, "hover:border-danger hover:text-danger")} aria-label={`Hapus ${invitee.name}`}>
           <Trash2 className="h-4 w-4" />
         </button>
-        <button type="button" onClick={send} className="btn-accent btn-sm">
-          {isWhatsApp ? "Kirim WA" : "Kirim DM"}
+        <button type="button" onClick={send} disabled={!canSend} className="btn-accent btn-sm disabled:cursor-not-allowed disabled:opacity-50">
+          {canSend ? (isWhatsApp ? "Kirim WA" : "Kirim DM") : "Belum ada kontak"}
         </button>
       </div>
     </li>

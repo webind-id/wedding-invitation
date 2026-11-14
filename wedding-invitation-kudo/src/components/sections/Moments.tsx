@@ -96,7 +96,8 @@ function Lightbox({ index, onClose, onStep }: { index: number; onClose: () => vo
 
 /** Grid masonry dua kolom + lightbox (keyboard & geser). */
 export function Moments() {
-  const { moments } = useInvitation().content;
+  const { content } = useInvitation();
+  const { moments } = content;
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const close = useCallback(() => setOpenIndex(null), []);
   const step = useCallback(
@@ -108,11 +109,11 @@ export function Moments() {
 
   return (
     <section id="galeri" aria-labelledby="galeri-title" className="grain px-4 py-20">
-      <Heading eyebrow="Galeri" id="galeri-title">
-        Potongan cerita
+      <Heading eyebrow="Galeri kenangan" id="galeri-title">
+        {content.galleryTitle || "Potongan-potongan kecil kita"}
       </Heading>
 
-      <ul className="mt-10 columns-2 gap-3 [&>li]:mb-3">
+      <ul className={cn("mx-auto mt-10 gap-3 [&>li]:mb-3", moments.length < 3 ? "max-w-xl columns-1" : "columns-2")}>
         {moments.map((m, i) => (
           <FadeIn as="li" key={m.src} delay={(i % 4) * 0.06} className="break-inside-avoid">
             <button
