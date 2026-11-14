@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as XLSX from "xlsx";
-import { csvToGuests, parseCsv, toCsv } from "@/lib/csv";
+import { csvToGuests, inviteesToCsv, parseCsv, toCsv } from "@/lib/csv";
 import { spreadsheetToGuests } from "@/lib/spreadsheet";
 
 describe("parseCsv", () => {
@@ -64,6 +64,33 @@ describe("csvToGuests", () => {
 describe("toCsv", () => {
   it("quotes special characters and neutralises formulas", () => {
     expect(toCsv(["Nama", "Catatan"], [["Budi, S.T.", "=SUM(A1)"]])).toBe('Nama,Catatan\n"Budi, S.T.",\'=SUM(A1)');
+  });
+
+  describe("inviteesToCsv", () => {
+    it("exports a personal message and WhatsApp link", () => {
+      const csv = inviteesToCsv(
+        [
+          {
+            id: "1",
+            invitation_id: "inv",
+            name: "Budi",
+            contact: "6281234567890",
+            channel: "whatsapp",
+            inviter: "Cahya",
+            is_sent: false,
+            sent_at: null,
+            created_at: "",
+            link: "https://contoh.test/?untuk=budi",
+          },
+        ],
+        "Halo {nama}, buka {link} dari {pengundang}.",
+      );
+      const rows = parseCsv(csv);
+      expect(rows[0]).toContain("Pesan");
+      expect(rows[0]).toContain("Link WhatsApp");
+      expect(rows[1]?.[5]).toBe("Halo Budi, buka https://contoh.test/?untuk=budi dari Cahya.");
+      expect(rows[1]?.[6]).toContain("https://wa.me/6281234567890?text=");
+    });
   });
 });
 

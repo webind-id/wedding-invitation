@@ -3,7 +3,8 @@
  * koma (ekspor Excel berlocale Indonesia).
  */
 
-import { parseContact } from "./contact";
+import { fillTemplate, parseContact, whatsappLink } from "./contact";
+import type { LinkedInvitee } from "./guest-link";
 
 export interface CsvGuestRow {
   name: string;
@@ -144,4 +145,27 @@ function escapeCell(value: string): string {
 
 export function toCsv(header: string[], rows: string[][]): string {
   return [header, ...rows].map((r) => r.map(escapeCell).join(",")).join("\n");
+}
+
+/** Ekspor daftar tamu lengkap dengan pesan personal dan link WhatsApp. */
+export function inviteesToCsv(invitees: LinkedInvitee[], template: string): string {
+  const rows = invitees.map((invitee) => {
+    const message = fillTemplate(template, {
+      nama: invitee.name,
+      link: invitee.link,
+      pengundang: invitee.inviter,
+    });
+    const whatsapp = invitee.channel === "whatsapp" && invitee.contact ? whatsappLink(invitee.contact, message) : "";
+    return [
+      invitee.name,
+      invitee.contact,
+      invitee.channel === "whatsapp" ? "WhatsApp" : invitee.channel === "instagram" ? "Instagram" : "",
+      invitee.inviter ?? "",
+      invitee.link,
+      message,
+      whatsapp,
+      invitee.is_sent ? "Ya" : "Belum",
+    ];
+  });
+  return toCsv(["Nama", "Kontak", "Saluran", "Pengundang", "Tautan Undangan", "Pesan", "Link WhatsApp", "Terkirim"], rows);
 }

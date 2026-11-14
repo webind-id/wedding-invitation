@@ -4,7 +4,7 @@ import { AlertTriangle, Download, Search, Trash } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { clearInviteesAction, deleteInviteeAction, setSentAction } from "@/app/(panel)/undangan/[id]/_actions/guests";
 import { cn } from "@/lib/cn";
-import { toCsv } from "@/lib/csv";
+import { inviteesToCsv } from "@/lib/csv";
 import { downloadFile } from "@/lib/download";
 import type { LinkedInvitee } from "@/lib/guest-link";
 import type { Invitee } from "@/lib/invitee";
@@ -78,16 +78,7 @@ export function GuestManager({ invitationId, isPublished, linkNotice, initialInv
   }
 
   function exportCsv() {
-    // Kontak tanpa awalan +/@ agar lolos penjaga formula CSV dan bisa diimpor ulang.
-    const rows = invitees.map((g) => [
-      g.name,
-      g.contact,
-      g.channel === "whatsapp" ? "WhatsApp" : g.channel === "instagram" ? "Instagram" : "",
-      g.inviter ?? "",
-      g.link,
-      g.is_sent ? "Ya" : "Belum",
-    ]);
-    downloadFile("daftar-tamu.csv", toCsv(["Nama", "Kontak", "Saluran", "Pengundang", "Tautan", "Terkirim"], rows));
+    downloadFile("daftar-tamu-undangan.csv", inviteesToCsv(invitees, message));
   }
 
   return (
