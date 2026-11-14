@@ -37,6 +37,17 @@ describe("invitationContentSchema", () => {
     expect(errorsOf(backwards)).toHaveProperty("events.0.end");
   });
 
+  it("allows one event to start when another event ends", () => {
+    const result = withPatch((c) => ({
+      ...c,
+      events: [
+        { ...c.events[0], end: "2027-06-12T10:00:00+07:00" },
+        { ...c.events[1], start: "2027-06-12T10:00:00+07:00" },
+      ],
+    }));
+    expect(result.success).toBe(true);
+  });
+
   it("rejects unsafe media URLs", () => {
     for (const bad of ["javascript:alert(1)", "//evil.test/x.jpg", "http://plain.test/x.jpg", "/\\evil.test/x.jpg", "/a b.jpg"]) {
       expect(errorsOf(withPatch((c) => ({ ...c, coverPhoto: bad })))).toHaveProperty("coverPhoto");

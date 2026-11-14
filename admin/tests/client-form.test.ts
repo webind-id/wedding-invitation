@@ -102,6 +102,18 @@ describe("restoreDraft", () => {
     expect(restoreDraft(draft, sampleContent)).toBe(draft);
   });
 
+  it("restores drafts created before the event and gallery fields were added", () => {
+    const { galleryTitle: _galleryTitle, ...legacy } = sampleContent;
+    const draft = {
+      ...legacy,
+      events: legacy.events.map(({ untilFinished: _untilFinished, ...event }) => event),
+    };
+    const restored = restoreDraft(draft, sampleContent);
+    expect(restored.bride).toEqual(sampleContent.bride);
+    expect(restored.galleryTitle).toBe(sampleContent.galleryTitle);
+    expect(restored.events[0]?.untilFinished).toBe(false);
+  });
+
   it("falls back to the invitation content when the draft is missing or malformed", () => {
     expect(restoreDraft(null, sampleContent)).toBe(sampleContent);
     expect(restoreDraft({ bride: {} }, sampleContent)).toBe(sampleContent);

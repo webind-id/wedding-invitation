@@ -120,8 +120,24 @@ export function restoreDraft(draft: unknown, fallback: InvitationContent): Invit
     ([key, value]) => (optionalKeys.has(key) && !(key in d)) || (key in d && kindOf(d[key]) === kindOf(value)),
   );
   if (!matches) return fallback;
+  const rawEvents = Array.isArray(d.events) ? d.events : [];
+  const eventsNeedMigration = rawEvents.some(
+    (event) => typeof event === "object" && event !== null && !("untilFinished" in event),
+  );
   const complete = Object.keys(fallback).every((key) => key in d);
-  return complete ? (draft as InvitationContent) : ({ ...fallback, ...d } as InvitationContent);
+  if (complete && !eventsNeedMigration) return draft as InvitationContent;
+
+  return {
+    ...fallback,
+    ...d,
+    events: rawEvents.map((event) => ({
+      ...(event as Record<string, unknown>),
+      untilFinished:
+        typeof event === "object" && event !== null && "untilFinished" in event
+          ? (event as Record<string, unknown>).untilFinished
+          : false,
+    })),
+  } as InvitationContent;
 }
 
 export type PreparedSubmission =
