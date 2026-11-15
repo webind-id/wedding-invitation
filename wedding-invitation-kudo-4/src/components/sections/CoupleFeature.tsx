@@ -1,5 +1,6 @@
 "use client";
 
+import { MapPin } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { photoAt } from "@/lib/photos";
 import type { Person } from "@/shared/contract";
@@ -39,6 +40,12 @@ function Profile({ person, role, figure, layout }: ProfileProps) {
           <p className="font-serif text-lg leading-relaxed text-ink/80">
             {person.childOrder} <span className="text-ink">{person.father}</span> &amp; <span className="text-ink">{person.mother}</span>.
           </p>
+          {person.address && (
+            <p className="mt-3 flex items-center gap-1.5 font-serif text-sm text-ink/70">
+              <MapPin className="h-3.5 w-3.5 shrink-0 text-gold" aria-hidden />
+              <span>{person.address}</span>
+            </p>
+          )}
           {person.instagram && (
             <a
               href={`https://instagram.com/${person.instagram}`}

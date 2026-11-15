@@ -1,6 +1,6 @@
 "use client";
 
-import { AtSign } from "lucide-react";
+import { AtSign, MapPin } from "lucide-react";
 import { useRef } from "react";
 import { useScrollScene } from "@/hooks/useScrollScene";
 import { cn } from "@/lib/cn";
@@ -52,6 +52,18 @@ function CastCredit({ person, role, mountain, depth, isReversed }: CastCreditPro
           <br />
           {person.father} &amp; {person.mother}
         </p>
+        {person.address && (
+          <p
+            data-reveal="up"
+            className={cn(
+              "mt-3 inline-flex items-center gap-1.5 font-mono text-xs text-seluloid/70",
+              isReversed && "md:flex-row-reverse"
+            )}
+          >
+            <MapPin className="h-3.5 w-3.5 shrink-0 text-amber" aria-hidden />
+            <span>{person.address}</span>
+          </p>
+        )}
         {person.instagram && (
           <a
             href={`https://instagram.com/${person.instagram}`}

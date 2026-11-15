@@ -8,7 +8,7 @@
 # Tunnel `cloudflared` yang sudah berjalan di server dan terhubung ke network
 # eksternal `cloudflare_net`:
 #   undangan.kudostack.my.id                    → admin
-#   wedding1.kudostack.my.id … wedding9.kudostack.my.id → kudo … kudo-9
+#   wedding1.kudostack.my.id … wedding10.kudostack.my.id → kudo … kudo-10
 # Subdomain undangan (<slug>.kudostack.my.id) tetap dilayani Cloudflare Worker di
 # gateway/, yang mengambil halaman dari wedding1…8.
 
@@ -88,6 +88,11 @@ services:
     <<: *app
     image: ${IMAGE_NAMESPACE:-kudostack}/wedding-invitation-kudo-9:${IMAGE_TAG:-latest}
     environment: { <<: *template-env, TEMPLATE_CODE: kudo-9 }
+
+  kudo-10:
+    <<: *app
+    image: ${IMAGE_NAMESPACE:-kudostack}/wedding-invitation-kudo-10:${IMAGE_TAG:-latest}
+    environment: { <<: *template-env, TEMPLATE_CODE: kudo-10 }
 
 networks:
   cloudflare_net:

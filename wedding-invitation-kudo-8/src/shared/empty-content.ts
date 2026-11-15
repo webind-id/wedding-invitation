@@ -4,8 +4,8 @@ import { CONTENT_VERSION, type InvitationContent } from "./contract";
 export function emptyContent(text?: Pick<InvitationContent, "defaultGuest" | "invitationIntro" | "verse" | "closing" | "seo">): InvitationContent {
   return {
     version: CONTENT_VERSION,
-    bride: { nickname: "", fullName: "", title: "", childOrder: "", father: "", mother: "", instagram: "", photo: "" },
-    groom: { nickname: "", fullName: "", title: "", childOrder: "", father: "", mother: "", instagram: "", photo: "" },
+    bride: { nickname: "", fullName: "", title: "", childOrder: "", father: "", mother: "", address: "", instagram: "", photo: "" },
+    groom: { nickname: "", fullName: "", title: "", childOrder: "", father: "", mother: "", address: "", instagram: "", photo: "" },
     headlineOrder: "bride-first",
     timeZone: "Asia/Jakarta",
     defaultGuest: text?.defaultGuest ?? "",

@@ -12,7 +12,7 @@ import { Photo } from "../ui/Photo";
 
 /**
  * Adegan pertama setelah amplop terbuka. Tiga lapisan kedalaman:
- * foto arch (belakang, bergerak lambat) → nama (tengah) → bunga (depan, bergerak cepat & berputar).
+ * foto arch (belakang, bergerak lambat) → nama mempelai di bawah foto → bunga (depan, bergerak cepat & berputar).
  */
 export function Hero({ isOpen }: { isOpen: boolean }) {
   const { content, pair } = useInvitation();
@@ -89,20 +89,20 @@ export function Hero({ isOpen }: { isOpen: boolean }) {
             <Photo src={content.coverPhoto} alt={`Foto ${pair[0].nickname} dan ${pair[1].nickname}`} eager parallax={6} className="arch aspect-[3/4] shadow-[0_40px_80px_-40px_rgba(57,49,47,0.55)] ring-1 ring-white/70" />
           </div>
         </div>
-
-        <h1 id="hero-title" data-depth="40" className="relative -mt-10 text-center font-script leading-[0.95] text-ink [text-shadow:0_0_18px_rgba(248,245,239,0.95),0_0_4px_rgba(248,245,239,0.9)] sm:-mt-24">
-          {/* Geser horizontal di elemen dalam — elemen data-intro dianimasikan GSAP (transform-nya ditimpa). */}
-          <span data-intro className="block">
-            <span className="inline-block -translate-x-[12%] text-[clamp(3.6rem,15vw,6.5rem)]">{pair[0].nickname}</span>
-          </span>
-          <span data-intro className="block font-display text-[clamp(1.6rem,5vw,2.4rem)] italic text-champagne-deep">
-            &amp;
-          </span>
-          <span data-intro className="block">
-            <span className="inline-block translate-x-[12%] text-[clamp(3.6rem,15vw,6.5rem)]">{pair[1].nickname}</span>
-          </span>
-        </h1>
       </div>
+
+      <h1 id="hero-title" data-depth="40" className="relative -mt-2 text-center font-script leading-[0.95] text-ink [text-shadow:0_0_16px_rgba(248,245,239,0.95),0_0_4px_rgba(248,245,239,0.9)] sm:-mt-4">
+        {/* Geser horizontal di elemen dalam — elemen data-intro dianimasikan GSAP (transform-nya ditimpa). */}
+        <span data-intro className="block">
+          <span className="inline-block -translate-x-[12%] text-[clamp(3.6rem,15vw,6.5rem)]">{pair[0].nickname}</span>
+        </span>
+        <span data-intro className="block font-display text-[clamp(1.6rem,5vw,2.4rem)] italic text-champagne-deep">
+          &amp;
+        </span>
+        <span data-intro className="block">
+          <span className="inline-block translate-x-[12%] text-[clamp(3.6rem,15vw,6.5rem)]">{pair[1].nickname}</span>
+        </span>
+      </h1>
 
       <div data-depth="20" className="relative mt-8 text-center">
         <p data-intro className="font-display text-xl tracking-[0.38em] text-ink sm:text-2xl">

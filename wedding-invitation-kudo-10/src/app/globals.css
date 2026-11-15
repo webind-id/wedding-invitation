@@ -1,0 +1,207 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply bg-cream;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-cream font-sans text-[15px] leading-relaxed text-earth-ink antialiased;
+    overflow-x: clip;
+    background-color: #FAF6F0;
+  }
+  ::selection {
+    @apply bg-terracotta/20 text-terracotta-900;
+  }
+  :focus-visible {
+    @apply outline outline-2 outline-offset-4 outline-terracotta;
+  }
+}
+
+@layer components {
+  /* ── Background & Tekstur Kertas (Handmade Cotton Paper) ──────────────── */
+  .rustic-paper {
+    background-color: #FAF6F0;
+    background-image:
+      radial-gradient(circle at 15% 15%, rgba(200, 109, 81, 0.035) 0%, transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(107, 122, 92, 0.04) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(229, 221, 208, 0.3) 0%, transparent 60%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.025'/%3E%3C/svg%3E");
+    background-size: 100% 100%, 100% 100%, 100% 100%, 180px 180px;
+  }
+
+  .rustic-paper-warm {
+    background-color: #F4EEE5;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(200, 109, 81, 0.05) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(107, 122, 92, 0.05) 0%, transparent 45%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+    background-size: 100% 100%, 100% 100%, 180px 180px;
+  }
+
+  /* Kartu bergaya kertas buatan tangan dengan tepian lembut */
+  .rustic-card {
+    @apply relative rounded-2xl border border-sand-deep/40 bg-white/85 p-6 md:p-8 shadow-rustic backdrop-blur-sm transition-all duration-300;
+  }
+
+  .rustic-card-hover {
+    @apply hover:-translate-y-1 hover:shadow-rustic-lg hover:border-terracotta/30;
+  }
+
+  /* Bingkai lengkung Bohemian Arch untuk foto dan showcase */
+  .boho-arch-frame {
+    @apply relative rounded-t-[100px] sm:rounded-t-[140px] md:rounded-t-[170px] rounded-b-2xl border-[3px] border-sand-soft bg-white/90 p-2 shadow-rustic;
+  }
+
+  .boho-arch-inner {
+    @apply relative overflow-hidden rounded-t-[94px] sm:rounded-t-[134px] md:rounded-t-[164px] rounded-b-xl;
+  }
+
+  /* Lapisan dalam pintu gerbang kartu lipat 3D Rustic Bohemian */
+  .rustic-gate-liner {
+    background-color: #F4EEE5;
+    background-image:
+      radial-gradient(circle at 50% 50%, rgba(200, 109, 81, 0.12) 0 1.5px, transparent 2px),
+      radial-gradient(circle at 0 0, rgba(107, 122, 92, 0.1) 0 1.5px, transparent 2px);
+    background-size: 16px 16px;
+  }
+
+  /* Tepian Kertas Kasar / Deckle Edge Effect */
+  .deckle-card {
+    @apply relative rounded-xl border border-dashed border-sand-deep/60 bg-cream-50 p-6 shadow-rustic-sm;
+  }
+
+  /* Badge dan Label Bernuansa Bumi */
+  .badge-terracotta {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-terracotta-200 bg-terracotta-50 px-3 py-1 font-sans text-xs font-semibold tracking-wider uppercase text-terracotta-700;
+  }
+
+  .badge-olive {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-olive-200 bg-olive-50 px-3 py-1 font-sans text-xs font-semibold tracking-wider uppercase text-olive-700;
+  }
+
+  .badge-sand {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-sand-deep/60 bg-sand-soft/80 px-3 py-1 font-sans text-xs font-semibold tracking-wider uppercase text-earth-ink;
+  }
+
+  /* ── Tombol Interaktif Tema Rustic ───────────────────────────────────── */
+  .btn-rustic-terracotta {
+    @apply inline-flex items-center justify-center gap-2.5 rounded-full border border-terracotta-600 bg-terracotta px-6 py-3 font-sans text-xs sm:text-sm font-semibold tracking-wider uppercase text-white shadow-rustic transition-all duration-200 hover:bg-terracotta-600 hover:shadow-rustic-lg active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-rustic-olive {
+    @apply inline-flex items-center justify-center gap-2.5 rounded-full border border-olive-600 bg-olive px-6 py-3 font-sans text-xs sm:text-sm font-semibold tracking-wider uppercase text-white shadow-rustic transition-all duration-200 hover:bg-olive-600 hover:shadow-rustic-lg active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-rustic-ghost {
+    @apply inline-flex items-center justify-center gap-2.5 rounded-full border border-sand-deep/60 bg-white/80 px-5 py-2.5 font-sans text-xs sm:text-sm font-semibold tracking-wider uppercase text-earth-ink shadow-rustic-sm transition-all duration-200 hover:border-terracotta/40 hover:bg-sand-soft active:scale-[0.98];
+  }
+
+  /* Input Form Kertas */
+  .rustic-field {
+    @apply w-full rounded-xl border border-sand-deep/60 bg-white/90 px-4 py-3 text-earth-ink placeholder:text-earth-muted/50 shadow-rustic-inner transition focus:border-terracotta focus:bg-white focus:outline-none focus:ring-2 focus:ring-terracotta/20;
+  }
+
+  /* Cap Lilin / Wax Seal 3D Effect */
+  .wax-seal {
+    @apply relative inline-flex items-center justify-center rounded-full bg-gradient-to-br from-terracotta-500 via-terracotta-600 to-terracotta-800 text-cream-50 shadow-seal;
+  }
+}
+
+/* ── Animasi Halus & Suasana Semilir Angin Taman ───────────────────────── */
+@keyframes swaySlow {
+  0%, 100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  50% {
+    transform: rotate(3deg) translateY(-4px);
+  }
+}
+
+@keyframes swayReverse {
+  0%, 100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-3deg) translateY(-3px);
+  }
+}
+
+@keyframes gentlePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.95;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 1;
+  }
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-sway-slow {
+  animation: swaySlow 7s ease-in-out infinite;
+}
+
+.animate-sway-reverse {
+  animation: swayReverse 8s ease-in-out infinite;
+}
+
+.animate-pulse-gentle {
+  animation: gentlePulse 3.5s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spinSlow 14s linear infinite;
+}
+
+/* ── 3D Helpers ───────────────────────────────────────────────────────── */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Muncul perlahan saat cover dimuat */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise-in {
+  animation: rise-in 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise-in {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}

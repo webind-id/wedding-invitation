@@ -1,6 +1,6 @@
 "use client";
 
-import { AtSign } from "lucide-react";
+import { AtSign, MapPin } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { Person } from "@/shared/contract";
 import { useInvitation } from "../InvitationContext";
@@ -26,6 +26,14 @@ function PersonCard({ person, align }: { person: Person; align: "left" | "right"
           <span className="font-semibold text-bark">{person.father}</span>
           <br />& <span className="font-semibold text-bark">{person.mother}</span>
         </p>
+        {person.address && (
+          <p className="mt-2 text-xs leading-relaxed text-bark/70">
+            <span className={cn("inline-flex items-center gap-1", isRight && "flex-row-reverse")}>
+              <MapPin className="h-3.5 w-3.5 shrink-0 text-clay" aria-hidden />
+              <span>{person.address}</span>
+            </span>
+          </p>
+        )}
         {person.instagram && (
           <a
             href={`https://instagram.com/${person.instagram}`}

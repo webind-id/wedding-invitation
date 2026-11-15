@@ -1,6 +1,6 @@
 "use client";
 
-import { AtSign } from "lucide-react";
+import { AtSign, MapPin } from "lucide-react";
 import { useRef } from "react";
 import { useScrollScene } from "@/hooks/useScrollScene";
 import { useTilt } from "@/hooks/useTilt";
@@ -55,6 +55,18 @@ function PersonRow({ person, depth, flip }: { person: Person; depth: number; fli
             <br />
             {person.father} &amp; {person.mother}
           </p>
+          {person.address && (
+            <p
+              data-reveal-item
+              className={cn(
+                "mt-3 inline-flex items-center gap-1 text-xs text-ink/70",
+                flip && "md:flex-row-reverse"
+              )}
+            >
+              <MapPin className="h-3.5 w-3.5 shrink-0 text-plum-deep" aria-hidden />
+              <span>{person.address}</span>
+            </p>
+          )}
           {person.instagram && (
             <p data-reveal-item className="mt-5">
               <a

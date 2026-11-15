@@ -1,6 +1,6 @@
 "use client";
 
-import { AtSign } from "lucide-react";
+import { AtSign, MapPin } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { Person } from "@/shared/contract";
 import { useInvitation } from "../InvitationContext";
@@ -30,6 +30,12 @@ function CastCard({ person, role, offset }: { person: Person; role: string; offs
         {person.childOrder} <span className="text-ivory/85">{person.father}</span> &amp;{" "}
         <span className="text-ivory/85">{person.mother}</span>
       </p>
+      {person.address && (
+        <p className="mt-3 flex items-center gap-1.5 text-xs text-smoke">
+          <MapPin className="h-3.5 w-3.5 shrink-0 text-gold/80" aria-hidden />
+          <span>{person.address}</span>
+        </p>
+      )}
       {person.instagram && (
         <a
           href={`https://instagram.com/${person.instagram}`}

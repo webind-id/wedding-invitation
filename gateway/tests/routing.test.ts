@@ -38,11 +38,11 @@ describe("matchHost", () => {
     }
   });
 
-  it("never routes the admin (undangan.) or template (wedding1–8.) hosts from wrangler.toml as invitations", () => {
+  it("never routes the admin (undangan.) or template (wedding1–10.) hosts from wrangler.toml as invitations", () => {
     const root = /^ROOT_DOMAIN = "(.+)"/m.exec(wranglerToml)?.[1] ?? "";
     const reserved = parseList(/^RESERVED_SUBDOMAINS = "(.*)"/m.exec(wranglerToml)?.[1]);
     expect(root).toBe("kudostack.my.id");
-    for (const sub of ["undangan", ...Array.from({ length: 8 }, (_, i) => `wedding${i + 1}`)]) {
+    for (const sub of ["undangan", ...Array.from({ length: 10 }, (_, i) => `wedding${i + 1}`)]) {
       expect(matchHost(`${sub}.${root}`, root, reserved)).toEqual({ kind: "passthrough" });
     }
     expect(matchHost(`arini-andra.${root}`, root, reserved)).toEqual({ kind: "invitation", slug: "arini-andra" });

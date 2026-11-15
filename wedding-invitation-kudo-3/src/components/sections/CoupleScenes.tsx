@@ -1,6 +1,6 @@
 "use client";
 
-import { AtSign } from "lucide-react";
+import { AtSign, MapPin } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { photoAt } from "@/lib/photos";
 import type { Person } from "@/shared/contract";
@@ -35,6 +35,12 @@ function PersonScene({ person, role, photo, side, isFirst }: { person: Person; r
               <br />
               {person.father} &amp; {person.mother}
             </p>
+            {person.address && (
+              <p className={cn("subtitle mt-3 inline-flex items-center gap-1.5 text-xs text-cream/70", isRight && "flex-row-reverse")}>
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-bronze" aria-hidden />
+                <span>{person.address}</span>
+              </p>
+            )}
             {person.instagram && (
               <a
                 href={`https://instagram.com/${person.instagram}`}

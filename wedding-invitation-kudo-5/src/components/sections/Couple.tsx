@@ -1,5 +1,6 @@
 "use client";
 
+import { MapPin } from "lucide-react";
 import { photoAt } from "@/lib/photos";
 import type { Person } from "@/shared/contract";
 import { useInvitation } from "../InvitationContext";
@@ -20,6 +21,12 @@ function Portrait({ person, role, photo, delay }: { person: Person; role: string
           {person.father} &amp; {person.mother}
         </span>
       </p>
+      {person.address && (
+        <p className="mt-3 flex items-center justify-center gap-1.5 font-serif text-sm italic text-umber">
+          <MapPin className="h-3.5 w-3.5 shrink-0 text-burgundy/70" aria-hidden />
+          <span>{person.address}</span>
+        </p>
+      )}
       {person.instagram && (
         <a
           href={`https://instagram.com/${person.instagram}`}

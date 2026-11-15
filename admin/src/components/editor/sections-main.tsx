@@ -18,6 +18,7 @@ function PersonFields({ who }: { who: "bride" | "groom" }) {
         <TextInput label="Anak ke-" path={p("childOrder")} placeholder={who === "bride" ? "Putri pertama dari" : "Putra kedua dari"} />
         <TextInput label="Nama ayah" path={p("father")} />
         <TextInput label="Nama ibu" path={p("mother")} />
+        <TextInput label="Alamat (opsional)" path={p("address")} placeholder="Bandung, Jawa Barat" />
         <TextInput label="Instagram (opsional)" path={p("instagram")} placeholder="tanpa @" />
       </div>
       <MediaInput label="Foto" path={p("photo")} aspect="aspect-[3/4]" hint="Potret 3:4, maks. 10 MB (otomatis dikompres ke WebP)" />
@@ -27,7 +28,7 @@ function PersonFields({ who }: { who: "bride" | "groom" }) {
 
 export function CoupleSection() {
   return (
-    <EditorSection id="mempelai" title="Mempelai" description="Nama, orang tua, foto, dan urutan nama di judul" errorPaths={["bride", "groom", "headlineOrder"]} defaultOpen>
+    <EditorSection id="mempelai" title="Mempelai" description="Nama, orang tua, alamat, foto, dan urutan nama di judul" errorPaths={["bride", "groom", "headlineOrder"]} defaultOpen>
       <SelectInput
         label="Urutan nama di judul"
         path={["headlineOrder"]}

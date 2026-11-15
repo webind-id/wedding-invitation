@@ -49,6 +49,7 @@ export const personSchema = z.object({
   childOrder: required(60),
   father: required(80),
   mother: required(80),
+  address: text(300).default(""),
   instagram,
   photo: mediaUrl,
 });

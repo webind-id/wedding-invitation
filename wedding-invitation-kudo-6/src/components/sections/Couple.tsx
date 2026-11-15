@@ -1,6 +1,6 @@
 "use client";
 
-import { AtSign } from "lucide-react";
+import { AtSign, MapPin } from "lucide-react";
 import { useRef } from "react";
 import { useScrollScene } from "@/hooks/useScrollScene";
 import { useTilt } from "@/hooks/useTilt";
@@ -34,6 +34,12 @@ function Portrait({ person, depth, align }: { person: Person; depth: number; ali
               <br />
               {person.father} &amp; {person.mother}
             </p>
+            {person.address && (
+              <p className="mt-2.5 inline-flex items-center gap-1 text-xs text-ink/65">
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-mauve" aria-hidden />
+                <span>{person.address}</span>
+              </p>
+            )}
             {person.instagram && (
               <a
                 href={`https://instagram.com/${person.instagram}`}

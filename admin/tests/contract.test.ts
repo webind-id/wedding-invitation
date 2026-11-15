@@ -28,6 +28,13 @@ describe("invitationContentSchema", () => {
     expect(errorsOf(result)).toMatchObject({ "bride.nickname": "Wajib diisi" });
   });
 
+  it("handles optional person address and enforces max length", () => {
+    expect(withPatch((c) => ({ ...c, bride: { ...c.bride, address: "" } })).success).toBe(true);
+    expect(withPatch((c) => ({ ...c, groom: { ...c.groom, address: "Jl. Merdeka No. 12" } })).success).toBe(true);
+    const tooLong = withPatch((c) => ({ ...c, bride: { ...c.bride, address: "a".repeat(301) } }));
+    expect(errorsOf(tooLong)).toHaveProperty("bride.address");
+  });
+
   it("requires at least one event and end after start", () => {
     expect(errorsOf(withPatch((c) => ({ ...c, events: [] })))).toHaveProperty("events");
     const backwards = withPatch((c) => ({
