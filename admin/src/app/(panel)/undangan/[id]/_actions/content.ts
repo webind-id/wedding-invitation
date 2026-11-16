@@ -17,7 +17,7 @@ export interface SaveContentResult {
 
 export async function saveContentAction(id: string, content: unknown): Promise<ActionResult<SaveContentResult>> {
   await requireAdmin();
-  return attempt(async () => {
+  return attempt<SaveContentResult>(async () => {
     if (!isUuid(id)) return failure("ID tidak valid.");
     if (typeof content !== "object" || content === null) {
       return failure("Data konten tidak valid.");

@@ -16,7 +16,6 @@ export function Gallery() {
   useScrollScene(ref);
 
   const moments = content.moments || [];
-  if (moments.length === 0) return null;
 
   const close = useCallback(() => setOpenIndex(null), []);
   const prev = useCallback(
@@ -38,6 +37,8 @@ export function Gallery() {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [openIndex, close, prev, next]);
+
+  if (moments.length === 0) return null;
 
   return (
     <section

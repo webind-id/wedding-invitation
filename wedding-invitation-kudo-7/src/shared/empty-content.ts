@@ -1,7 +1,7 @@
 import { CONTENT_VERSION, type InvitationContent } from "./contract";
 
 /** Konten kosong untuk form baru; teks admin boleh dipertahankan secara eksplisit. */
-export function emptyContent(text?: Pick<InvitationContent, "defaultGuest" | "invitationIntro" | "verse" | "closing" | "seo">): InvitationContent {
+export function emptyContent(text?: Pick<InvitationContent, "defaultGuest" | "coverGreeting" | "invitationIntro" | "verse" | "closing" | "seo">): InvitationContent {
   return {
     version: CONTENT_VERSION,
     bride: { nickname: "", fullName: "", title: "", childOrder: "", father: "", mother: "", address: "", instagram: "", photo: "" },
@@ -9,6 +9,7 @@ export function emptyContent(text?: Pick<InvitationContent, "defaultGuest" | "in
     headlineOrder: "bride-first",
     timeZone: "Asia/Jakarta",
     defaultGuest: text?.defaultGuest ?? "",
+    coverGreeting: text?.coverGreeting ?? "Kepada Yth.",
     coverPhoto: "",
     posterPhoto: "",
     music: "",
