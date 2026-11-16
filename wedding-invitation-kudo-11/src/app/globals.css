@@ -1,0 +1,232 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply bg-night;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-night font-sans text-[15px] leading-relaxed text-moon antialiased;
+    overflow-x: clip;
+    background-color: #0B1026;
+  }
+  ::selection {
+    @apply bg-ember/30 text-moon;
+  }
+  :focus-visible {
+    @apply outline outline-2 outline-offset-4 outline-ember;
+  }
+}
+
+@layer components {
+  /* ── Langit Malam ─────────────────────────────────────────────────────── */
+  .night-sky {
+    background-color: #0B1026;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(58, 71, 133, 0.55) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 50% 100%, rgba(219, 135, 16, 0.14) 0%, transparent 70%),
+      linear-gradient(to bottom, #0B1026 0%, #121A3A 55%, #0B1026 100%);
+  }
+
+  .night-sky-deep {
+    background-color: #05081A;
+    background-image:
+      radial-gradient(ellipse 70% 45% at 20% 10%, rgba(39, 51, 106, 0.6) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 45% at 85% 90%, rgba(217, 72, 43, 0.12) 0%, transparent 70%),
+      linear-gradient(to bottom, #05081A 0%, #0B1026 50%, #05081A 100%);
+  }
+
+  /* Bintang berulang dalam tiga ukuran pola (tanpa gambar). */
+  .starfield {
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, rgba(253, 243, 220, 0.9) 50%, transparent 51%),
+      radial-gradient(1px 1px at 68% 42%, rgba(253, 243, 220, 0.7) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 35% 75%, rgba(244, 221, 170, 0.8) 50%, transparent 51%),
+      radial-gradient(1px 1px at 88% 12%, rgba(253, 243, 220, 0.6) 50%, transparent 51%),
+      radial-gradient(1px 1px at 52% 88%, rgba(201, 195, 217, 0.7) 50%, transparent 51%),
+      radial-gradient(2px 2px at 78% 70%, rgba(253, 243, 220, 0.5) 50%, transparent 51%);
+    background-size: 180px 180px, 240px 240px, 310px 310px, 270px 270px, 210px 210px, 420px 420px;
+  }
+
+  /* Bulan purnama lembut */
+  .moon-disc {
+    @apply rounded-full;
+    background: radial-gradient(circle at 38% 35%, #FFFBEF 0%, #F4DDAA 45%, #C9A867 100%);
+    box-shadow: 0 0 60px 10px rgba(244, 221, 170, 0.25), 0 0 140px 40px rgba(244, 221, 170, 0.1);
+  }
+
+  /* ── Kartu & Bingkai ─────────────────────────────────────────────────── */
+  .glass-night {
+    @apply relative rounded-2xl border border-gold/20 bg-night-800/70 p-6 shadow-night backdrop-blur-md md:p-8;
+  }
+
+  .glass-night-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:border-ember/40 hover:shadow-glow;
+  }
+
+  /* Bingkai foto berbentuk lampion (atas membulat, bawah meruncing lembut) */
+  .lantern-frame {
+    @apply relative rounded-t-[999px] rounded-b-[36px] border border-gold/40 bg-night-900/80 p-2 shadow-glow;
+  }
+
+  .lantern-frame-inner {
+    @apply relative overflow-hidden rounded-t-[999px] rounded-b-[30px];
+  }
+
+  /* ── Label ─────────────────────────────────────────────────────────────── */
+  .badge-gold {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 font-sans text-[0.7rem] font-medium uppercase tracking-[0.2em] text-gold-light;
+  }
+
+  .badge-ember {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-ember/40 bg-ember/15 px-3 py-1 font-sans text-[0.7rem] font-medium uppercase tracking-[0.2em] text-ember-200;
+  }
+
+  /* ── Tombol ─────────────────────────────────────────────────────────────── */
+  .btn-ember {
+    @apply inline-flex items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-ember-300 via-ember-500 to-vermilion-400 px-6 py-3 font-sans text-xs font-semibold uppercase tracking-[0.18em] text-night-950 shadow-glow transition-all duration-200 hover:shadow-glow-lg hover:brightness-110 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 sm:text-sm;
+  }
+
+  .btn-night {
+    @apply inline-flex items-center justify-center gap-2.5 rounded-full border border-gold/40 bg-night-800/70 px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-[0.18em] text-moon transition-all duration-200 hover:border-ember/60 hover:bg-night-700 hover:shadow-glow-sm active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 sm:text-sm;
+  }
+
+  /* Input formulir */
+  .night-field {
+    @apply w-full rounded-xl border border-gold/25 bg-night-900/80 px-4 py-3 text-moon placeholder:text-moon-subtle/70 transition focus:border-ember focus:outline-none focus:ring-2 focus:ring-ember/25;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 18px rgba(245, 165, 36, 0.45), 0 0 2px rgba(255, 241, 201, 0.4);
+  }
+}
+
+/* ── Lampion 3D ─────────────────────────────────────────────────────────── */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+@keyframes lantern-spin {
+  from {
+    transform: rotateX(var(--lantern-tilt, -8deg)) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(var(--lantern-tilt, -8deg)) rotateY(360deg);
+  }
+}
+
+@keyframes flame-flicker {
+  0%, 100% { opacity: 0.95; transform: translateX(-50%) scale(1, 1); }
+  25% { opacity: 0.8; transform: translateX(-50%) scale(0.92, 1.08); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.06, 0.95); }
+  75% { opacity: 0.85; transform: translateX(-50%) scale(0.96, 1.04); }
+}
+
+@keyframes halo-breathe {
+  0%, 100% { opacity: 0.75; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+}
+
+/* Lampion terbang dari bawah wadah ke atas */
+@keyframes lantern-rise {
+  from { transform: translate3d(0, 0, 0); opacity: 0; }
+  8% { opacity: var(--lantern-opacity, 1); }
+  85% { opacity: var(--lantern-opacity, 1); }
+  to { transform: translate3d(0, calc(-1 * var(--rise, 135vh)), 0); opacity: 0; }
+}
+
+/* Lampion mengapung di tempat */
+@keyframes lantern-bob {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -16px, 0); }
+}
+
+@keyframes lantern-sway {
+  0%, 100% { transform: translateX(calc(-1 * var(--sway, 10px))) rotate(-2deg); }
+  50% { transform: translateX(var(--sway, 10px)) rotate(2deg); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+/* Lampion harapan yang dilepas tamu di bagian penutup */
+@keyframes wish-fly {
+  0% { transform: translate3d(0, 0, 0) scale(0.6); opacity: 0; }
+  10% { opacity: 1; transform: translate3d(0, -40px, 0) scale(1); }
+  100% { transform: translate3d(var(--wish-x, 0px), -110vh, 0) scale(0.45); opacity: 0; }
+}
+
+.animate-lantern-spin {
+  animation: lantern-spin var(--spin, 14s) linear infinite;
+}
+.animate-flame {
+  animation: flame-flicker 1.6s ease-in-out infinite;
+}
+.animate-halo {
+  animation: halo-breathe 4s ease-in-out infinite;
+}
+.animate-lantern-rise {
+  animation: lantern-rise var(--duration, 30s) linear var(--delay, 0s) infinite;
+}
+.animate-lantern-bob {
+  animation: lantern-bob var(--duration, 8s) ease-in-out var(--delay, 0s) infinite;
+}
+.animate-lantern-sway {
+  animation: lantern-sway calc(var(--duration, 30s) / 4) ease-in-out var(--delay, 0s) infinite;
+}
+.animate-twinkle {
+  animation: twinkle 5s ease-in-out infinite;
+}
+.animate-wish {
+  animation: wish-fly 9s cubic-bezier(0.33, 0, 0.4, 1) forwards;
+}
+
+/* Muncul perlahan saat sampul dimuat */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.rise-in {
+  animation: rise-in 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(231, 194, 122, 0.35) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise-in,
+  .animate-lantern-spin,
+  .animate-flame,
+  .animate-halo,
+  .animate-lantern-rise,
+  .animate-lantern-bob,
+  .animate-lantern-sway,
+  .animate-twinkle {
+    animation: none;
+  }
+  .animate-wish {
+    animation-duration: 0.01s;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
