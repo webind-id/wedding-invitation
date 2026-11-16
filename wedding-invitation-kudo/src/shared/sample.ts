@@ -34,6 +34,7 @@ export const sampleContent: InvitationContent = {
   headlineOrder: "bride-first",
   timeZone: "Asia/Jakarta",
   defaultGuest: "Bapak/Ibu/Saudara/i",
+  coverGreeting: "Kepada Yth.",
   coverPhoto: "/images/cover.webp",
   posterPhoto: "/images/poster.webp",
   music: "",

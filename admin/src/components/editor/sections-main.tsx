@@ -174,9 +174,10 @@ export function StorySection() {
 
 export function TextsSection() {
   return (
-    <EditorSection id="teks" title="Teks undangan" description="Sapaan, ayat, penutup, dan judul halaman" errorPaths={["defaultGuest", "invitationIntro", "verse", "closing", "seo"]}>
+    <EditorSection id="teks" title="Teks undangan" description="Sapaan, ayat, penutup, dan judul halaman" errorPaths={["defaultGuest", "coverGreeting", "invitationIntro", "verse", "closing", "seo"]}>
       <div className="grid gap-4 sm:grid-cols-2">
         <TextInput label="Sapaan bila tanpa nama tamu" path={["defaultGuest"]} hint="Dipakai bila tautan tanpa ?to=" />
+        <TextInput label="Sapaan pembuka di cover" path={["coverGreeting"]} placeholder="Kepada Yth." hint="Misal: Invitation to, Dear, dsb." />
         <TextInput label="Tanda tangan penutup" path={["closing", "signature"]} placeholder="Kami yang berbahagia" />
       </div>
       <TextArea label="Kalimat pengantar" path={["invitationIntro"]} />

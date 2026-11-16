@@ -96,7 +96,7 @@ export function TrailCover({ guestName, onOpen }: TrailCoverProps) {
 
         <div className="mt-auto text-center">
           <p data-cover-text className="label text-seluloid/55">
-            Kepada Yth.
+            {content.coverGreeting || "Kepada Yth."}
           </p>
           <p data-cover-text className="mx-auto mt-2 max-w-md font-display text-[clamp(1.7rem,6vw,2.4rem)] italic leading-tight [text-wrap:balance]">
             {guestName}

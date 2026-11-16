@@ -100,6 +100,7 @@ export const invitationContentSchema = z.object({
   headlineOrder: z.enum(["bride-first", "groom-first"]),
   timeZone: z.enum(Object.keys(TIME_ZONES) as [TimeZone, ...TimeZone[]]),
   defaultGuest: required(60),
+  coverGreeting: text(60).default("Kepada Yth."),
   coverPhoto: mediaUrl,
   posterPhoto: mediaUrl,
   music: mediaUrl,

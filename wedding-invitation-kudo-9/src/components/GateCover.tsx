@@ -164,7 +164,7 @@ export function GateCover({ guestName, onOpen }: GateCoverProps) {
 
       <div data-chrome className="relative mt-10">
         <div className="rise-in flex flex-col items-center text-center" style={{ animationDelay: "900ms" }}>
-          <p className="text-[0.6rem] uppercase tracking-[0.3em] text-ink/55">Kepada Yth.</p>
+          <p className="text-[0.6rem] uppercase tracking-[0.3em] text-ink/55">{content.coverGreeting || "Kepada Yth."}</p>
           <p className="mt-1 max-w-[80vw] truncate font-display text-[clamp(1.2rem,4.5vw,1.5rem)] italic text-ink">{guestName}</p>
           <button ref={buttonRef} type="button" onClick={open} disabled={isOpening} className="btn-plum mt-6">
             Buka Undangan

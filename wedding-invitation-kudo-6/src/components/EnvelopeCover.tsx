@@ -119,7 +119,7 @@ export function EnvelopeCover({ guestName, onOpen }: EnvelopeCoverProps) {
               <path d="M0 200 L150 112 L300 200" fill="none" stroke="rgba(57,49,47,0.08)" strokeWidth="0.8" />
             </svg>
             <div data-shell className="absolute inset-x-0 bottom-[5%] text-center sm:bottom-[8%]" style={{ transform: "translateZ(2.5px)" }}>
-              <p className="text-[0.56rem] uppercase tracking-[0.28em] text-ink/50 sm:text-[0.62rem]">Kepada Yth.</p>
+              <p className="text-[0.56rem] uppercase tracking-[0.28em] text-ink/50 sm:text-[0.62rem]">{content.coverGreeting || "Kepada Yth."}</p>
               <p className="mx-auto mt-1 max-w-[80%] truncate font-display text-[clamp(1.05rem,4vw,1.35rem)] italic text-ink">{guestName}</p>
             </div>
 

@@ -11,7 +11,8 @@ import { csvToGuests } from "@/lib/csv";
 /** Teks undangan versi klien — tanpa isian teknis (sapaan ?untuk=, judul tab/SEO). */
 export function ClientTextsSection() {
   return (
-    <EditorSection id="teks" title="Teks undangan" description="Kalimat pengantar, ayat, dan penutup (boleh dikosongkan)" errorPaths={["invitationIntro", "verse", "closing"]}>
+    <EditorSection id="teks" title="Teks undangan" description="Sapaan pembuka, kalimat pengantar, ayat, dan penutup (boleh dikosongkan)" errorPaths={["coverGreeting", "invitationIntro", "verse", "closing"]}>
+      <TextInput label="Sapaan pembuka di sampul / cover" path={["coverGreeting"]} placeholder="Kepada Yth." hint="Misal: Kepada Yth., Invitation to, Dear, dsb." />
       <TextArea label="Kalimat pengantar" path={["invitationIntro"]} />
       <TextArea label="Ayat (Arab) — kosongkan bila tidak ingin menampilkan ayat" path={["verse", "arabic"]} dir="rtl" />
       <div className="grid gap-4 sm:grid-cols-[1fr_14rem]">

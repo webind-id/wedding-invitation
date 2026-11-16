@@ -52,7 +52,7 @@ export function TitleSequence({ guestName, onStart }: TitleSequenceProps) {
 
       <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
         <motion.p variants={line(0)} className="kicker">
-          Kepada Yth.
+          {content.coverGreeting || "Kepada Yth."}
         </motion.p>
         <motion.p variants={line(0)} className="mt-3 max-w-md font-serif text-2xl italic text-cream/90">
           {guestName}

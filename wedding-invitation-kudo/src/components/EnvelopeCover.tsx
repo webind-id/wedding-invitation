@@ -64,7 +64,7 @@ export function EnvelopeCover({ guestName, onOpen }: EnvelopeCoverProps) {
         </motion.p>
 
         <motion.div variants={item} className="mt-7 rounded-2xl border border-dashed border-forest/25 px-4 py-3">
-          <p className="text-[0.7rem] text-bark/60">Kepada Yth.</p>
+          <p className="text-[0.7rem] text-bark/60">{content.coverGreeting || "Kepada Yth."}</p>
           <p className="mt-1 break-words font-display text-lg text-forest">{guestName}</p>
         </motion.div>
 

@@ -21,7 +21,8 @@ export function ogText(content: InvitationContent, guestName: string | null): { 
   const title = content.seo.title || `Undangan Pernikahan ${couple}`;
   const when = first ? `${formatLongDate(first.start, content.timeZone)} · ${first.venue}` : "";
   const body = content.seo.description || (guestName ? `Dengan hormat kami mengundang Anda ke pernikahan kami. ${when}` : `Dengan hormat kami mengundang Anda ke pernikahan ${couple}. ${when}`).trim();
-  const description = guestName ? `Kepada Yth. ${guestName} — ${body}` : body;
+  const greeting = content.coverGreeting || "Kepada Yth.";
+  const description = guestName ? `${greeting} ${guestName} — ${body}` : body;
   return { title, description: clip(description, DESCRIPTION_MAX) };
 }
 

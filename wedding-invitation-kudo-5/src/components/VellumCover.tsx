@@ -71,7 +71,7 @@ export function VellumCover({ guestName, onOpen }: VellumCoverProps) {
         >
           {/* Label alamat di atas vellum: lebih pekat agar teks kartu di baliknya tidak bertumpuk. */}
           <div className="w-full max-w-xs bg-[#FBF7EF]/90 px-5 py-6 shadow-[0_6px_18px_-10px_rgba(43,33,27,0.4)] ring-1 ring-burgundy/25">
-            <p className="smallcaps text-burgundy">Kepada Yth.</p>
+            <p className="smallcaps text-burgundy">{content.coverGreeting || "Kepada Yth."}</p>
             <p className="mt-2 font-fell text-2xl italic leading-snug text-wine">{guestName}</p>
             <button type="button" onClick={handleOpen} disabled={isLifting} className="btn-burgundy mt-5">
               Buka undangan

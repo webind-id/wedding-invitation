@@ -180,7 +180,7 @@ export function JogloCover({ guestName, onOpen }: JogloCoverProps) {
 
       <div data-chrome className="relative mt-7 text-center sm:mt-10">
         <div className="rise-in flex flex-col items-center" style={{ animationDelay: "900ms" }}>
-          <p className="font-display text-[0.6rem] uppercase tracking-[0.3em] text-gading/55">Kepada Yth.</p>
+          <p className="font-display text-[0.6rem] uppercase tracking-[0.3em] text-gading/55">{content.coverGreeting || "Kepada Yth."}</p>
           <p className="mt-1 max-w-[80vw] truncate font-serif text-[clamp(1.2rem,5vw,1.55rem)] italic text-gading">{guestName}</p>
           <button ref={buttonRef} type="button" onClick={open} disabled={isOpening} className="btn-prada mt-5">
             Buka Undangan

@@ -297,7 +297,7 @@ export function RusticCover({ guestName, onOpen }: RusticCoverProps) {
       <div data-chrome className="rise-in relative mt-6 w-full max-w-xs flex flex-col items-center text-center">
         <div className="w-full rounded-xl border border-sand-deep/50 bg-white/90 px-4 py-2.5 shadow-rustic-sm backdrop-blur-sm">
           <p className="font-sans text-[0.68rem] text-earth-muted uppercase tracking-wider mb-0.5">
-            Kepada Yth. Bapak/Ibu/Saudara/i:
+            {content.coverGreeting || "Kepada Yth."}
           </p>
           <p className="font-serif text-base sm:text-lg font-bold text-terracotta-700 truncate">
             {guestName}
