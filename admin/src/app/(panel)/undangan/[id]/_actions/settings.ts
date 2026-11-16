@@ -12,7 +12,7 @@ import { deleteInvitation, getInvitation, insertInvitation, updateInvitation } f
 import { getTemplate } from "@/lib/repo/templates";
 import { slugify } from "@/lib/slug";
 import { db, MEDIA_BUCKET } from "@/lib/supabase";
-import { fieldErrors } from "@/shared/contract";
+import { fieldErrors, invitationContentSchema } from "@/shared/contract";
 
 function revalidateInvitation(id: string) {
   revalidatePath("/undangan");
@@ -40,6 +40,15 @@ export async function setStatusAction(id: string, publish: boolean): Promise<Act
   await requireAdmin();
   return attempt(async () => {
     if (!isUuid(id)) return failure("ID tidak valid.");
+    if (publish) {
+      const inv = await getInvitation(id);
+      if (!inv) return failure("Undangan tidak ditemukan.");
+      const parsed = invitationContentSchema.safeParse(inv.content);
+      if (!parsed.success) {
+        const count = parsed.error.issues.length;
+        return failure(`Undangan belum bisa diterbitkan karena masih ada ${count} isian yang belum lengkap. Silakan lengkapi konten terlebih dahulu.`);
+      }
+    }
     const result = await updateInvitation(id, {
       status: publish ? "published" : "draft",
       published_at: publish ? new Date().toISOString() : null,

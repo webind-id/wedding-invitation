@@ -22,7 +22,11 @@ const JUMP_LINKS = [
   ["hadiah", "Hadiah"],
 ] as const;
 
-type SaveState = { kind: "idle" } | { kind: "saved" } | { kind: "error"; message: string };
+type SaveState =
+  | { kind: "idle" }
+  | { kind: "saved" }
+  | { kind: "saved_draft"; count: number }
+  | { kind: "error"; message: string };
 
 export function ContentEditor({ invitationId, initial }: { invitationId: string; initial: InvitationContent }) {
   const [content, setContent] = useState(initial);
@@ -48,9 +52,14 @@ export function ContentEditor({ invitationId, initial }: { invitationId: string;
     startSaving(async () => {
       const result = await saveContentAction(invitationId, content);
       if (result.ok) {
-        setErrors({});
         setIsDirty(false);
-        setSaveState({ kind: "saved" });
+        if (result.data.isComplete) {
+          setErrors({});
+          setSaveState({ kind: "saved" });
+        } else {
+          setErrors(result.data.fieldErrors ?? {});
+          setSaveState({ kind: "saved_draft", count: result.data.incompleteCount });
+        }
         return;
       }
       setErrors(result.fieldErrors ?? {});
@@ -105,18 +114,34 @@ export function ContentEditor({ invitationId, initial }: { invitationId: string;
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-card/95 backdrop-blur lg:left-60">
         <div className="flex items-center gap-3 px-4 py-3 sm:px-8">
-          <p role="status" className={cn("min-w-0 flex-1 truncate text-sm", saveState.kind === "error" ? "text-danger" : "text-muted")}>
+          <p
+            role="status"
+            className={cn(
+              "min-w-0 flex-1 truncate text-sm",
+              saveState.kind === "error"
+                ? "text-danger"
+                : saveState.kind === "saved_draft"
+                  ? "text-amber-600 dark:text-amber-400 font-medium"
+                  : "text-muted",
+            )}
+          >
             {saveState.kind === "error"
               ? `${saveState.message}${errorCount ? ` (${errorCount} isian)` : ""}`
-              : saveState.kind === "saved"
-                ? "Tersimpan."
-                : isDirty
-                  ? "Ada perubahan yang belum disimpan."
-                  : "Semua perubahan tersimpan."}
+              : saveState.kind === "saved_draft"
+                ? `Tersimpan sebagai draft (${saveState.count} isian belum lengkap)`
+                : saveState.kind === "saved"
+                  ? "Semua perubahan tersimpan."
+                  : isDirty
+                    ? "Ada perubahan yang belum disimpan."
+                    : "Semua perubahan tersimpan."}
           </p>
           <kbd className="hidden rounded border border-line px-1.5 text-[0.65rem] text-muted sm:block">Ctrl S</kbd>
           <button type="button" onClick={save} disabled={isSaving || !isDirty} className="btn-primary">
-            {saveState.kind === "saved" && !isDirty ? <Check className="h-4 w-4" aria-hidden /> : <Save className="h-4 w-4" aria-hidden />}
+            {(saveState.kind === "saved" || saveState.kind === "saved_draft") && !isDirty ? (
+              <Check className="h-4 w-4" aria-hidden />
+            ) : (
+              <Save className="h-4 w-4" aria-hidden />
+            )}
             {isSaving ? "Menyimpan…" : "Simpan konten"}
           </button>
         </div>

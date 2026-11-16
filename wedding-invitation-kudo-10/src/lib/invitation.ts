@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { invitationContentSchema, type InvitationContent } from "@/shared/contract";
+import { sampleContent } from "@/shared/sample";
 import { previewSecret, verifyPreviewToken } from "@/shared/preview-token";
 import { db } from "./supabase-server";
 
@@ -43,12 +44,23 @@ export const loadInvitation = cache(async (slug: string, preview?: string): Prom
   const isPreview = data.status !== "published";
   if (isPreview && !verifyPreviewToken(slug, preview, previewSecret())) return null;
 
+  let content: InvitationContent | null = null;
   const parsed = invitationContentSchema.safeParse(data.content);
-  if (!parsed.success) {
-    console.error(`[undangan] konten "${slug}" tidak sesuai kontrak`, parsed.error.issues.slice(0, 5));
+  if (parsed.success) {
+    content = parsed.data;
+  } else if (isPreview && data.content && typeof data.content === "object") {
+    const merged = { ...sampleContent, ...(data.content as object) };
+    const draftParsed = invitationContentSchema.safeParse(merged);
+    if (draftParsed.success) {
+      content = draftParsed.data;
+    }
+  }
+
+  if (!content) {
+    console.error(`[undangan] konten "${slug}" tidak sesuai kontrak`, parsed.error?.issues.slice(0, 5));
     return null;
   }
-  return { id: data.id as string, slug, content: parsed.data, isPreview };
+  return { id: data.id as string, slug, content, isPreview };
 });
 
 /** id undangan terbit untuk menerima RSVP (draft tidak menerima ucapan). */

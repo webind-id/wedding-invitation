@@ -83,6 +83,11 @@ describe("invitationContentSchema", () => {
     const result = withPatch((c) => ({ ...c, events: [{ ...c.events[0], start: "12/06/2027" }] }));
     expect(errorsOf(result)).toHaveProperty("events.0.start");
   });
+
+  it("accepts custom cover greeting or defaults to Kepada Yth.", () => {
+    expect(withPatch((c) => ({ ...c, coverGreeting: "Invitation to" })).success).toBe(true);
+    expect(withPatch((c) => ({ ...c, coverGreeting: "" })).success).toBe(true);
+  });
 });
 
 describe("helpers", () => {

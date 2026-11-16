@@ -7,19 +7,45 @@ import { isUuid } from "@/lib/invitee";
 import type { MediaKind } from "@/lib/media";
 import { invitationExists, updateInvitation } from "@/lib/repo/invitations";
 import { uploadMedia } from "@/lib/upload";
-import { fieldErrors, invitationContentSchema } from "@/shared/contract";
+import { fieldErrors, invitationContentSchema, type InvitationContent } from "@/shared/contract";
 
-export async function saveContentAction(id: string, content: unknown): Promise<ActionResult> {
+export interface SaveContentResult {
+  isComplete: boolean;
+  incompleteCount: number;
+  fieldErrors?: Record<string, string>;
+}
+
+export async function saveContentAction(id: string, content: unknown): Promise<ActionResult<SaveContentResult>> {
   await requireAdmin();
   return attempt(async () => {
     if (!isUuid(id)) return failure("ID tidak valid.");
-    const parsed = invitationContentSchema.safeParse(content);
-    if (!parsed.success) return failure("Ada isian yang belum benar.", fieldErrors(parsed.error));
+    if (typeof content !== "object" || content === null) {
+      return failure("Data konten tidak valid.");
+    }
 
-    const result = await updateInvitation(id, { content: parsed.data });
+    const parsed = invitationContentSchema.safeParse(content);
+    if (parsed.success) {
+      const result = await updateInvitation(id, { content: parsed.data });
+      if (result === "missing") return failure("Undangan tidak ditemukan.");
+      revalidatePath(`/undangan/${id}`);
+      revalidatePath("/undangan");
+      return success({ isComplete: true, incompleteCount: 0 });
+    }
+
+    // Bila belum lengkap, tetap simpan sebagai draft agar pengguna bisa berpindah dan mengisi undangan lain
+    const errors = fieldErrors(parsed.error);
+    const result = await updateInvitation(id, {
+      content: content as InvitationContent,
+      status: "draft",
+    });
     if (result === "missing") return failure("Undangan tidak ditemukan.");
     revalidatePath(`/undangan/${id}`);
-    return success(undefined);
+    revalidatePath("/undangan");
+    return success({
+      isComplete: false,
+      incompleteCount: Object.keys(errors).length,
+      fieldErrors: errors,
+    });
   });
 }
 
