@@ -5,7 +5,7 @@ import { useRef } from "react";
 import { useScrollScene } from "@/hooks/useScrollScene";
 import { useTilt } from "@/hooks/useTilt";
 import type { LanternVariant } from "@/lib/lanterns";
-import type { Person } from "@/shared/contract";
+import { type Person, withHonorific } from "@/shared/contract";
 import { useInvitation } from "../InvitationContext";
 import { Lantern3D } from "../lantern/Lantern3D";
 import { LanternSky } from "../lantern/LanternSky";
@@ -43,7 +43,7 @@ function PortraitCard({ person, role, variant }: { person: Person; role: string;
             {person.childOrder && <p className="font-medium text-moon">{person.childOrder}</p>}
             {(person.father || person.mother) && (
               <p className="mt-1">
-                Bapak {person.father} &amp; Ibu {person.mother}
+                {withHonorific(person.father, "Bapak")} &amp; {withHonorific(person.mother, "Ibu")}
               </p>
             )}
           </div>

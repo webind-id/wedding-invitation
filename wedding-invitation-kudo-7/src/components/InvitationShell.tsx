@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useScrollRefresh } from "@/hooks/useScrollRefresh";
-import type { InvitationContent } from "@/shared/contract";
+import { GAMELAN_MUSIC, musicSource, type InvitationContent } from "@/shared/contract";
 import { InvitationProvider } from "./InvitationContext";
 import { JogloCover } from "./JogloCover";
 import { MusicButton } from "./MusicButton";
@@ -59,8 +59,8 @@ export function InvitationShell({ content, slug, guestName, isPreview }: Invitat
 
       {!isOpen && <JogloCover guestName={guestName} onOpen={handleOpen} />}
 
-      {content.music && <audio ref={audioRef} src={content.music} loop preload="none" />}
-      {isOpen && content.music && <MusicButton audioRef={audioRef} />}
+      {musicSource(content, GAMELAN_MUSIC) && <audio ref={audioRef} src={musicSource(content, GAMELAN_MUSIC)} loop preload="none" />}
+      {isOpen && musicSource(content, GAMELAN_MUSIC) && <MusicButton audioRef={audioRef} />}
 
       <main ref={mainRef} inert={!isOpen} className="overflow-x-clip">
         <Hero isOpen={isOpen} />

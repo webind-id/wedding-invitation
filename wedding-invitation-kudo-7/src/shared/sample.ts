@@ -38,6 +38,7 @@ export const sampleContent: InvitationContent = {
   coverPhoto: "/images/cover.webp",
   posterPhoto: "/images/poster.webp",
   music: "",
+  musicOff: false,
   verse: {
     arabic:
       "وَمِنْ اٰيٰتِهٖٓ اَنْ خَلَقَ لَكُمْ مِّنْ اَنْفُسِكُمْ اَزْوَاجًا لِّتَسْكُنُوْٓا اِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَّوَدَّةً وَّرَحْمَةً",
@@ -87,6 +88,12 @@ export const sampleContent: InvitationContent = {
       title: "Lamaran sederhana",
       text: "Di hadapan kedua keluarga, kami berjanji untuk melangkah ke jenjang yang lebih serius.",
     },
+  ],
+  ceremonies: [
+    { name: "Siraman", description: "Calon pengantin dimandikan air kembang setaman oleh orang tua dan sesepuh, sebagai lambang penyucian diri lahir dan batin." },
+    { name: "Midodareni", description: "Malam sebelum akad, calon pengantin wanita tinggal di kamar dan dipercaya didatangi bidadari agar tampak ayu esok harinya. Keluarga pria datang bersilaturahmi." },
+    { name: "Panggih", description: "Pertemuan kedua mempelai: balangan gantal, wiji dadi (menginjak telur), sindur binayang, kacar-kucur, hingga dulangan." },
+    { name: "Sungkeman", description: "Kedua mempelai bersimpuh memohon doa restu dan maaf kepada kedua orang tua sebagai tanda bakti." },
   ],
   galleryTitle: "Potongan-potongan kecil kita",
   moments: [
