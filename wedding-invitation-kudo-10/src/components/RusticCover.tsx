@@ -192,7 +192,8 @@ export function RusticCover({ guestName, onOpen }: RusticCoverProps) {
       {/* ── Panggung Kartu 3D (Gatefold Arch Card Stage) ─────────────────── */}
       <div className="rise-in relative [perspective:1600px]">
         <div ref={stageRef} className="preserve-3d">
-          <div className="preserve-3d relative aspect-[4/5] w-[min(80vw,340px)] sm:w-[350px]">
+          {/* Lebar ikut tinggi layar (rasio 4:5; 14rem = isi sampul lainnya) agar sampul muat di laptop pendek tanpa terpotong. */}
+          <div className="preserve-3d relative aspect-[4/5] w-[min(80vw,340px,calc((100svh-14rem)*0.8))] sm:w-[min(350px,calc((100svh-14rem)*0.8))]">
             {/* 1. KARTU DALAM (Inner Card): Muncul saat kedua pintu 3D terbuka */}
             <div
               ref={innerRef}

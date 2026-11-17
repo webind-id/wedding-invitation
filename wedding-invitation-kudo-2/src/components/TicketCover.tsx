@@ -44,13 +44,12 @@ export function TicketCover({ guestName, onOpen }: TicketCoverProps) {
       initial="hidden"
       animate="shown"
       exit="exit"
-      className="film-grain fixed inset-0 z-50 flex overflow-y-auto bg-void px-4 py-10"
+      className="film-grain fixed inset-0 z-50 flex overflow-y-auto bg-void px-4 py-10 [@media(max-height:700px)]:py-4"
     >
-      {/* Sorot proyektor dari atas */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-[-20%] h-[90vh] w-[120vw] origin-top -translate-x-1/2 animate-beam-sweep bg-[conic-gradient(from_160deg_at_50%_0%,transparent_0deg,rgba(201,166,107,0.16)_20deg,transparent_40deg)]"
-      />
+      {/* Sorot proyektor dari atas — dipotong di tepi layar agar sapuannya tidak membuat sampul bisa di-scroll. */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute left-1/2 top-[-20%] h-[90vh] w-[120vw] origin-top -translate-x-1/2 animate-beam-sweep bg-[conic-gradient(from_160deg_at_50%_0%,transparent_0deg,rgba(201,166,107,0.16)_20deg,transparent_40deg)]" />
+      </div>
 
       <div className="relative z-10 m-auto w-full max-w-[21rem]">
         <motion.div
@@ -63,11 +62,15 @@ export function TicketCover({ guestName, onOpen }: TicketCoverProps) {
             <span className="font-display text-sm italic text-gold">{monogram}</span>
           </div>
 
+          {/*
+            Tinggi foto mengikuti tinggi layar agar seluruh tiket (termasuk tombol "Sobek tiket")
+            muat di layar laptop tanpa scroll: 27.5rem = bagian tiket lain + padding. Maks 26rem (≈4:5 lama).
+          */}
           <Photo
             src={content.coverPhoto}
             alt={`${first.nickname} & ${second.nickname}`}
             eager
-            className="aspect-[4/5]"
+            className="h-[clamp(11rem,calc(100svh-27.5rem),26rem)]"
             imgClassName="animate-slow-zoom"
           />
 

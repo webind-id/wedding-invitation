@@ -30,9 +30,12 @@ export function EnvelopeCover({ guestName, onOpen }: EnvelopeCoverProps) {
   const [first, second] = pair;
   const firstEvent = content.events[0];
   return (
-    <div className="grain fixed inset-0 z-50 flex overflow-y-auto bg-forest px-4 pb-20 pt-8">
-      <Sprig className="pointer-events-none absolute -left-6 bottom-0 h-64 w-48 animate-sway text-sage/30" />
-      <Sprig className="pointer-events-none absolute -right-8 top-0 h-56 w-40 rotate-180 animate-sway text-sage/30" />
+    <div className="grain fixed inset-0 z-50 flex overflow-y-auto bg-forest px-4 pb-14 pt-6">
+      {/* Ranting bergoyang dipotong di tepi layar — tanpa ini rotasinya membuat sampul bisa di-scroll beberapa piksel. */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden">
+        <Sprig className="absolute -left-6 bottom-0 h-64 w-48 animate-sway text-sage/30" />
+        <Sprig className="absolute -right-8 top-0 h-56 w-40 rotate-180 animate-sway text-sage/30" />
+      </div>
 
       <motion.article
         variants={stagger}
@@ -44,7 +47,8 @@ export function EnvelopeCover({ guestName, onOpen }: EnvelopeCoverProps) {
           Undangan Pernikahan
         </motion.p>
 
-        <motion.div variants={item} className="mx-auto mt-5 w-44">
+        {/* Lebar foto mengikuti tinggi layar (rasio 3:4) agar kartu + segel muat tanpa scroll; maks w-44 seperti semula. */}
+        <motion.div variants={item} className="mx-auto mt-5 w-[clamp(7.5rem,calc((100svh-26rem)*0.75),11rem)]">
           <Picture
             src={content.coverPhoto}
             alt={`${first.nickname} & ${second.nickname}`}
