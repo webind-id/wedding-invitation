@@ -1,0 +1,400 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Ronce Melati — semua gerak diputar SEKALI (pembukaan, adegan hero, muncul saat scroll).
+ * Tidak ada animasi berulang/berkedip (preferensi pemilik produk).
+ */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply text-[17px] leading-relaxed;
+    overflow-x: clip;
+  }
+  ::selection {
+    @apply bg-blush/60 text-sogan-950;
+  }
+  :focus-visible {
+    @apply outline outline-2 outline-offset-[3px] outline-gold-400;
+  }
+}
+
+@layer components {
+  /* ── Pola batik ─────────────────────────────────────────────────────── */
+  /* Kawung emas di luar kolom undangan */
+  .kawung-body {
+    background-color: #22160D;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%23CEAC59' stroke-opacity='.16' stroke-width='1'%3E%3Cellipse cx='12' cy='12' rx='11' ry='6' transform='rotate(45 12 12)'/%3E%3Cellipse cx='36' cy='12' rx='11' ry='6' transform='rotate(-45 36 12)'/%3E%3Cellipse cx='12' cy='36' rx='11' ry='6' transform='rotate(-45 12 36)'/%3E%3Cellipse cx='36' cy='36' rx='11' ry='6' transform='rotate(45 36 36)'/%3E%3Ccircle cx='24' cy='24' r='2'/%3E%3C/g%3E%3C/svg%3E");
+  }
+  /* Kawung sogan tipis di atas kertas gading */
+  .kawung-bg {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%237A5A3E' stroke-opacity='.10' stroke-width='1'%3E%3Cellipse cx='12' cy='12' rx='11' ry='6' transform='rotate(45 12 12)'/%3E%3Cellipse cx='36' cy='12' rx='11' ry='6' transform='rotate(-45 36 12)'/%3E%3Cellipse cx='12' cy='36' rx='11' ry='6' transform='rotate(-45 12 36)'/%3E%3Cellipse cx='36' cy='36' rx='11' ry='6' transform='rotate(45 36 36)'/%3E%3Ccircle cx='24' cy='24' r='2'/%3E%3C/g%3E%3C/svg%3E");
+  }
+  /* Kawung emas di atas sogan gelap */
+  .kawung-dark {
+    background-color: #2E1E12;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%23CEAC59' stroke-opacity='.13' stroke-width='1'%3E%3Cellipse cx='12' cy='12' rx='11' ry='6' transform='rotate(45 12 12)'/%3E%3Cellipse cx='36' cy='12' rx='11' ry='6' transform='rotate(-45 36 12)'/%3E%3Cellipse cx='12' cy='36' rx='11' ry='6' transform='rotate(-45 12 36)'/%3E%3Cellipse cx='36' cy='36' rx='11' ry='6' transform='rotate(45 36 36)'/%3E%3Ccircle cx='24' cy='24' r='2'/%3E%3C/g%3E%3C/svg%3E");
+  }
+  /* Pinggiran bermotif parang di sisi kiri/kanan bagian */
+  .parang {
+    @apply pointer-events-none absolute inset-y-0 z-[1] w-[18px] border-x border-gold-500 bg-sogan-800;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='26' viewBox='0 0 18 26'%3E%3Cpath d='M-4 30 C 4 22, 2 14, 10 8 S 18 -2, 24 -6' fill='none' stroke='%23CEAC59' stroke-width='2.2'/%3E%3Cpath d='M-4 30 C 4 22, 2 14, 10 8 S 18 -2, 24 -6' fill='none' stroke='%232E1E12' stroke-width='.8'/%3E%3Ccircle cx='4' cy='6' r='1.4' fill='%23E9D6A0'/%3E%3Ccircle cx='14' cy='20' r='1.4' fill='%23E9D6A0'/%3E%3C/svg%3E");
+  }
+  .parang-l {
+    left: 0;
+  }
+  .parang-r {
+    right: 0;
+    transform: scaleX(-1);
+  }
+
+  /* ── Bagian ─────────────────────────────────────────────────────────── */
+  .sec {
+    @apply relative px-10 py-[72px] text-center max-[360px]:px-8;
+  }
+  .sec-dark {
+    @apply kawung-dark text-cream-100;
+  }
+  .script-title {
+    @apply font-script text-[46px] font-normal leading-[1.15] text-sogan-700;
+  }
+  .sec-dark .script-title {
+    @apply text-gold-400;
+  }
+  .display-title {
+    @apply font-display text-[22px] font-medium uppercase tracking-[5px] text-sogan-800;
+  }
+  .sec-dark .display-title {
+    @apply text-gold-300;
+  }
+  .lead {
+    @apply mt-3.5 text-[17px] leading-[1.7] text-sogan-700 [text-wrap:pretty];
+  }
+  .sec-dark .lead {
+    @apply text-cream-200;
+  }
+  .small-ui {
+    @apply font-sans text-xs leading-[1.7] text-sogan-500;
+  }
+  .sec-dark .small-ui {
+    @apply text-cream-200;
+  }
+  .kicker {
+    @apply font-sans text-[10px] uppercase tracking-[4px];
+  }
+
+  /* ── Tombol ─────────────────────────────────────────────────────────── */
+  .btn {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border-0 px-[22px] py-3 font-sans text-xs font-medium uppercase tracking-[1.5px] no-underline transition-[transform,box-shadow,background-color] duration-200 ease-silk disabled:pointer-events-none disabled:opacity-60;
+  }
+  .btn-gold {
+    @apply btn bg-gradient-to-br from-gold-400 to-gold-600 text-sogan-950 shadow-gold hover:-translate-y-0.5 hover:shadow-gold-lg active:translate-y-0;
+  }
+  .btn-sogan {
+    @apply btn bg-sogan-800 text-cream-100 shadow-[0_6px_16px_rgba(58,38,24,0.25)] hover:-translate-y-0.5 hover:bg-sogan-700 active:translate-y-0;
+  }
+  .btn-outline {
+    @apply btn border border-gold-500 bg-transparent text-gold-300 hover:bg-gold-500/10;
+  }
+
+  /* ── Bingkai foto lengkung bertepi prada ────────────────────────────── */
+  .arch {
+    @apply relative mx-auto rounded-t-[100px] rounded-b-[18px] bg-gradient-to-br from-gold-300 to-gold-600 p-[7px] shadow-card;
+  }
+  .arch-in {
+    @apply relative h-full w-full overflow-hidden rounded-t-[94px] rounded-b-[13px];
+  }
+  .arch-in::after {
+    content: "";
+    @apply pointer-events-none absolute inset-2.5 rounded-t-[86px] rounded-b-lg border border-gold-300/40;
+  }
+
+  /* ── Formulir ───────────────────────────────────────────────────────── */
+  .field-label {
+    @apply block font-sans text-[11px] tracking-[1px] text-sogan-500;
+  }
+  .field {
+    @apply mt-1.5 w-full rounded-xl border border-cream-200 bg-ivory px-3.5 py-3 font-sans text-[13px] text-sogan-800 outline-none transition placeholder:text-sogan-500/60 focus:border-gold-500 focus:ring-[3px] focus:ring-gold-500/20;
+  }
+}
+
+/* ── Sampul ─────────────────────────────────────────────────────────────── */
+.cover-shade {
+  background: linear-gradient(180deg, rgba(34, 22, 13, 0.94) 0%, rgba(34, 22, 13, 0.82) 34%, rgba(34, 22, 13, 0.35) 58%, rgba(34, 22, 13, 0) 74%);
+}
+.cover-leave {
+  opacity: 0;
+  pointer-events: none;
+}
+.cover-leave .cover-item {
+  transform: translateY(-30px);
+}
+.cover-item {
+  transition: transform 1.2s cubic-bezier(0.22, 0.8, 0.26, 1);
+}
+
+/* ── Adegan pembuka (hero) ──────────────────────────────────────────────── */
+.hero-sky {
+  background: linear-gradient(180deg, #22160D 0%, #4E3421 38%, #8E6A45 62%, #CEAC59 84%, #F4B8C8 100%);
+}
+.stage {
+  transform: scale(1.6);
+  transform-origin: 50% 80%;
+  transition: transform 4.2s cubic-bezier(0.33, 0.7, 0.18, 1);
+}
+.played .stage {
+  transform: scale(1);
+}
+.scene-el {
+  position: absolute;
+  pointer-events: none; /* pemandangan hanya hiasan — ketukan diteruskan ke wayang */
+}
+.scene-el > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.sun-glow {
+  top: 22%;
+  left: 50%;
+  width: 340px;
+  height: 340px;
+  margin-left: -170px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(241, 226, 180, 0.65) 0%, rgba(233, 214, 160, 0.18) 45%, transparent 70%);
+}
+.far-palm {
+  bottom: 15%;
+  width: 34%;
+  height: 46%;
+  opacity: 0.55;
+  filter: blur(0.6px);
+}
+.mid-bush {
+  bottom: 2%;
+  width: 50%;
+  aspect-ratio: 1;
+  transition: transform 3.8s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+.near-palm {
+  bottom: -3%;
+  width: 78%;
+  height: 104%;
+  filter: blur(1.5px);
+  transition: transform 3.9s cubic-bezier(0.3, 0.7, 0.2, 1), filter 3.9s;
+}
+.fg-bush {
+  bottom: -10%;
+  width: 92%;
+  aspect-ratio: 1;
+  filter: blur(4px);
+  transition: transform 3.6s cubic-bezier(0.3, 0.7, 0.2, 1), filter 3.6s;
+}
+.far-palm.is-l { left: -2%; }
+.far-palm.is-r { right: -2%; }
+.mid-bush.is-l { left: -20%; transform: translateX(18%); }
+.mid-bush.is-r { right: -20%; transform: translateX(-18%); }
+.near-palm.is-l { left: -30%; transform: translateX(30%); }
+.near-palm.is-r { right: -30%; transform: translateX(-30%); }
+.fg-bush.is-l { left: -52%; transform: translate(0, -2%) scale(1.1); }
+.fg-bush.is-r { right: -52%; transform: translate(0, -2%) scale(1.1); }
+/* Saat dibuka, lapisan depan menyibak ke samping seperti tirai daun */
+.played .mid-bush.is-l,
+.played .mid-bush.is-r {
+  transform: none;
+}
+.played .near-palm.is-l,
+.played .near-palm.is-r {
+  transform: none;
+  filter: blur(0);
+}
+.played .fg-bush.is-l { transform: translate(-4%, 10%) scale(1.05); filter: blur(2px); }
+.played .fg-bush.is-r { transform: translate(4%, 10%) scale(1.05); filter: blur(2px); }
+
+/* Wayang Rama & Shinta — posisi & ukuran saja; gerak "dimainkan dalang" oleh GSAP (components/jawa/Wayang.tsx) */
+.wayang {
+  bottom: 3%;
+  height: 38%;
+  max-height: 330px;
+}
+.wayang [data-wayang] {
+  pointer-events: auto;
+  visibility: hidden; /* GSAP menampilkan (autoAlpha) — mencegah kedip sebelum skrip berjalan */
+  will-change: transform;
+}
+.wayang img {
+  height: 100%;
+  width: auto;
+  filter: drop-shadow(0 10px 18px rgba(34, 22, 13, 0.45));
+  -webkit-user-select: none;
+  user-select: none;
+}
+.wayang.is-l { left: 2%; }
+.wayang.is-r { right: 2%; }
+
+/* Panel nama berbentuk gunungan */
+.name-panel {
+  opacity: 0;
+  transform: translateY(40px) scale(0.88);
+  transition: opacity 1.4s cubic-bezier(0.22, 0.8, 0.26, 1) 2.9s, transform 1.6s cubic-bezier(0.22, 0.8, 0.26, 1) 2.9s;
+}
+.played .name-panel {
+  opacity: 1;
+  transform: none;
+}
+.name-panel .panel-draw {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  transition: stroke-dashoffset 2.4s cubic-bezier(0.22, 0.8, 0.26, 1) 3.3s;
+}
+.played .name-panel .panel-draw {
+  stroke-dashoffset: 0;
+}
+.panel-line {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 1s cubic-bezier(0.22, 0.8, 0.26, 1), transform 1s cubic-bezier(0.22, 0.8, 0.26, 1);
+  transition-delay: calc(3.5s + var(--i, 0) * 0.2s);
+}
+.played .panel-line {
+  opacity: 1;
+  transform: none;
+}
+.scroll-hint {
+  opacity: 0;
+  transition: opacity 1s 5s;
+}
+.played .scroll-hint {
+  opacity: 0.85;
+}
+
+/* ── Ronce melati (untaian bunga) — turun sekali lalu diam ─────────────── */
+.ronce {
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: transform 1.6s cubic-bezier(0.22, 0.8, 0.26, 1) var(--ronce-delay, 0s), opacity 1s var(--ronce-delay, 0s);
+}
+.ronce-show .ronce,
+.ronce.ronce-show {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Hujan melati sekali saat undangan dibuka ───────────────────────────── */
+@keyframes melati-fall {
+  from { transform: translate(0, 0) rotate(0); }
+  to { transform: translate(var(--dx), 110vh) rotate(var(--rot)); }
+}
+.melati-drop {
+  position: absolute;
+  top: -24px;
+  animation: melati-fall var(--dur, 11s) linear var(--delay, 0s) forwards;
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.rise-in {
+  /* backwards (bukan both): setelah selesai, transform kembali milik elemen (mis. efek hover tombol). */
+  animation: rise-in 1.2s cubic-bezier(0.22, 0.8, 0.26, 1) backwards;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(206, 172, 89, 0.45) transparent;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .stage,
+  .mid-bush,
+  .near-palm,
+  .fg-bush,
+  .name-panel,
+  .name-panel .panel-draw,
+  .panel-line,
+  .scroll-hint,
+  .ronce,
+  .cover-item {
+    transition: none !important;
+  }
+  .rise-in {
+    animation: none;
+  }
+  .melati-drop {
+    display: none;
+  }
+}
+
+/*
+ * ── Pohon bergoyang ─────────────────────────────────────────────────────────
+ * PENGECUALIAN aturan "tanpa animasi berulang", atas permintaan pemilik produk: pohon, pelepah,
+ * semak, dan ranting bergoyang pelan — sebelum maupun sesudah undangan dibuka. Hanya berjalan
+ * saat bagiannya terlihat (kelas `is-swaying` dari useSwayZone), dan mati di prefers-reduced-motion.
+ * Titik putar (transform-origin) diberi per elemen dalam satuan viewBox SVG.
+ */
+/* Amplitudo kudo-12 lebih besar dari desain asal (±0.9° / ±3° / ±0.6° nyaris tak terlihat di ponsel). */
+@keyframes tree-sway {
+  0%, 100% { transform: rotate(-2.2deg); }
+  50% { transform: rotate(2.2deg); }
+}
+@keyframes frond-sway {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg); }
+}
+@keyframes bush-sway {
+  0%, 100% { transform: translateX(-6px) rotate(-2deg) scale(1); }
+  50% { transform: translateX(6px) rotate(2deg) scale(1.03); }
+}
+/* `rotate` (bukan transform) agar tidak bentrok dengan transform cermin pada ranting. */
+@keyframes branch-sway {
+  0%, 100% { rotate: -2.5deg; }
+  50% { rotate: 2.5deg; }
+}
+.sway-tree,
+.sway-frond,
+.sway-bush,
+.sway-branch {
+  animation-duration: var(--sway-dur, 8s);
+  animation-delay: var(--sway-delay, 0s);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+}
+.sway-tree { animation-name: tree-sway; }
+.sway-frond { animation-name: frond-sway; }
+.sway-bush { animation-name: bush-sway; transform-origin: 200px 400px; }
+.sway-branch { animation-name: branch-sway; }
+.is-swaying .sway-tree,
+.is-swaying .sway-frond,
+.is-swaying .sway-bush,
+.is-swaying .sway-branch {
+  animation-play-state: running;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sway-tree,
+  .sway-frond,
+  .sway-bush,
+  .sway-branch {
+    animation: none;
+  }
+}
