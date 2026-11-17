@@ -1,5 +1,5 @@
 import "server-only";
-import type { InvitationContent } from "@/shared/contract";
+import { withContentDefaults, type InvitationContent } from "@/shared/contract";
 import { sanitizeSearch } from "../search";
 import { db, dbFail } from "../supabase";
 import type { TemplateRow } from "./templates";
@@ -53,7 +53,9 @@ export async function listInvitations(filter: InvitationFilter = {}, limit = 200
 export async function getInvitation(id: string): Promise<InvitationRow | null> {
   const { data, error } = await db().from("invitations").select(`*, ${TEMPLATE_REF}`).eq("id", id).maybeSingle();
   if (error) dbFail("memuat undangan", error);
-  return data as unknown as InvitationRow | null;
+  const row = data as unknown as InvitationRow | null;
+  // Konten lama belum punya kunci baru (musicOff, ceremonies) — lengkapi agar editor aman.
+  return row && { ...row, content: withContentDefaults(row.content) };
 }
 
 export interface NewInvitation {

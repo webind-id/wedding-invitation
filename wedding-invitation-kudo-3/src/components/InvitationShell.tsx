@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useSceneTracker } from "@/hooks/useSceneTracker";
 import { photoPool } from "@/lib/photos";
-import type { InvitationContent } from "@/shared/contract";
+import { musicSource, type InvitationContent } from "@/shared/contract";
 import { Chrome } from "./Chrome";
 import { InvitationProvider } from "./InvitationContext";
 import { CoupleScenes } from "./sections/CoupleScenes";
@@ -83,8 +83,8 @@ export function InvitationShell({ content, slug, guestName, isPreview }: Invitat
         />
       )}
 
-      {content.music && <audio ref={audioRef} src={content.music} loop preload="none" />}
-      {isRevealed && <Chrome chapter={scene.chapter} audioRef={audioRef} hasMusic={Boolean(content.music)} />}
+      {musicSource(content) && <audio ref={audioRef} src={musicSource(content)} loop preload="none" />}
+      {isRevealed && <Chrome chapter={scene.chapter} audioRef={audioRef} hasMusic={Boolean(musicSource(content))} />}
 
       <main inert={!isOpen} className="relative overflow-x-clip">
         <OpeningScene guestName={guestName} isRevealed={isRevealed} />

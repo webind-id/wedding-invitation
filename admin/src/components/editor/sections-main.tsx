@@ -16,8 +16,8 @@ function PersonFields({ who }: { who: "bride" | "groom" }) {
         <TextInput label="Nama lengkap" path={p("fullName")} />
         <TextInput label="Gelar (opsional)" path={p("title")} placeholder="S.T." />
         <TextInput label="Anak ke-" path={p("childOrder")} placeholder={who === "bride" ? "Putri pertama dari" : "Putra kedua dari"} />
-        <TextInput label="Nama ayah" path={p("father")} />
-        <TextInput label="Nama ibu" path={p("mother")} />
+        <TextInput label="Nama ayah" path={p("father")} placeholder="Bapak Hendra Wijaya" />
+        <TextInput label="Nama ibu" path={p("mother")} placeholder="Ibu Ratna Sari" />
         <TextInput label="Alamat (opsional)" path={p("address")} placeholder="Bandung, Jawa Barat" />
         <TextInput label="Instagram (opsional)" path={p("instagram")} placeholder="tanpa @" />
       </div>
@@ -165,6 +165,36 @@ export function StorySection() {
               <TextInput label="Judul" path={["story", i, "title"]} />
             </div>
             <TextArea label="Cerita" path={["story", i, "text"]} />
+          </>
+        )}
+      </ListEditor>
+    </EditorSection>
+  );
+}
+
+/** Prosesi adat (Siraman, Midodareni, …). Disimpan untuk semua template; belum semua template menampilkannya. */
+export function CeremoniesSection() {
+  const { content } = useEditor();
+  return (
+    <EditorSection
+      id="prosesi"
+      title="Prosesi adat"
+      description="Rangkaian upacara adat (boleh kosong). Saat ini baru tampil di template bertema adat."
+      errorPaths={["ceremonies"]}
+    >
+      <ListEditor
+        path={["ceremonies"]}
+        items={content.ceremonies}
+        noun="prosesi"
+        max={10}
+        create={() => ({ name: "", description: "" })}
+        itemKey={(_, i) => `prosesi-${i}`}
+        title={(c, i) => c.name || `Prosesi ${i + 1}`}
+      >
+        {(_, i) => (
+          <>
+            <TextInput label="Nama prosesi" path={["ceremonies", i, "name"]} placeholder="Siraman" />
+            <TextArea label="Keterangan" path={["ceremonies", i, "description"]} rows={2} />
           </>
         )}
       </ListEditor>

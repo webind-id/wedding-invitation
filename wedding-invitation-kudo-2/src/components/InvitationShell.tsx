@@ -2,7 +2,7 @@
 
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import type { InvitationContent } from "@/shared/contract";
+import { musicSource, type InvitationContent } from "@/shared/contract";
 import { InvitationProvider } from "./InvitationContext";
 import { Cast } from "./sections/Cast";
 import { Countdown } from "./sections/Countdown";
@@ -60,8 +60,8 @@ export function InvitationShell({ content, slug, guestName, isPreview }: Invitat
 
       <AnimatePresence>{!isOpen && <TicketCover key="ticket" guestName={guestName} onOpen={handleOpen} />}</AnimatePresence>
 
-      {content.music && <audio ref={audioRef} src={content.music} loop preload="none" />}
-      {isOpen && <TopBar audioRef={audioRef} hasMusic={Boolean(content.music)} />}
+      {musicSource(content) && <audio ref={audioRef} src={musicSource(content)} loop preload="none" />}
+      {isOpen && <TopBar audioRef={audioRef} hasMusic={Boolean(musicSource(content))} />}
 
       <main id="top" inert={!isOpen} className="overflow-x-clip">
         <PosterHero isOpen={isOpen} />

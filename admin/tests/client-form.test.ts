@@ -114,6 +114,15 @@ describe("restoreDraft", () => {
     expect(restored.events[0]?.untilFinished).toBe(false);
   });
 
+  it("keeps drafts saved before music options and ceremonies existed", () => {
+    const { musicOff: _musicOff, ceremonies: _ceremonies, ...legacy } = sampleContent;
+    const draft = { ...legacy, story: [] };
+    const restored = restoreDraft(draft, { ...sampleContent, ceremonies: [] });
+    expect(restored.story).toEqual([]);
+    expect(restored.musicOff).toBe(false);
+    expect(restored.ceremonies).toEqual([]);
+  });
+
   it("falls back to the invitation content when the draft is missing or malformed", () => {
     expect(restoreDraft(null, sampleContent)).toBe(sampleContent);
     expect(restoreDraft({ bride: {} }, sampleContent)).toBe(sampleContent);
@@ -130,10 +139,18 @@ describe("submissionSummary", () => {
       events: sampleContent.events.length,
       story: sampleContent.story.length,
       gallery: sampleContent.moments.length,
+      ceremonies: sampleContent.ceremonies.length,
       accounts: sampleContent.gift.accounts.length,
-      hasMusic: false,
+      music: "default",
       guests: 3,
     });
     expect(summary.firstEvent).toBe(sampleContent.events[0].start);
+  });
+});
+
+describe("submissionSummary music", () => {
+  it("reports which music option the client picked", () => {
+    expect(submissionSummary({ ...sampleContent, music: "https://x.supabase.co/a.mp3" }, 0).music).toBe("custom");
+    expect(submissionSummary({ ...sampleContent, musicOff: true }, 0).music).toBe("off");
   });
 });

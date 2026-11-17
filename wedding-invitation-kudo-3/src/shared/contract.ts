@@ -74,6 +74,12 @@ export const storyChapterSchema = z.object({
   text: required(400),
 });
 
+/** Satu prosesi adat (mis. Siraman, Midodareni). Belum ditampilkan semua template. */
+export const ceremonySchema = z.object({
+  name: required(60),
+  description: text(400),
+});
+
 export const momentSchema = z.object({
   src: mediaUrl.refine((v) => v !== "", REQUIRED),
   alt: text(120),
@@ -103,11 +109,15 @@ export const invitationContentSchema = z.object({
   coverGreeting: text(60).default("Kepada Yth."),
   coverPhoto: mediaUrl,
   posterPhoto: mediaUrl,
+  /** Kosong = lagu bawaan template (DEFAULT_MUSIC). Abaikan bila musicOff. */
   music: mediaUrl,
+  /** true = undangan tanpa musik sama sekali. */
+  musicOff: z.boolean().default(false),
   verse: z.object({ arabic: text(1000), translation: text(1000), source: text(80) }),
   invitationIntro: text(400),
   events: z.array(eventSchema).min(1, "Minimal satu acara").max(6, "Maksimal 6 acara"),
   story: z.array(storyChapterSchema).max(12, "Maksimal 12 bab"),
+  ceremonies: z.array(ceremonySchema).max(10, "Maksimal 10 prosesi").default([]),
   galleryTitle: text(120).optional(),
   moments: z.array(momentSchema).max(30, "Maksimal 30 foto"),
   gift: z.object({
@@ -123,9 +133,50 @@ export type InvitationContent = z.infer<typeof invitationContentSchema>;
 export type Person = z.infer<typeof personSchema>;
 export type WeddingEvent = z.infer<typeof eventSchema>;
 export type StoryChapter = z.infer<typeof storyChapterSchema>;
+export type Ceremony = z.infer<typeof ceremonySchema>;
 export type Moment = z.infer<typeof momentSchema>;
 export type GiftAccount = z.infer<typeof giftAccountSchema>;
 export type GiftShipping = z.infer<typeof shippingSchema>;
+
+/** Lagu bawaan umum — ada di public/audio/ setiap template (dan admin, untuk pratinjau). */
+export const DEFAULT_MUSIC = "/audio/backsound.mp3";
+
+/** Lagu bawaan template bertema adat Jawa (kudo-7, kudo-12): gamelan slendro. */
+export const GAMELAN_MUSIC = "/audio/gamelan.mp3";
+
+/** Lagu bawaan template bertema Tionghoa / klenteng (kudo-13): guzheng pentatonik. */
+export const GUZHENG_MUSIC = "/audio/guzheng.mp3";
+
+/**
+ * Musik yang diputar: kosong bila dimatikan, lagu unggahan bila ada, selain itu lagu bawaan
+ * template (`fallback` — template adat Jawa memberi GAMELAN_MUSIC).
+ */
+export function musicSource(content: Pick<InvitationContent, "music" | "musicOff">, fallback: string = DEFAULT_MUSIC): string {
+  if (content.musicOff) return "";
+  return content.music || fallback;
+}
+
+/**
+ * Isi kunci yang ditambahkan belakangan pada konten lama dari database (yang dibaca tanpa zod),
+ * agar editor tidak membaca `undefined`.
+ */
+export function withContentDefaults(content: InvitationContent): InvitationContent {
+  const raw = content as Partial<InvitationContent>;
+  return { ...content, musicOff: raw.musicOff ?? false, ceremonies: raw.ceremonies ?? [] };
+}
+
+/** Sapaan/gelar yang sudah diketik di depan nama orang tua (tidak ditambah lagi). */
+const HONORIFIC = /^(bapak|ibu|nyonya|tuan|almarhum|almarhumah|haji|hajah|(bpk|bp|ib|ny|tn|alm|almh|dr|drs|prof|ir|kh|mr|mrs|ms)\.?|h\.|hj\.?)(\s|$)/i;
+
+/**
+ * "Hendra Wijaya" → "Bapak Hendra Wijaya", tetapi "Bapak Hendra" / "Alm. Hendra" / "H. Hendra" dibiarkan,
+ * agar template tidak menampilkan "Bapak Bapak …". Nama kosong tetap kosong.
+ */
+export function withHonorific(name: string, honorific: "Bapak" | "Ibu"): string {
+  const trimmed = name.trim();
+  if (!trimmed || HONORIFIC.test(trimmed)) return trimmed;
+  return `${honorific} ${trimmed}`;
+}
 
 /** Pasangan nama sesuai urutan headline. */
 export function couplePair(content: Pick<InvitationContent, "bride" | "groom" | "headlineOrder">): [Person, Person] {

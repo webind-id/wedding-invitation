@@ -33,6 +33,12 @@ interface ClientFormPanelProps {
 
 type Notice = { tone: "ok" | "err"; text: string } | null;
 
+const MUSIC_LABEL: Record<SubmissionSummary["music"], string> = {
+  default: "Lagu bawaan",
+  custom: "Lagu sendiri",
+  off: "Tanpa musik",
+};
+
 export function ClientFormPanel({ invitationId, invitationTitle, state }: ClientFormPanelProps) {
   const [isBusy, startBusy] = useTransition();
   const [notice, setNotice] = useState<Notice>(null);
@@ -165,9 +171,10 @@ export function ClientFormPanel({ invitationId, invitationTitle, state }: Client
                       ["Acara pertama", state.summary.firstEvent ? formatDateTime(state.summary.firstEvent) : "-"],
                       ["Acara", String(state.summary.events)],
                       ["Bab kisah", String(state.summary.story)],
+                      ["Prosesi adat", String(state.summary.ceremonies)],
                       ["Foto galeri", String(state.summary.gallery)],
                       ["Rekening", String(state.summary.accounts)],
-                      ["Musik", state.summary.hasMusic ? "Ada" : "Tidak ada"],
+                      ["Musik", MUSIC_LABEL[state.summary.music]],
                       ["Tamu", String(state.summary.guests)],
                     ].map(([label, value]) => (
                       <div key={label} className="rounded-xl bg-paper p-3">

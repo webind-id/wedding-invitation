@@ -1,12 +1,17 @@
 import { describe, expect, it } from "vitest";
 import {
   couplePair,
+  DEFAULT_MUSIC,
+  GAMELAN_MUSIC,
   coupleLabel,
   fieldErrors,
   fromLocalInput,
   invitationContentSchema,
+  musicSource,
   toLocalInput,
+  withContentDefaults,
   type InvitationContent,
+  withHonorific,
 } from "@/shared/contract";
 import { sampleContent } from "@/shared/sample";
 
@@ -108,5 +113,70 @@ describe("helpers", () => {
     const result = invitationContentSchema.safeParse({ ...sampleContent, defaultGuest: "" });
     expect(result.success).toBe(false);
     if (!result.success) expect(fieldErrors(result.error).defaultGuest).toBe("Wajib diisi");
+  });
+});
+
+describe("music and ceremonies", () => {
+  it("plays the template's default song when no song is uploaded", () => {
+    expect(musicSource({ music: "", musicOff: false })).toBe(DEFAULT_MUSIC);
+  });
+
+  it("plays the uploaded song", () => {
+    expect(musicSource({ music: "https://x.supabase.co/lagu.mp3", musicOff: false })).toBe("https://x.supabase.co/lagu.mp3");
+  });
+
+  it("plays nothing when music is turned off, even with an uploaded song", () => {
+    expect(musicSource({ music: "https://x.supabase.co/lagu.mp3", musicOff: true })).toBe("");
+  });
+
+  it("accepts content saved before musicOff and ceremonies existed", () => {
+    const { musicOff: _musicOff, ceremonies: _ceremonies, ...legacy } = sampleContent;
+    const parsed = invitationContentSchema.parse(legacy);
+    expect(parsed.musicOff).toBe(false);
+    expect(parsed.ceremonies).toEqual([]);
+  });
+
+  it("fills the new keys on raw database content", () => {
+    const { musicOff: _musicOff, ceremonies: _ceremonies, ...legacy } = sampleContent;
+    const filled = withContentDefaults(legacy as InvitationContent);
+    expect(filled.musicOff).toBe(false);
+    expect(filled.ceremonies).toEqual([]);
+    expect(withContentDefaults(sampleContent).ceremonies).toBe(sampleContent.ceremonies);
+  });
+
+  it("requires a name for each ceremony", () => {
+    const result = invitationContentSchema.safeParse({ ...sampleContent, ceremonies: [{ name: "", description: "x" }] });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe("template default song", () => {
+  it("lets Javanese templates fall back to gamelan instead of the general song", () => {
+    expect(musicSource({ music: "", musicOff: false }, GAMELAN_MUSIC)).toBe(GAMELAN_MUSIC);
+    expect(musicSource({ music: "https://x.supabase.co/lagu.mp3", musicOff: false }, GAMELAN_MUSIC)).toBe("https://x.supabase.co/lagu.mp3");
+    expect(musicSource({ music: "", musicOff: true }, GAMELAN_MUSIC)).toBe("");
+  });
+});
+
+describe("withHonorific", () => {
+  it("adds Bapak/Ibu to a bare name", () => {
+    expect(withHonorific("Hendra Wijaya", "Bapak")).toBe("Bapak Hendra Wijaya");
+    expect(withHonorific("  Ratna Sari ", "Ibu")).toBe("Ibu Ratna Sari");
+  });
+
+  it("keeps a title the admin already typed", () => {
+    for (const name of ["Bapak Hendra", "bpk. Hendra", "Alm. Hendra", "Almh. Ratna", "H. Hendra", "Hj. Ratna", "Ny. Ratna", "Dr. Hendra", "Ibu Ratna"]) {
+      expect(withHonorific(name, "Bapak")).toBe(name);
+    }
+  });
+
+  it("does not mistake names that merely start with the same letters", () => {
+    expect(withHonorific("Haris", "Bapak")).toBe("Bapak Haris");
+    expect(withHonorific("Ibnu", "Bapak")).toBe("Bapak Ibnu");
+    expect(withHonorific("Drajat", "Bapak")).toBe("Bapak Drajat");
+  });
+
+  it("leaves an empty name empty", () => {
+    expect(withHonorific("", "Ibu")).toBe("");
   });
 });

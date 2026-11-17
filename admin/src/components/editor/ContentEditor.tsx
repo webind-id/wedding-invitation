@@ -9,7 +9,7 @@ import type { MediaKind } from "@/lib/media";
 import type { InvitationContent } from "@/shared/contract";
 import { EditorContext, type EditorContextValue } from "./EditorContext";
 import { uploadFile } from "./MediaInput";
-import { CoupleSection, EventsSection, StorySection, TextsSection } from "./sections-main";
+import { CeremoniesSection, CoupleSection, EventsSection, StorySection, TextsSection } from "./sections-main";
 import { GallerySection, GiftSection, MediaSection } from "./sections-media";
 
 const JUMP_LINKS = [
@@ -18,6 +18,7 @@ const JUMP_LINKS = [
   ["media", "Foto & musik"],
   ["teks", "Teks"],
   ["kisah", "Kisah"],
+  ["prosesi", "Prosesi"],
   ["galeri", "Galeri"],
   ["hadiah", "Hadiah"],
 ] as const;
@@ -108,6 +109,7 @@ export function ContentEditor({ invitationId, initial }: { invitationId: string;
         <MediaSection />
         <TextsSection />
         <StorySection />
+        <CeremoniesSection />
         <GallerySection />
         <GiftSection />
       </div>

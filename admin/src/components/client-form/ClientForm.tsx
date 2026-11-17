@@ -4,7 +4,7 @@ import { CheckCircle2, Save, Send } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import { saveClientDraftAction, submitClientFormAction, uploadClientMediaAction } from "@/app/isi/[token]/actions";
 import { EditorContext, type EditorContextValue } from "@/components/editor/EditorContext";
-import { CoupleSection, EventsSection, StorySection } from "@/components/editor/sections-main";
+import { CeremoniesSection, CoupleSection, EventsSection, StorySection } from "@/components/editor/sections-main";
 import { GallerySection, GiftSection, MediaSection } from "@/components/editor/sections-media";
 import type { ClientGuestRow } from "@/lib/client-form";
 import { cn } from "@/lib/cn";
@@ -19,6 +19,7 @@ const STEPS = [
   ["media", "Foto & musik"],
   ["teks", "Teks"],
   ["kisah", "Kisah"],
+  ["prosesi", "Prosesi"],
   ["galeri", "Galeri"],
   ["hadiah", "Hadiah"],
   ["tamu", "Tamu"],
@@ -141,6 +142,7 @@ export function ClientForm({ token, initialContent, initialGuests, wasSubmitted 
         <MediaSection />
         <ClientTextsSection />
         <StorySection />
+        <CeremoniesSection />
         <GallerySection />
         <GiftSection />
         <ClientGuestsSection guests={guests} onChange={changeGuests} />

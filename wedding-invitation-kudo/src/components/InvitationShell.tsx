@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import type { InvitationContent } from "@/shared/contract";
+import { musicSource, type InvitationContent } from "@/shared/contract";
 import { AudioButton } from "./AudioButton";
 import { DesktopPoster } from "./DesktopPoster";
 import { EnvelopeCover } from "./EnvelopeCover";
@@ -91,7 +91,7 @@ export function InvitationShell({ content, slug, guestName, isPreview }: Invitat
       </div>
 
       {isOpen && <SectionDock />}
-      {content.music && <AudioButton ref={audioRef} src={content.music} isVisible={isOpen} />}
+      {musicSource(content) && <AudioButton ref={audioRef} src={musicSource(content)} isVisible={isOpen} />}
     </InvitationProvider>
   );
 }

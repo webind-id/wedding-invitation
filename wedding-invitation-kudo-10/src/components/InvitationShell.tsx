@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useScrollRefresh } from "@/hooks/useScrollRefresh";
-import type { InvitationContent } from "@/shared/contract";
+import { musicSource, type InvitationContent } from "@/shared/contract";
 import { FloatingNav } from "./FloatingNav";
 import { InvitationProvider } from "./InvitationContext";
 import { MusicButton } from "./MusicButton";
@@ -58,8 +58,8 @@ export function InvitationShell({ content, slug, guestName, isPreview }: Invitat
 
       {!isOpen && <RusticCover guestName={guestName} onOpen={handleOpen} />}
 
-      {content.music && <audio ref={audioRef} src={content.music} loop preload="none" />}
-      {isOpen && content.music && <MusicButton audioRef={audioRef} />}
+      {musicSource(content) && <audio ref={audioRef} src={musicSource(content)} loop preload="none" />}
+      {isOpen && musicSource(content) && <MusicButton audioRef={audioRef} />}
       {isOpen && <FloatingNav />}
 
       <main ref={mainRef} inert={!isOpen} className="overflow-x-clip pb-16 sm:pb-0">

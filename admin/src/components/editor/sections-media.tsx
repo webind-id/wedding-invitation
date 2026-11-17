@@ -3,7 +3,8 @@
 import { ArrowLeft, ArrowRight, Trash2, Upload } from "lucide-react";
 import { useRef, useState } from "react";
 import { moveItem, removeItem } from "@/lib/immutable";
-import type { Moment } from "@/shared/contract";
+import { cn } from "@/lib/cn";
+import { DEFAULT_MUSIC, GAMELAN_MUSIC, GUZHENG_MUSIC, type Moment } from "@/shared/contract";
 import { useEditor } from "./EditorContext";
 import { EditorSection } from "./EditorSection";
 import { SelectInput, TextArea, TextInput } from "./inputs";
@@ -12,13 +13,81 @@ import { ACCEPT, MediaInput } from "./MediaInput";
 
 export function MediaSection() {
   return (
-    <EditorSection id="media" title="Foto utama & musik" errorPaths={["coverPhoto", "posterPhoto", "music"]}>
+    <EditorSection id="media" title="Foto utama & musik" errorPaths={["coverPhoto", "posterPhoto", "music", "musicOff"]}>
       <div className="grid gap-6 lg:grid-cols-2">
         <MediaInput label="Foto sampul" path={["coverPhoto"]} aspect="aspect-[4/5]" hint="Potret 4:5, tampil di sampul & pembuka" />
         <MediaInput label="Foto poster desktop" path={["posterPhoto"]} aspect="aspect-video" hint="Lanskap, latar kiri di layar lebar" />
       </div>
-      <MediaInput label="Musik latar (opsional)" path={["music"]} kind="audio" hint="MP3 maks. 10 MB — pastikan Anda berhak memakainya" />
+      <MusicPicker />
     </EditorSection>
+  );
+}
+
+type MusicMode = "default" | "custom" | "off";
+
+const MUSIC_OPTIONS: { value: MusicMode; label: string; hint: string }[] = [
+  { value: "default", label: "Lagu bawaan", hint: "Instrumental bawaan; template Jawa memakai gamelan, Tionghoa memakai guzheng" },
+  { value: "custom", label: "Lagu sendiri", hint: "Unggah MP3 atau tempel tautan" },
+  { value: "off", label: "Tanpa musik", hint: "Undangan tanpa suara" },
+];
+
+/**
+ * Musik latar: lagu bawaan (music kosong), lagu sendiri (music berisi URL), atau tanpa musik
+ * (musicOff). "Lagu sendiri" diingat secara lokal sampai file diunggah, karena music masih kosong.
+ */
+function MusicPicker() {
+  const { content, set } = useEditor();
+  const derived: MusicMode = content.musicOff ? "off" : content.music ? "custom" : "default";
+  const [isPickingCustom, setIsPickingCustom] = useState(false);
+  const mode: MusicMode = derived === "default" && isPickingCustom ? "custom" : derived;
+
+  function choose(next: MusicMode) {
+    setIsPickingCustom(next === "custom");
+    set(["musicOff"], next === "off");
+    // Lagu bawaan = music kosong. Unggahan lama tetap disimpan saat memilih "Tanpa musik".
+    if (next === "default") set(["music"], "");
+  }
+
+  return (
+    <fieldset>
+      <legend className="label">Musik latar</legend>
+      <div role="radiogroup" className="grid gap-2 sm:grid-cols-3">
+        {MUSIC_OPTIONS.map((opt) => (
+          <label
+            key={opt.value}
+            className={cn(
+              "flex cursor-pointer items-start gap-2.5 rounded-xl border p-3 text-sm transition-colors",
+              mode === opt.value ? "border-ink bg-paper" : "border-line hover:border-muted",
+            )}
+          >
+            <input type="radio" name="music-mode" value={opt.value} checked={mode === opt.value} onChange={() => choose(opt.value)} className="mt-0.5 accent-clay" />
+            <span>
+              <span className="block font-medium">{opt.label}</span>
+              <span className="hint mt-0.5 block">{opt.hint}</span>
+            </span>
+          </label>
+        ))}
+      </div>
+      <div className="mt-3">
+        {mode === "default" && (
+          <div className="grid gap-3 sm:grid-cols-3">
+            {[
+              { src: DEFAULT_MUSIC, label: "Template umum" },
+              { src: GAMELAN_MUSIC, label: "Template adat Jawa (gamelan)" },
+              { src: GUZHENG_MUSIC, label: "Template Tionghoa (guzheng)" },
+            ].map((song) => (
+              <div key={song.src}>
+                <p className="hint mb-1">{song.label}</p>
+                <audio src={song.src} controls preload="none" className="h-8 w-full" aria-label={`Pratinjau lagu bawaan: ${song.label}`} />
+              </div>
+            ))}
+          </div>
+        )}
+        {mode === "custom" && (
+          <MediaInput label="File lagu" path={["music"]} kind="audio" hint="MP3 maks. 10 MB — pastikan Anda berhak memakainya. Kosongkan untuk kembali ke lagu bawaan." />
+        )}
+      </div>
+    </fieldset>
   );
 }
 

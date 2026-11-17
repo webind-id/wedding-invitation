@@ -115,7 +115,8 @@ const kindOf = (v: unknown) => (Array.isArray(v) ? "array" : v === null ? "null"
 export function restoreDraft(draft: unknown, fallback: InvitationContent): InvitationContent {
   if (kindOf(draft) !== "object") return fallback;
   const d = draft as Record<string, unknown>;
-  const optionalKeys = new Set(["galleryTitle"]);
+  // Kunci yang ditambahkan belakangan: draf lama tanpa kunci ini tetap dipulihkan (diisi dari fallback).
+  const optionalKeys = new Set(["galleryTitle", "musicOff", "ceremonies"]);
   const matches = Object.entries(fallback).every(
     ([key, value]) => (optionalKeys.has(key) && !(key in d)) || (key in d && kindOf(d[key]) === kindOf(value)),
   );
@@ -156,9 +157,10 @@ export interface SubmissionSummary {
   firstEvent: string | null;
   events: number;
   story: number;
+  ceremonies: number;
   gallery: number;
   accounts: number;
-  hasMusic: boolean;
+  music: "default" | "custom" | "off";
   guests: number;
 }
 
@@ -169,9 +171,10 @@ export function submissionSummary(content: InvitationContent, guestCount: number
     firstEvent: content.events[0]?.start ?? null,
     events: content.events.length,
     story: content.story.length,
+    ceremonies: content.ceremonies.length,
     gallery: content.moments.length,
     accounts: content.gift.accounts.length,
-    hasMusic: Boolean(content.music),
+    music: content.musicOff ? "off" : content.music ? "custom" : "default",
     guests: guestCount,
   };
 }

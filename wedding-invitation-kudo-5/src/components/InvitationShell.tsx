@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Music, Pause } from "lucide-react";
 import { useEffect, useRef, useState, type RefObject } from "react";
-import type { InvitationContent } from "@/shared/contract";
+import { musicSource, type InvitationContent } from "@/shared/contract";
 import { InvitationProvider } from "./InvitationContext";
 import { Album } from "./sections/Album";
 import { Calendar } from "./sections/Calendar";
@@ -109,8 +109,8 @@ export function InvitationShell({ content, slug, guestName, isPreview }: Invitat
 
       <AnimatePresence>{!isOpen && <VellumCover key="cover" guestName={guestName} onOpen={handleOpen} />}</AnimatePresence>
 
-      {content.music && <audio ref={audioRef} src={content.music} loop preload="none" />}
-      {isOpen && content.music && <MusicButton audioRef={audioRef} />}
+      {musicSource(content) && <audio ref={audioRef} src={musicSource(content)} loop preload="none" />}
+      {isOpen && musicSource(content) && <MusicButton audioRef={audioRef} />}
 
       <main inert={!isOpen} className="paper overflow-x-clip">
         <FormalCard guestName={guestName} />
