@@ -5,7 +5,7 @@ Panduan memasang **admin + 8 template** di server sendiri memakai Docker, dengan
 | Alamat | Container |
 | --- | --- |
 | `undangan.kudostack.my.id` (admin) | `admin` |
-| `wedding1.kudostack.my.id` … `wedding11.kudostack.my.id` | `kudo` … `kudo-11` |
+| `wedding1.kudostack.my.id` … `wedding13.kudostack.my.id` | `kudo` … `kudo-13` |
 | `<slug>.kudostack.my.id` (undangan) | — dilayani Cloudflare Worker |
 
 ---
@@ -30,7 +30,7 @@ Admin ──► undangan.kudostack.my.id ───────┤  Cloudflare Tu
 
 - Worker menangani **wildcard** `*.kudostack.my.id` dan SSL-nya di edge, gratis. Di server sendiri, ini butuh reverse proxy + sertifikat wildcard (DNS challenge) + kode routing ke Supabase.
 - Gateway hanya butuh alamat template yang bisa dijangkau dari internet. Alamat itu tidak harus di Vercel; `wedding1…9.kudostack.my.id` lewat Tunnel juga bisa.
-- `undangan` dan `wedding1`–`wedding11` sudah dicadangkan di `gateway/wrangler.toml` (`RESERVED_SUBDOMAINS`), sehingga gateway meneruskannya apa adanya dan tidak menganggapnya slug undangan. Isi daftar yang sama di menu **Domain** admin.
+- `undangan` dan `wedding1`–`wedding13` sudah dicadangkan di `gateway/wrangler.toml` (`RESERVED_SUBDOMAINS`), sehingga gateway meneruskannya apa adanya dan tidak menganggapnya slug undangan. Isi daftar yang sama di menu **Domain** admin.
 
 **Cloudflare Tunnel** (`cloudflared`) membuat koneksi keluar dari server ke Cloudflare, jadi server tidak perlu IP publik, port 80/443 terbuka, atau Nginx/Certbot. Container app tidak membuka port ke luar; hanya `cloudflared` yang bisa menjangkaunya.
 
@@ -101,6 +101,8 @@ Di Tunnel yang sama, buka **Public Hostname** lalu tambahkan:
 | `wedding9` | `kudostack.my.id` | `http://kudo-9:3000` |
 | `wedding10` | `kudostack.my.id` | `http://kudo-10:3000` |
 | `wedding11` | `kudostack.my.id` | `http://kudo-11:3000` |
+| `wedding12` | `kudostack.my.id` | `http://kudo-12:3000` |
+| `wedding13` | `kudostack.my.id` | `http://kudo-13:3000` |
 
 - [ ] Cloudflare otomatis membuat record DNS `CNAME → <id>.cfargotunnel.com` (Proxied) untuk tiap hostname. Record spesifik ini mengalahkan wildcard `*`, jadi undangan tetap ke Worker.
 - [ ] Jika sudah ada record lain bernama `undangan` atau `wedding…` (mis. sisa Vercel `cname.vercel-dns.com`), **hapus dulu** sebelum menambah hostname-nya.
@@ -127,8 +129,8 @@ docker logs -f <nama-container-cloudflared>  # harus ada "Registered tunnel conn
 
 ### 5. Admin panel
 - [ ] Buka `https://undangan.kudostack.my.id` → login.
-- [ ] Menu **Domain**: domain induk `kudostack.my.id`, dan **Nama yang dicadangkan (tambahan)** `undangan, wedding1, wedding2, wedding3, wedding4, wedding5, wedding6, wedding7, wedding8, wedding9, wedding10, wedding11` → Simpan.
-- [ ] Menu **Template**: isi "Alamat app template": kudo → `https://wedding1.kudostack.my.id`, kudo-2 → `https://wedding2.kudostack.my.id`, … kudo-11 → `https://wedding11.kudostack.my.id`.
+- [ ] Menu **Domain**: domain induk `kudostack.my.id`, dan **Nama yang dicadangkan (tambahan)** `undangan, wedding1, wedding2, wedding3, wedding4, wedding5, wedding6, wedding7, wedding8, wedding9, wedding10, wedding11, wedding12, wedding13` → Simpan.
+- [ ] Menu **Template**: isi "Alamat app template": kudo → `https://wedding1.kudostack.my.id`, kudo-2 → `https://wedding2.kudostack.my.id`, … kudo-13 → `https://wedding13.kudostack.my.id`.
 - [ ] Menu **Domain** → **Uji sekarang**. Semua pemeriksaan harus hijau.
 
 ### 6. Uji
