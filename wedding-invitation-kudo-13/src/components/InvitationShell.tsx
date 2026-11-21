@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useScrollRefresh } from "@/hooks/useScrollRefresh";
 import { GUZHENG_MUSIC, musicSource, type InvitationContent } from "@/shared/contract";
+import { withKlentengDefaults } from "@/lib/klenteng-defaults";
 import { InvitationProvider } from "./InvitationContext";
 import { Sprite } from "./klenteng/Sprite";
 import { KlentengCover } from "./KlentengCover";
@@ -60,7 +61,8 @@ export function InvitationShell({ content, slug, guestName, isPreview }: Invitat
   }
 
   return (
-    <InvitationProvider content={content} slug={slug}>
+    // Teks bawaan bernuansa Islami dari konten contoh (QS. Ar-Rum, "ridho Allah SWT") → teks klenteng.
+    <InvitationProvider content={withKlentengDefaults(content)} slug={slug}>
       <Sprite />
       {isPreview && (
         <div className="fixed inset-x-0 top-0 z-[70] border-b border-gold-500/50 bg-red-950/95 px-4 py-1.5 text-center font-sans text-xs font-medium tracking-wider text-gold-300">

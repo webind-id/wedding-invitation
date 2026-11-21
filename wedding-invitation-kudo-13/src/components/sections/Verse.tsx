@@ -8,7 +8,8 @@ import { Divider, HangingBranches } from "../klenteng/Ornaments";
 
 /**
  * Salam pembuka "Dengan Sukacita". Kotak kutipan memakai ayat/kutipan dari admin bila diisi;
- * bila kosong, memakai kutipan Shijing 执子之手，与子偕老 bawaan template.
+ * bila kosong — termasuk QS. Ar-Rum : 21 bawaan konten contoh (lib/klenteng-defaults.ts) —
+ * memakai kutipan Shijing 执子之手，与子偕老 bawaan template, lengkap dengan pinyin.
  */
 export function Verse() {
   const { content } = useInvitation();
@@ -50,7 +51,8 @@ export function Verse() {
             <p lang="zh" className="font-han text-2xl tracking-[6px] text-red-700">
               执子之手，与子偕老
             </p>
-            <blockquote className="mt-2 text-[17px] italic leading-[1.6] text-ink-700">&ldquo;Kugenggam tanganmu, bersamamu hingga menua.&rdquo;</blockquote>
+            <p lang="zh-Latn-pinyin" className="mt-1.5 font-sans text-[11px] tracking-[2px] text-red-900/70">Zhí zǐ zhī shǒu, yǔ zǐ xié lǎo</p>
+            <blockquote className="mt-3 text-[17px] italic leading-[1.6] text-ink-700">&ldquo;Kugenggam tanganmu, bersamamu hingga menua.&rdquo;</blockquote>
             <figcaption className="mt-2.5 font-sans text-[11px] uppercase tracking-[2px] text-gold-600">Shijing · Kitab Puisi Kuno</figcaption>
           </>
         )}

@@ -15,7 +15,7 @@ This is the **"kudo-13" template**, theme **Gerbang Rembulan**: a Chinese-Indone
 
 Data is managed in **`../admin`**, and this app renders it from the shared Supabase project. The runtime plumbing is identical to the other templates:
 
-- `/` is a demo built from `sampleContent`.
+- `/` is a demo built from `klentengDemoContent` (`lib/klenteng-defaults.ts`: `sampleContent` with klenteng texts).
 - `/[slug]` calls `loadInvitation()`. `TEMPLATE_CODE` must be `kudo-13`, and drafts need a valid `?preview=` token.
 - `/api/ucapan` is the guestbook. `GATEWAY_SECRET` lets the subdomain gateway pass the guest's real IP.
 - `/og` and `/[slug]/og` render the link-preview image (`components/og/OgCard.tsx`, fonts in `public/og/fonts`, including the Han TTF subset).
@@ -28,7 +28,7 @@ Data is managed in **`../admin`**, and this app renders it from the shared Supab
 Shell order is `KlentengCover` → `Hero` → `Verse` → `Couple` → `SaveTheDate` → `Events` → `Tradisi` → `Gallery` → `Story` → `Gifts` → `Rsvp` → `Closing`, plus `MusicButton` and a one-time `PetalShower` after opening.
 - `KlentengCover` is fixed and locks scroll. Its lower part is transparent, so the hero scene shows through. Opening fades it out (`LEAVE_MS`), then `onOpen` fires.
 - `Hero` receives `isOpen`; the section gets `played lanterns-show` and everything runs once via CSS transitions in `globals.css` (`.stage`, `.mid-bush`, `.near-tree`, `.fg-bush`, `.name-panel`, `.panel-line`, `.lanterns`).
-- `Verse` shows the admin verse if set; otherwise the template's Shijing quote (执子之手，与子偕老).
+- `Verse` shows the admin verse if set; otherwise the template's Shijing quote (执子之手，与子偕老 + pinyin). `InvitationShell` passes content through `withKlentengDefaults()`: the untouched stock QS. Ar-Rum : 21 verse and the stock "ridho Allah SWT" intro from `sampleContent` count as empty, so new invitations show the klenteng texts; anything the admin edited is shown as-is.
 
 ## Motion rules
 

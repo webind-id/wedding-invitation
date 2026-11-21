@@ -3,11 +3,11 @@ import { headers } from "next/headers";
 import { InvitationShell } from "@/components/InvitationShell";
 import { ogVersion, requestOrigin } from "@/lib/og-meta";
 import { guestNameFrom, metadataFor, type SearchParams } from "@/lib/page-props";
-import { sampleContent } from "@/shared/sample";
+import { klentengDemoContent as demo } from "@/lib/klenteng-defaults";
 
 export async function generateMetadata(): Promise<Metadata> {
   const origin = requestOrigin(await headers());
-  return metadataFor(sampleContent, { pageUrl: `${origin}/`, imageUrl: `${origin}/og?v=${ogVersion(sampleContent)}` });
+  return metadataFor(demo, { pageUrl: `${origin}/`, imageUrl: `${origin}/og?v=${ogVersion(demo)}` });
 }
 
 /** Halaman demo template dengan konten contoh — buku tamu nonaktif di sini. */
@@ -15,9 +15,9 @@ export default async function DemoPage({ searchParams }: { searchParams: SearchP
   const { to } = await searchParams;
   return (
     <InvitationShell
-      content={sampleContent}
+      content={demo}
       slug={null}
-      guestName={guestNameFrom(to, sampleContent.defaultGuest)}
+      guestName={guestNameFrom(to, demo.defaultGuest)}
       isPreview={false}
     />
   );
