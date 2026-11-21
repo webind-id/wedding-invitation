@@ -33,6 +33,8 @@ export interface ClientFormRow {
   revoked_at: string | null;
   draft: unknown;
   guests: unknown;
+  /** File daftar tamu asli dari klien (migrasi 007) — baca dengan readGuestFile(). */
+  guest_file?: unknown;
   submitted_at: string | null;
   imported_at: string | null;
   created_at: string;

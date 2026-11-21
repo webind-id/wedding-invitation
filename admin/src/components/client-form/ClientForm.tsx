@@ -11,6 +11,8 @@ import { cn } from "@/lib/cn";
 import { getIn, setIn, type Path } from "@/lib/immutable";
 import type { MediaKind } from "@/lib/media";
 import type { InvitationContent } from "@/shared/contract";
+import type { GuestFileInfo } from "@/lib/guest-file";
+import { ClientGuestFile } from "./ClientGuestFile";
 import { ClientGuestsSection, ClientTextsSection } from "./ClientSections";
 
 const STEPS = [
@@ -31,6 +33,8 @@ interface ClientFormProps {
   token: string;
   initialContent: InvitationContent;
   initialGuests: ClientGuestRow[];
+  /** File daftar tamu (Excel/CSV) yang sudah diunggah, bila ada. */
+  initialGuestFile: GuestFileInfo | null;
   /** Klien sudah pernah mengirim (masih boleh merevisi sampai admin mengimpor). */
   wasSubmitted: boolean;
 }
@@ -40,7 +44,7 @@ interface ClientFormProps {
  * (lewat EditorContext), tapi menyimpan ke draf formulir & mengunggah lewat token —
  * tidak pernah menyentuh undangan secara langsung.
  */
-export function ClientForm({ token, initialContent, initialGuests, wasSubmitted }: ClientFormProps) {
+export function ClientForm({ token, initialContent, initialGuests, initialGuestFile, wasSubmitted }: ClientFormProps) {
   const [content, setContent] = useState(initialContent);
   const [guests, setGuests] = useState(initialGuests.length ? initialGuests : [{ name: "", contact: "", inviter: "" }]);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -145,7 +149,7 @@ export function ClientForm({ token, initialContent, initialGuests, wasSubmitted 
         <CeremoniesSection />
         <GallerySection />
         <GiftSection />
-        <ClientGuestsSection guests={guests} onChange={changeGuests} />
+        <ClientGuestsSection guests={guests} onChange={changeGuests} fileUpload={<ClientGuestFile token={token} initial={initialGuestFile} />} />
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-card/95 backdrop-blur">

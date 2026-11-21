@@ -31,13 +31,16 @@ const EMPTY_ROW: ClientGuestRow = { name: "", contact: "", inviter: "" };
 interface ClientGuestsSectionProps {
   guests: ClientGuestRow[];
   onChange: (guests: ClientGuestRow[]) => void;
+  /** Unggah file Excel/CSV (ClientGuestFile), ditampilkan di atas isian manual. */
+  fileUpload?: React.ReactNode;
 }
 
 /**
  * Daftar tamu yang ingin diundang. Bisa diketik per baris atau ditempel sekaligus
- * (satu tamu per baris: "Nama, 0812…" — dari Excel/Sheets juga bisa).
+ * (satu tamu per baris: "Nama, 0812…" — dari Excel/Sheets juga bisa), atau dikirim sebagai
+ * file Excel/CSV apa adanya lewat `fileUpload`.
  */
-export function ClientGuestsSection({ guests, onChange }: ClientGuestsSectionProps) {
+export function ClientGuestsSection({ guests, onChange, fileUpload }: ClientGuestsSectionProps) {
   const [pasted, setPasted] = useState("");
   const [isPasteOpen, setIsPasteOpen] = useState(false);
   const filled = guests.filter((g) => g.name || g.contact).length;
@@ -55,6 +58,8 @@ export function ClientGuestsSection({ guests, onChange }: ClientGuestsSectionPro
 
   return (
     <EditorSection id="tamu" title="Daftar tamu" description={`${filled} tamu · kontak opsional, bisa diisi nanti di panel Tamu`} errorPaths={[]}>
+      {fileUpload}
+      {fileUpload && <p className="hint">Atau ketik/tempel daftar tamu di bawah:</p>}
       <ul className="space-y-2">
         {guests.map((g, i) => {
           const contact = g.contact.trim();

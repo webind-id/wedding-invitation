@@ -5,6 +5,8 @@ import { attempt, failure, success, type ActionResult } from "@/lib/action";
 import { requireAdmin } from "@/lib/auth";
 import { prepareClientSubmission } from "@/lib/client-form";
 import { isUuid } from "@/lib/invitee";
+import { readGuestFile } from "@/lib/guest-file";
+import { guestFileDownloadUrl } from "@/lib/guest-file-storage";
 import { activeClientForm, createClientForm, markClientFormImported, revokeClientForms } from "@/lib/repo/client-forms";
 import { invitationExists, updateInvitation } from "@/lib/repo/invitations";
 import { insertInvitees } from "@/lib/repo/invitees";
@@ -65,5 +67,18 @@ export async function importClientFormAction(id: string, includeGuests: boolean)
     await markClientFormImported(form.id);
     revalidatePath(`/undangan/${id}`, "layout");
     return success({ guestsAdded, guestsSkipped: includeGuests ? offered - guestsAdded : 0 });
+  });
+}
+
+/** Tautan unduhan sementara (60 detik) untuk file daftar tamu asli yang diunggah klien. */
+export async function clientGuestFileUrlAction(id: string): Promise<ActionResult<{ url: string }>> {
+  await requireAdmin();
+  return attempt(async () => {
+    if (!isUuid(id)) return failure("ID tidak valid.");
+    const lookup = await activeClientForm(id);
+    const meta = lookup.ready && lookup.form ? readGuestFile(lookup.form.guest_file) : null;
+    if (!meta) return failure("Klien belum mengunggah file daftar tamu.");
+    const url = await guestFileDownloadUrl(meta);
+    return url ? success({ url }) : failure("File tidak bisa diunduh. Pastikan migrasi 007_client_guest_files.sql sudah dijalankan.");
   });
 }

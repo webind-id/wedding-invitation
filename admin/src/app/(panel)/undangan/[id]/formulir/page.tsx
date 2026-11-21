@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { ClientFormPanel, type PanelState } from "@/components/client-form/ClientFormPanel";
 import { clientFormAvailability, clientFormLink, prepareClientSubmission, readClientPayload, submissionSummary } from "@/lib/client-form";
+import { guestFileInfo, readGuestFile } from "@/lib/guest-file";
 import { isUuid } from "@/lib/invitee";
 import { loadInvitation } from "@/lib/load";
 import { activeClientForm } from "@/lib/repo/client-forms";
@@ -42,6 +43,7 @@ export default async function ClientFormTab({ params }: { params: Promise<{ id: 
       submittedAt: form.submitted_at,
       importedAt: form.imported_at,
       hasDraft: form.draft !== null,
+      guestFile: guestFileInfo(readGuestFile(form.guest_file)),
       summary: prepared?.ok ? submissionSummary(prepared.content, guestCount) : null,
     };
   }

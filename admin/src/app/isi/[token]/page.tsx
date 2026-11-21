@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ClientForm } from "@/components/client-form/ClientForm";
 import { clientFormAvailability, isClientFormToken, readClientPayload, restoreDraft } from "@/lib/client-form";
 import { formatDateTime } from "@/lib/format";
+import { guestFileInfo, readGuestFile } from "@/lib/guest-file";
 import { clientFormByToken } from "@/lib/repo/client-forms";
 import { emptyContent } from "@/shared/empty-content";
 
@@ -51,6 +52,7 @@ export default async function ClientFormPage({ params }: { params: Promise<{ tok
 
   const initialContent = restoreDraft(form.draft, emptyContent());
   const initialGuests = readClientPayload({}, form.guests)?.guests ?? [];
+  const initialGuestFile = guestFileInfo(readGuestFile(form.guest_file));
 
   return (
     <Shell>
@@ -62,7 +64,7 @@ export default async function ClientFormPage({ params }: { params: Promise<{ tok
         </p>
         <p className="mt-2 text-xs text-muted">Isian yang sudah ada adalah contoh atau isian sebelumnya — silakan ganti dengan data Anda.</p>
       </header>
-      <ClientForm token={token} initialContent={initialContent} initialGuests={initialGuests} wasSubmitted={form.status === "submitted"} />
+      <ClientForm token={token} initialContent={initialContent} initialGuests={initialGuests} initialGuestFile={initialGuestFile} wasSubmitted={form.status === "submitted"} />
     </Shell>
   );
 }

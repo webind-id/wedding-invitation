@@ -184,6 +184,11 @@ create table if not exists public.client_forms (
   check (pg_column_size(draft) <= 400000),
   check (jsonb_typeof(guests) = 'array')
 );
+-- File daftar tamu dari klien (migrations/007_client_guest_files.sql).
+alter table public.client_forms add column if not exists guest_file jsonb;
+alter table public.client_forms drop constraint if exists client_forms_guest_file_check;
+alter table public.client_forms
+  add constraint client_forms_guest_file_check check (guest_file is null or jsonb_typeof(guest_file) = 'object');
 create index if not exists client_forms_invitation_idx on public.client_forms (invitation_id, created_at desc);
 alter table public.client_forms enable row level security;
 
@@ -192,6 +197,14 @@ insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_typ
 values (
   'invitation-media', 'invitation-media', true, 10485760,
   array['image/jpeg', 'image/png', 'image/webp', 'audio/mpeg']
+)
+on conflict (id) do nothing;
+
+-- ── Storage: file daftar tamu dari klien (PRIVAT — berisi nama & nomor HP) ──
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'client-files', 'client-files', false, 5242880,
+  array['text/csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel']
 )
 on conflict (id) do nothing;
 

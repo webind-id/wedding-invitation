@@ -1,6 +1,7 @@
 import "server-only";
 import type { InvitationContent } from "@/shared/contract";
 import { clientFormExpiry, newClientFormToken, type ClientFormRow, type ClientGuestRow } from "../client-form";
+import type { GuestFileMeta } from "../guest-file";
 import { db, dbFail } from "../supabase";
 
 /** Tabel belum ada (migrasi 004 belum dijalankan): Postgres 42P01 / PostgREST PGRST205. */
@@ -91,4 +92,23 @@ export async function markClientFormImported(id: string): Promise<void> {
   const now = new Date().toISOString();
   const { error } = await db().from("client_forms").update({ status: "imported", imported_at: now, updated_at: now }).eq("id", id);
   if (error) dbFail("menandai formulir sudah diimpor", error);
+}
+
+/** Kolom guest_file belum ada (migrasi 007 belum dijalankan): Postgres 42703 / PostgREST PGRST204. */
+const MISSING_COLUMN = new Set(["42703", "PGRST204"]);
+
+export type GuestFileSave = "saved" | "closed" | "not-ready";
+
+/** Catat (atau hapus, bila null) file daftar tamu klien. Hanya formulir yang masih berlaku. */
+export async function setClientGuestFile(id: string, meta: GuestFileMeta | null): Promise<GuestFileSave> {
+  const { data, error } = await db()
+    .from("client_forms")
+    .update({ guest_file: meta, updated_at: new Date().toISOString() })
+    .eq("id", id)
+    .is("revoked_at", null)
+    .neq("status", "imported")
+    .select("id");
+  if (error && MISSING_COLUMN.has(error.code)) return "not-ready";
+  if (error) dbFail("menyimpan file daftar tamu", error);
+  return (data ?? []).length > 0 ? "saved" : "closed";
 }

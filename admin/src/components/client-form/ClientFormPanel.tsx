@@ -1,12 +1,13 @@
 "use client";
 
-import { AlertTriangle, Download, Link2, MessageCircle, RefreshCw, XCircle } from "lucide-react";
+import { AlertTriangle, Download, FileSpreadsheet, Link2, MessageCircle, RefreshCw, XCircle } from "lucide-react";
 import { useState, useTransition } from "react";
-import { createClientFormAction, importClientFormAction, revokeClientFormAction } from "@/app/(panel)/undangan/[id]/_actions/client-form";
+import { clientGuestFileUrlAction, createClientFormAction, importClientFormAction, revokeClientFormAction } from "@/app/(panel)/undangan/[id]/_actions/client-form";
 import { CopyButton } from "@/components/ui/CopyButton";
 import type { ClientFormAvailability, SubmissionSummary } from "@/lib/client-form";
 import { cn } from "@/lib/cn";
 import { formatDateTime } from "@/lib/format";
+import { formatFileSize, type GuestFileInfo } from "@/lib/guest-file";
 
 export type PanelState =
   | { kind: "not-ready" }
@@ -21,6 +22,8 @@ export type PanelState =
       submittedAt: string | null;
       importedAt: string | null;
       hasDraft: boolean;
+      /** File daftar tamu (Excel/CSV) asli dari klien, bila diunggah. */
+      guestFile: GuestFileInfo | null;
       /** Ringkasan kiriman yang lolos validasi; null bila belum dikirim / tidak valid. */
       summary: SubmissionSummary | null;
     };
@@ -59,6 +62,15 @@ export function ClientFormPanel({ invitationId, invitationTitle, state }: Client
   function revoke() {
     if (!window.confirm("Cabut tautan? Klien tidak bisa membuka formulir lagi (isian yang tersimpan tetap ada).")) return;
     run(() => revokeClientFormAction(invitationId), "Tautan dicabut.");
+  }
+
+  function downloadGuestFile() {
+    setNotice(null);
+    startBusy(async () => {
+      const result = await clientGuestFileUrlAction(invitationId);
+      if (result.ok) window.location.href = result.data.url;
+      else setNotice({ tone: "err", text: result.error });
+    });
   }
 
   function importNow() {
@@ -158,6 +170,28 @@ export function ClientFormPanel({ invitationId, invitationTitle, state }: Client
               )}
             </div>
           </section>
+
+          {state.guestFile && (
+            <section className="card p-5">
+              <h2 className="font-semibold">File daftar tamu dari klien</h2>
+              <p className="mt-0.5 text-xs text-muted">
+                File asli tanpa diubah — tidak ikut diimpor otomatis. Unduh, rapikan bila perlu, lalu masukkan lewat tab <b>Tamu</b>.
+              </p>
+              <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl bg-paper px-4 py-3">
+                <FileSpreadsheet className="h-5 w-5 shrink-0 text-moss" aria-hidden />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">{state.guestFile.name}</p>
+                  <p className="text-xs text-muted">
+                    {formatFileSize(state.guestFile.size)}
+                    {state.guestFile.uploadedAt && ` · diunggah ${formatDateTime(state.guestFile.uploadedAt)}`}
+                  </p>
+                </div>
+                <button type="button" onClick={downloadGuestFile} disabled={isBusy} className="btn-outline btn-sm">
+                  <Download className="h-3.5 w-3.5" aria-hidden /> Unduh
+                </button>
+              </div>
+            </section>
+          )}
 
           {state.status === "submitted" && (
             <section className="card p-5">

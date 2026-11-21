@@ -83,6 +83,7 @@ Buka Supabase → **SQL Editor**, lalu jalankan berurutan:
 - [ ] `admin/supabase/migrations/003_invitee_code.sql` (kode tautan tamu `?untuk=…`)
 - [ ] `admin/supabase/migrations/004_client_forms.sql` (formulir klien `/isi/…`)
 - [ ] `admin/supabase/migrations/005_name_only_invitees.sql` (impor tamu dengan nama saja)
+- [ ] `admin/supabase/migrations/007_client_guest_files.sql` (klien mengunggah daftar tamu Excel/CSV; bucket privat `client-files`)
 
 Lewati langkah ini kalau database dibuat dari `schema.sql` terbaru.
 
