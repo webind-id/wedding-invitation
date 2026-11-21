@@ -36,7 +36,8 @@ function PersonScene({ person, role, photo, side, isFirst }: { person: Person; r
               {person.father} &amp; {person.mother}
             </p>
             {person.address && (
-              <p className={cn("subtitle mt-3 inline-flex items-center gap-1.5 text-xs text-cream/70", isRight && "flex-row-reverse")}>
+              // flex (bukan inline-flex): alamat satu baris sendiri, agar tautan Instagram turun ke baris berikutnya.
+              <p className={cn("subtitle mt-3 flex items-center gap-1.5 text-xs text-cream/70", isRight && "flex-row-reverse")}>
                 <MapPin className="h-3.5 w-3.5 shrink-0 text-bronze" aria-hidden />
                 <span>{person.address}</span>
               </p>
