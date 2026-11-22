@@ -10,6 +10,7 @@ import { guestFileDownloadUrl } from "@/lib/guest-file-storage";
 import { activeClientForm, createClientForm, markClientFormImported, revokeClientForms } from "@/lib/repo/client-forms";
 import { invitationExists, updateInvitation } from "@/lib/repo/invitations";
 import { insertInvitees } from "@/lib/repo/invitees";
+import { emptyContent } from "@/shared/empty-content";
 
 const MIGRATION = "Jalankan migrasi supabase/migrations/004_client_forms.sql dulu.";
 
@@ -40,6 +41,8 @@ export interface ImportResult {
   guestsAdded: number;
   /** Tamu yang dilewati: tidak valid, ganda di kiriman, atau kontaknya sudah ada di tab Tamu. */
   guestsSkipped: number;
+  /** Kiriman belum lengkap → undangan disimpan sebagai draft untuk dilengkapi admin. */
+  savedAsDraft: boolean;
 }
 
 /** Pasang kiriman klien ke undangan: konten diganti, daftar tamu (opsional) ditambahkan. */
@@ -52,11 +55,10 @@ export async function importClientFormAction(id: string, includeGuests: boolean)
     const form = lookup.form;
     if (!form || form.status !== "submitted") return failure("Belum ada kiriman klien yang bisa diimpor.");
 
-    // Validasi ulang — data di DB tidak dipercaya begitu saja.
-    const prepared = prepareClientSubmission(form.draft, form.guests);
-    if (!prepared.ok) return failure("Kiriman klien tidak lolos validasi. Minta klien memperbaiki lalu mengirim ulang.");
-
-    const updated = await updateInvitation(id, { content: prepared.content });
+    // Validasi ulang — data di DB tidak dipercaya begitu saja. Kiriman yang belum lengkap tetap
+    // diimpor, tapi undangan menjadi draft (sama seperti menyimpan konten belum lengkap di editor).
+    const prepared = prepareClientSubmission(form.draft, form.guests, emptyContent());
+    const updated = await updateInvitation(id, prepared.complete ? { content: prepared.content } : { content: prepared.content, status: "draft" });
     if (updated === "missing") return failure("Undangan tidak ditemukan.");
 
     let guestsAdded = 0;
@@ -66,7 +68,7 @@ export async function importClientFormAction(id: string, includeGuests: boolean)
     }
     await markClientFormImported(form.id);
     revalidatePath(`/undangan/${id}`, "layout");
-    return success({ guestsAdded, guestsSkipped: includeGuests ? offered - guestsAdded : 0 });
+    return success({ guestsAdded, guestsSkipped: includeGuests ? offered - guestsAdded : 0, savedAsDraft: !prepared.complete });
   });
 }
 

@@ -62,7 +62,10 @@ export default async function ClientFormPage({ params }: { params: Promise<{ tok
           Untuk undangan <b className="text-ink">{form.invitation.title}</b>. Isi tiap bagian, simpan draf kapan saja, lalu kirim ke admin. Tautan
           berlaku sampai {formatDateTime(form.expires_at)}.
         </p>
-        <p className="mt-2 text-xs text-muted">Isian yang sudah ada adalah contoh atau isian sebelumnya — silakan ganti dengan data Anda.</p>
+        <p className="mt-3 rounded-xl bg-moss/10 px-4 py-3 text-sm text-ink/80">
+          <b className="text-ink">Tidak harus diisi semua.</b> Tulisan samar di setiap kolom hanyalah contoh. Kosongkan yang belum Anda tahu atau
+          membingungkan — tanyakan ke admin, atau biarkan admin yang mengisinya.
+        </p>
       </header>
       <ClientForm token={token} initialContent={initialContent} initialGuests={initialGuests} initialGuestFile={initialGuestFile} wasSubmitted={form.status === "submitted"} />
     </Shell>

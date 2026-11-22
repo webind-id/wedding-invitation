@@ -10,6 +10,7 @@ import type { ClientGuestRow } from "@/lib/client-form";
 import { cn } from "@/lib/cn";
 import { getIn, setIn, type Path } from "@/lib/immutable";
 import type { MediaKind } from "@/lib/media";
+import { examplePlaceholder } from "@/lib/placeholders";
 import type { InvitationContent } from "@/shared/contract";
 import type { GuestFileInfo } from "@/lib/guest-file";
 import { ClientGuestFile } from "./ClientGuestFile";
@@ -27,7 +28,7 @@ const STEPS = [
   ["tamu", "Tamu"],
 ] as const;
 
-type Status = { kind: "idle" } | { kind: "saved" } | { kind: "sent"; skippedGuests: number } | { kind: "error"; message: string };
+type Status = { kind: "idle" } | { kind: "saved" } | { kind: "sent"; skippedGuests: number; incompleteFields: number } | { kind: "error"; message: string };
 
 interface ClientFormProps {
   token: string;
@@ -100,7 +101,7 @@ export function ClientForm({ token, initialContent, initialGuests, initialGuestF
       }
       setErrors({});
       setIsDirty(false);
-      setStatus({ kind: "sent", skippedGuests: result.data.skippedGuests });
+      setStatus({ kind: "sent", skippedGuests: result.data.skippedGuests, incompleteFields: result.data.incompleteFields });
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
   }
@@ -113,7 +114,10 @@ export function ClientForm({ token, initialContent, initialGuests, initialGuestF
     return () => window.removeEventListener("beforeunload", onBeforeUnload);
   }, [isDirty]);
 
-  const ctx = useMemo<EditorContextValue>(() => ({ invitationId: "", content, errors, set, update, upload }), [content, errors, set, update, upload]);
+  const ctx = useMemo<EditorContextValue>(
+    () => ({ invitationId: "", content, errors, set, update, upload, placeholderFor: examplePlaceholder }),
+    [content, errors, set, update, upload],
+  );
   const errorCount = Object.keys(errors).length;
   const isSent = status.kind === "sent" || (wasSubmitted && !isDirty && status.kind !== "error");
 
@@ -126,6 +130,7 @@ export function ClientForm({ token, initialContent, initialGuests, initialGuestF
             <p className="font-semibold text-ink">Data sudah terkirim ke admin.</p>
             <p className="mt-0.5 text-muted">
               Admin akan meninjau dan memasangnya di undangan. Anda masih bisa memperbaiki isian lalu mengirim ulang selama belum diproses.
+              {status.kind === "sent" && status.incompleteFields > 0 && " Beberapa isian masih kosong — tidak apa-apa, admin akan membantu melengkapinya."}
               {status.kind === "sent" && status.skippedGuests > 0 && ` ${status.skippedGuests} baris tamu dilewati karena nama/kontak tidak valid atau ganda.`}
             </p>
           </div>
@@ -143,7 +148,7 @@ export function ClientForm({ token, initialContent, initialGuests, initialGuestF
       <div className="space-y-4 pb-32">
         <CoupleSection />
         <EventsSection />
-        <MediaSection />
+        <MediaSection client />
         <ClientTextsSection />
         <StorySection />
         <CeremoniesSection />
@@ -161,7 +166,7 @@ export function ClientForm({ token, initialContent, initialGuests, initialGuestF
                 ? "Draf tersimpan. Anda bisa melanjutkan nanti lewat tautan yang sama."
                 : isDirty
                   ? "Ada perubahan yang belum disimpan."
-                  : "Isi semua bagian, lalu kirim ke admin."}
+                  : "Isi yang Anda tahu, lalu kirim ke admin — tidak harus lengkap."}
           </p>
           <button type="button" onClick={saveDraft} disabled={isBusy || !isDirty} className="btn-outline">
             <Save className="h-4 w-4" aria-hidden /> Simpan draf

@@ -5,6 +5,7 @@ import { guestFileInfo, readGuestFile } from "@/lib/guest-file";
 import { isUuid } from "@/lib/invitee";
 import { loadInvitation } from "@/lib/load";
 import { activeClientForm } from "@/lib/repo/client-forms";
+import { emptyContent } from "@/shared/empty-content";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +32,7 @@ export default async function ClientFormTab({ params }: { params: Promise<{ id: 
   else if (!lookup.form) state = { kind: "none" };
   else {
     const form = lookup.form;
-    const prepared = form.status === "submitted" ? prepareClientSubmission(form.draft, form.guests) : null;
+    const prepared = form.status === "submitted" ? prepareClientSubmission(form.draft, form.guests, emptyContent()) : null;
     const guestCount = readClientPayload({}, form.guests)?.guests.filter((g) => g.name || g.contact).length ?? 0;
     state = {
       kind: "form",
@@ -44,7 +45,8 @@ export default async function ClientFormTab({ params }: { params: Promise<{ id: 
       importedAt: form.imported_at,
       hasDraft: form.draft !== null,
       guestFile: guestFileInfo(readGuestFile(form.guest_file)),
-      summary: prepared?.ok ? submissionSummary(prepared.content, guestCount) : null,
+      summary: prepared ? submissionSummary(prepared.content, guestCount) : null,
+      incompleteFields: prepared ? Object.keys(prepared.fieldErrors).length : 0,
     };
   }
 

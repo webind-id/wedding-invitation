@@ -24,8 +24,10 @@ export type PanelState =
       hasDraft: boolean;
       /** File daftar tamu (Excel/CSV) asli dari klien, bila diunggah. */
       guestFile: GuestFileInfo | null;
-      /** Ringkasan kiriman yang lolos validasi; null bila belum dikirim / tidak valid. */
+      /** Ringkasan kiriman; null bila belum dikirim. */
       summary: SubmissionSummary | null;
+      /** Isian kiriman yang masih kosong/belum sesuai (klien tidak wajib mengisi semua). */
+      incompleteFields: number;
     };
 
 interface ClientFormPanelProps {
@@ -79,9 +81,10 @@ export function ClientFormPanel({ invitationId, invitationTitle, state }: Client
     startBusy(async () => {
       const result = await importClientFormAction(invitationId, includeGuests);
       if (!result.ok) return setNotice({ tone: "err", text: result.error });
-      const { guestsAdded, guestsSkipped } = result.data;
+      const { guestsAdded, guestsSkipped, savedAsDraft } = result.data;
       const guestText = includeGuests ? ` ${guestsAdded} tamu ditambahkan${guestsSkipped ? `, ${guestsSkipped} dilewati (tidak valid/sudah ada)` : ""}.` : "";
-      setNotice({ tone: "ok", text: `Konten undangan diperbarui dari kiriman klien.${guestText}` });
+      const draftText = savedAsDraft ? " Kiriman belum lengkap, jadi undangan disimpan sebagai draft — lengkapi di tab Konten sebelum diterbitkan." : "";
+      setNotice({ tone: "ok", text: `Konten undangan diperbarui dari kiriman klien.${guestText}${draftText}` });
     });
   }
 
@@ -221,6 +224,12 @@ export function ClientFormPanel({ invitationId, invitationTitle, state }: Client
                     <input type="checkbox" checked={includeGuests} onChange={(e) => setIncludeGuests(e.target.checked)} disabled={state.summary.guests === 0} />
                     Tambahkan juga {state.summary.guests} tamu ke tab Tamu (kontak yang sudah ada dilewati)
                   </label>
+                  {state.incompleteFields > 0 && (
+                    <p className="mt-4 rounded-xl bg-clay/10 px-3.5 py-2.5 text-sm text-clay">
+                      {state.incompleteFields} isian masih kosong atau belum sesuai — klien boleh tidak mengisi semua. Setelah diimpor, undangan disimpan sebagai
+                      draft; lengkapi di tab <b>Konten</b> sebelum diterbitkan.
+                    </p>
+                  )}
                   <p className="mt-3 flex items-start gap-2 text-xs text-clay">
                     <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
                     Impor mengganti seluruh konten undangan dengan kiriman ini. Tinjau dulu bila Anda sudah mengedit konten.

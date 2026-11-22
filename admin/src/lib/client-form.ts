@@ -143,15 +143,25 @@ export function restoreDraft(draft: unknown, fallback: InvitationContent): Invit
   } as InvitationContent;
 }
 
-export type PreparedSubmission =
-  | { ok: true; content: InvitationContent; guests: PreparedBatch }
-  | { ok: false; error: string; fieldErrors: Record<string, string> };
+export interface PreparedSubmission {
+  /** Lolos kontrak konten (siap terbit). Bila false, kiriman tetap diterima — admin yang melengkapi. */
+  complete: boolean;
+  content: InvitationContent;
+  /** Isian yang belum lengkap/benar menurut kontrak (kosong bila complete). */
+  fieldErrors: Record<string, string>;
+  guests: PreparedBatch;
+}
 
-/** Validasi kiriman final: kontrak konten (sama dengan editor admin) + normalisasi daftar tamu. */
-export function prepareClientSubmission(content: unknown, guests: unknown): PreparedSubmission {
+/**
+ * Kiriman klien: klien TIDAK wajib mengisi semua. Konten yang lolos kontrak dipakai hasil
+ * parse-nya; yang belum lengkap tetap diterima (bentuknya dipulihkan lewat restoreDraft)
+ * dan saat diimpor undangan disimpan sebagai draft — sama seperti editor admin.
+ */
+export function prepareClientSubmission(content: unknown, guests: unknown, fallback: InvitationContent): PreparedSubmission {
+  const prepared = prepareInvitees(guests);
   const parsed = invitationContentSchema.safeParse(content);
-  if (!parsed.success) return { ok: false, error: "Ada isian yang belum lengkap atau belum benar.", fieldErrors: fieldErrors(parsed.error) };
-  return { ok: true, content: parsed.data, guests: prepareInvitees(guests) };
+  if (parsed.success) return { complete: true, content: parsed.data, fieldErrors: {}, guests: prepared };
+  return { complete: false, content: restoreDraft(content, fallback), fieldErrors: fieldErrors(parsed.error), guests: prepared };
 }
 
 export interface SubmissionSummary {

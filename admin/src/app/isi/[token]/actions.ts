@@ -16,6 +16,7 @@ import { guestFileInfo, readGuestFile, type GuestFileInfo } from "@/lib/guest-fi
 import { removeGuestFile, uploadGuestFile } from "@/lib/guest-file-storage";
 import { clientFormByToken, saveClientDraft, setClientGuestFile, submitClientForm, type ClientFormWithInvitation } from "@/lib/repo/client-forms";
 import { uploadMedia } from "@/lib/upload";
+import { emptyContent } from "@/shared/empty-content";
 
 const TEN_MINUTES = 10 * 60 * 1000;
 const draftLimiter = createRateLimiter(60, TEN_MINUTES);
@@ -59,6 +60,8 @@ export async function saveClientDraftAction(token: string, content: unknown, gue
 export interface ClientSubmitResult {
   /** Baris tamu yang dilewati karena nama/kontak tidak valid atau ganda. */
   skippedGuests: number;
+  /** Isian yang masih kosong/belum sesuai — tidak menghalangi kiriman; admin yang melengkapi. */
+  incompleteFields: number;
 }
 
 export async function submitClientFormAction(token: string, content: unknown, guests: unknown): Promise<ActionResult<ClientSubmitResult>> {
@@ -69,14 +72,10 @@ export async function submitClientFormAction(token: string, content: unknown, gu
     const payload = readClientPayload(content, guests);
     if (!payload) return failure(TOO_BIG);
 
-    const prepared = prepareClientSubmission(payload.content, payload.guests);
-    if (!prepared.ok) {
-      // Simpan apa adanya sebagai draf agar isian tidak hilang, lalu tunjukkan isian yang perlu diperbaiki.
-      await saveClientDraft(form.id, payload.content, payload.guests);
-      return failure(prepared.error, prepared.fieldErrors);
-    }
+    // Klien tidak wajib mengisi semua: kiriman yang belum lengkap tetap diterima (admin melengkapi).
+    const prepared = prepareClientSubmission(payload.content, payload.guests, emptyContent());
     if (!(await submitClientForm(form.id, prepared.content, payload.guests))) return failure(CLOSED.revoked);
-    return success({ skippedGuests: prepared.guests.invalid });
+    return success({ skippedGuests: prepared.guests.invalid, incompleteFields: Object.keys(prepared.fieldErrors).length });
   });
 }
 

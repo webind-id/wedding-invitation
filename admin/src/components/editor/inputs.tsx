@@ -47,7 +47,7 @@ function FieldShell({
 }
 
 export function TextInput({ placeholder, type = "text", ...props }: BaseProps & { placeholder?: string; type?: string }) {
-  const { content, set } = useEditor();
+  const { content, set, placeholderFor } = useEditor();
   return (
     <FieldShell {...props}>
       {({ id, invalid, describedBy }) => (
@@ -56,7 +56,7 @@ export function TextInput({ placeholder, type = "text", ...props }: BaseProps & 
           type={type}
           value={String(getIn(content, props.path) ?? "")}
           onChange={(e) => set(props.path, e.target.value)}
-          placeholder={placeholder}
+          placeholder={placeholder ?? placeholderFor?.(props.path)}
           aria-invalid={invalid}
           aria-describedby={describedBy}
           className={cn("input", invalid && "input-error")}
@@ -67,7 +67,7 @@ export function TextInput({ placeholder, type = "text", ...props }: BaseProps & 
 }
 
 export function TextArea({ rows = 3, dir, ...props }: BaseProps & { rows?: number; dir?: "rtl" }) {
-  const { content, set } = useEditor();
+  const { content, set, placeholderFor } = useEditor();
   return (
     <FieldShell {...props}>
       {({ id, invalid, describedBy }) => (
@@ -77,6 +77,7 @@ export function TextArea({ rows = 3, dir, ...props }: BaseProps & { rows?: numbe
           dir={dir}
           value={String(getIn(content, props.path) ?? "")}
           onChange={(e) => set(props.path, e.target.value)}
+          placeholder={placeholderFor?.(props.path)}
           aria-invalid={invalid}
           aria-describedby={describedBy}
           className={cn("input resize-y", invalid && "input-error", dir === "rtl" && "text-lg leading-loose")}

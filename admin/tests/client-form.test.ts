@@ -1,3 +1,4 @@
+import { emptyContent } from "@/shared/empty-content";
 import { describe, expect, it } from "vitest";
 import {
   CLIENT_DRAFT_MAX_BYTES,
@@ -76,23 +77,34 @@ describe("readClientPayload (before any zod parsing)", () => {
 
 describe("prepareClientSubmission", () => {
   it("validates content with the shared contract and normalizes guests", () => {
-    const result = prepareClientSubmission(sampleContent, [
-      { name: "Budi", contact: "0812-3456-7890", inviter: "" },
-      { name: "Budi lagi", contact: "+62 812 3456 7890", inviter: "" },
-      { name: "", contact: "0812", inviter: "" },
-    ]);
-    expect(result.ok).toBe(true);
-    if (!result.ok) return;
+    const result = prepareClientSubmission(
+      sampleContent,
+      [
+        { name: "Budi", contact: "0812-3456-7890", inviter: "" },
+        { name: "Budi lagi", contact: "+62 812 3456 7890", inviter: "" },
+        { name: "", contact: "0812", inviter: "" },
+      ],
+      emptyContent(),
+    );
+    expect(result.complete).toBe(true);
+    expect(result.fieldErrors).toEqual({});
     expect(result.content.bride.nickname).toBe(sampleContent.bride.nickname);
     expect(result.guests.valid).toEqual([{ name: "Budi", contact: "6281234567890", channel: "whatsapp", inviter: null }]);
     expect(result.guests.invalid).toBe(2);
   });
 
-  it("returns per-field errors for incomplete content", () => {
-    const result = prepareClientSubmission({ ...sampleContent, bride: { ...sampleContent.bride, fullName: "" } }, []);
-    expect(result.ok).toBe(false);
-    if (result.ok) return;
+  it("accepts incomplete content (the client need not fill everything) and lists what is missing", () => {
+    const result = prepareClientSubmission({ ...sampleContent, bride: { ...sampleContent.bride, fullName: "" } }, [], emptyContent());
+    expect(result.complete).toBe(false);
     expect(result.fieldErrors["bride.fullName"]).toBeTruthy();
+    expect(result.content.bride.fullName).toBe("");
+    expect(result.content.bride.nickname).toBe(sampleContent.bride.nickname);
+  });
+
+  it("falls back to the empty shape for junk instead of rejecting", () => {
+    const result = prepareClientSubmission("bukan objek", [], emptyContent());
+    expect(result.complete).toBe(false);
+    expect(result.content).toEqual(emptyContent());
   });
 });
 

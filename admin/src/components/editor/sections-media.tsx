@@ -11,22 +11,26 @@ import { SelectInput, TextArea, TextInput } from "./inputs";
 import { ListEditor } from "./ListControls";
 import { ACCEPT, MediaInput } from "./MediaInput";
 
-export function MediaSection() {
+/** client = formulir klien: tanpa pratinjau lagu bawaan per jenis template (klien hanya memakai satu desain). */
+export function MediaSection({ client = false }: { client?: boolean }) {
   return (
     <EditorSection id="media" title="Foto utama & musik" errorPaths={["coverPhoto", "posterPhoto", "music", "musicOff"]}>
       <div className="grid gap-6 lg:grid-cols-2">
         <MediaInput label="Foto sampul" path={["coverPhoto"]} aspect="aspect-[4/5]" hint="Potret 4:5, tampil di sampul & pembuka" />
         <MediaInput label="Foto poster desktop" path={["posterPhoto"]} aspect="aspect-video" hint="Lanskap, latar kiri di layar lebar" />
       </div>
-      <MusicPicker />
+      <MusicPicker client={client} />
     </EditorSection>
   );
 }
 
 type MusicMode = "default" | "custom" | "off";
 
+const DEFAULT_HINT_ADMIN = "Instrumental bawaan; template Jawa memakai gamelan, Tionghoa memakai guzheng";
+const DEFAULT_HINT_CLIENT = "Instrumental bawaan yang sesuai dengan desain undangan";
+
 const MUSIC_OPTIONS: { value: MusicMode; label: string; hint: string }[] = [
-  { value: "default", label: "Lagu bawaan", hint: "Instrumental bawaan; template Jawa memakai gamelan, Tionghoa memakai guzheng" },
+  { value: "default", label: "Lagu bawaan", hint: DEFAULT_HINT_ADMIN },
   { value: "custom", label: "Lagu sendiri", hint: "Unggah MP3 atau tempel tautan" },
   { value: "off", label: "Tanpa musik", hint: "Undangan tanpa suara" },
 ];
@@ -35,7 +39,7 @@ const MUSIC_OPTIONS: { value: MusicMode; label: string; hint: string }[] = [
  * Musik latar: lagu bawaan (music kosong), lagu sendiri (music berisi URL), atau tanpa musik
  * (musicOff). "Lagu sendiri" diingat secara lokal sampai file diunggah, karena music masih kosong.
  */
-function MusicPicker() {
+function MusicPicker({ client }: { client: boolean }) {
   const { content, set } = useEditor();
   const derived: MusicMode = content.musicOff ? "off" : content.music ? "custom" : "default";
   const [isPickingCustom, setIsPickingCustom] = useState(false);
@@ -63,13 +67,13 @@ function MusicPicker() {
             <input type="radio" name="music-mode" value={opt.value} checked={mode === opt.value} onChange={() => choose(opt.value)} className="mt-0.5 accent-clay" />
             <span>
               <span className="block font-medium">{opt.label}</span>
-              <span className="hint mt-0.5 block">{opt.hint}</span>
+              <span className="hint mt-0.5 block">{client && opt.value === "default" ? DEFAULT_HINT_CLIENT : opt.hint}</span>
             </span>
           </label>
         ))}
       </div>
       <div className="mt-3">
-        {mode === "default" && (
+        {mode === "default" && !client && (
           <div className="grid gap-3 sm:grid-cols-3">
             {[
               { src: DEFAULT_MUSIC, label: "Template umum" },

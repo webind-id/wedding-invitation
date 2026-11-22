@@ -15,6 +15,8 @@ export interface EditorContextValue {
   set: (path: Path, value: unknown) => void;
   /** Ganti nilai berdasarkan nilai terkini — aman untuk pembaruan async. */
   update: (path: Path, fn: (current: unknown) => unknown) => void;
+  /** Contoh isian untuk kolom teks yang kosong (formulir klien). Admin: tidak ada. */
+  placeholderFor?: (path: Path) => string | undefined;
 }
 
 export const EditorContext = createContext<EditorContextValue | null>(null);
