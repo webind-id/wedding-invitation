@@ -158,8 +158,12 @@ export function ClientForm({ token, initialContent, initialGuests, initialGuestF
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-card/95 backdrop-blur">
-        <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-3 px-4 py-3">
-          <p role="status" className={cn("min-w-0 flex-1 text-sm", status.kind === "error" ? "text-danger" : "text-muted")}>
+        {/* Mobile: status satu baris penuh di atas, dua tombol berbagi baris di bawah. sm+: satu baris. */}
+        <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3">
+          <p
+            role="status"
+            className={cn("w-full text-xs leading-snug sm:w-auto sm:min-w-0 sm:flex-1 sm:text-sm", status.kind === "error" ? "text-danger" : "text-muted")}
+          >
             {status.kind === "error"
               ? `${status.message}${errorCount ? ` (${errorCount} isian ditandai merah)` : ""}`
               : status.kind === "saved"
@@ -168,10 +172,10 @@ export function ClientForm({ token, initialContent, initialGuests, initialGuestF
                   ? "Ada perubahan yang belum disimpan."
                   : "Isi yang Anda tahu, lalu kirim ke admin — tidak harus lengkap."}
           </p>
-          <button type="button" onClick={saveDraft} disabled={isBusy || !isDirty} className="btn-outline">
+          <button type="button" onClick={saveDraft} disabled={isBusy || !isDirty} className="btn-outline flex-1 whitespace-nowrap sm:flex-none">
             <Save className="h-4 w-4" aria-hidden /> Simpan draf
           </button>
-          <button type="button" onClick={submit} disabled={isBusy} className="btn-primary">
+          <button type="button" onClick={submit} disabled={isBusy} className="btn-primary flex-1 whitespace-nowrap sm:flex-none">
             <Send className="h-4 w-4" aria-hidden /> {isBusy ? "Memproses…" : isSent ? "Kirim ulang" : "Kirim ke admin"}
           </button>
         </div>
