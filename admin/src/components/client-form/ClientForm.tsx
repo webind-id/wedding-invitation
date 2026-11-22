@@ -36,8 +36,10 @@ interface ClientFormProps {
   initialGuests: ClientGuestRow[];
   /** File daftar tamu (Excel/CSV) yang sudah diunggah, bila ada. */
   initialGuestFile: GuestFileInfo | null;
-  /** Klien sudah pernah mengirim (masih boleh merevisi sampai admin mengimpor). */
+  /** Klien sudah pernah mengirim (masih boleh merevisi). */
   wasSubmitted: boolean;
+  /** Kiriman sebelumnya sudah diimpor admin — formulir ini untuk revisi. */
+  isRevision?: boolean;
 }
 
 /**
@@ -45,7 +47,7 @@ interface ClientFormProps {
  * (lewat EditorContext), tapi menyimpan ke draf formulir & mengunggah lewat token —
  * tidak pernah menyentuh undangan secara langsung.
  */
-export function ClientForm({ token, initialContent, initialGuests, initialGuestFile, wasSubmitted }: ClientFormProps) {
+export function ClientForm({ token, initialContent, initialGuests, initialGuestFile, wasSubmitted, isRevision = false }: ClientFormProps) {
   const [content, setContent] = useState(initialContent);
   const [guests, setGuests] = useState(initialGuests.length ? initialGuests : [{ name: "", contact: "", inviter: "" }]);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -154,7 +156,7 @@ export function ClientForm({ token, initialContent, initialGuests, initialGuestF
         <CeremoniesSection />
         <GallerySection />
         <GiftSection />
-        <ClientGuestsSection guests={guests} onChange={changeGuests} fileUpload={<ClientGuestFile token={token} initial={initialGuestFile} />} />
+        <ClientGuestsSection guests={guests} onChange={changeGuests} isRevision={isRevision} fileUpload={<ClientGuestFile token={token} initial={initialGuestFile} />} />
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-card/95 backdrop-blur">

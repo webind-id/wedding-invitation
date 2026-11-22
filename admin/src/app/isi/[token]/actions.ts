@@ -26,10 +26,9 @@ const uploadLimiter = createRateLimiter(60, TEN_MINUTES);
 const TOO_MANY = "Terlalu banyak permintaan. Tunggu beberapa menit lalu coba lagi.";
 const TOO_BIG = "Isian terlalu besar. Kurangi teks yang sangat panjang lalu coba lagi.";
 
-const CLOSED: Record<"expired" | "revoked" | "imported", string> = {
+const CLOSED: Record<"expired" | "revoked", string> = {
   expired: "Masa berlaku tautan ini sudah habis. Minta tautan baru ke admin.",
   revoked: "Tautan ini sudah tidak berlaku. Minta tautan baru ke admin.",
-  imported: "Data Anda sudah diproses admin. Hubungi admin bila ada perubahan.",
 };
 
 async function rateKey(token: string): Promise<string> {

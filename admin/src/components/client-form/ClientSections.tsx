@@ -33,6 +33,8 @@ interface ClientGuestsSectionProps {
   onChange: (guests: ClientGuestRow[]) => void;
   /** Unggah file Excel/CSV (ClientGuestFile), ditampilkan di atas isian manual. */
   fileUpload?: React.ReactNode;
+  /** Setelah impor: tamu sebelumnya sudah masuk undangan, daftar di sini untuk tamu baru saja. */
+  isRevision?: boolean;
 }
 
 /**
@@ -40,7 +42,7 @@ interface ClientGuestsSectionProps {
  * (satu tamu per baris: "Nama, 0812…" — dari Excel/Sheets juga bisa), atau dikirim sebagai
  * file Excel/CSV apa adanya lewat `fileUpload`.
  */
-export function ClientGuestsSection({ guests, onChange, fileUpload }: ClientGuestsSectionProps) {
+export function ClientGuestsSection({ guests, onChange, fileUpload, isRevision = false }: ClientGuestsSectionProps) {
   const [pasted, setPasted] = useState("");
   const [isPasteOpen, setIsPasteOpen] = useState(false);
   const filled = guests.filter((g) => g.name || g.contact).length;
@@ -58,6 +60,11 @@ export function ClientGuestsSection({ guests, onChange, fileUpload }: ClientGues
 
   return (
     <EditorSection id="tamu" title="Daftar tamu" description={`${filled} tamu · kontak opsional, bisa diisi nanti di panel Tamu`} errorPaths={[]}>
+      {isRevision && (
+        <p className="rounded-xl bg-paper px-3.5 py-2.5 text-sm text-ink/80">
+          Tamu yang Anda kirim sebelumnya sudah dimasukkan admin ke undangan. Tambahkan di sini <b>hanya tamu baru</b>.
+        </p>
+      )}
       {fileUpload}
       {fileUpload && <p className="hint">Atau ketik/tempel daftar tamu di bawah:</p>}
       <ul className="space-y-2">

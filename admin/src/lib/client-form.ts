@@ -41,7 +41,8 @@ export interface ClientFormRow {
   updated_at: string;
 }
 
-export type ClientFormAvailability = "open" | "expired" | "revoked" | "imported";
+/** "imported" tidak menutup formulir: klien tetap bisa merevisi lewat tautan yang sama. */
+export type ClientFormAvailability = "open" | "expired" | "revoked";
 
 /** Satu baris daftar tamu yang diketik klien (belum dinormalisasi). */
 export interface ClientGuestRow {
@@ -66,15 +67,28 @@ export function clientFormLink(origin: string, token: string): string {
   return `${origin.replace(/\/+$/, "")}/isi/${token}`;
 }
 
-/** Bisakah klien membuka/mengubah formulir ini? Setelah dikirim pun masih bisa direvisi sampai diimpor. */
+/**
+ * Bisakah klien membuka/mengubah formulir ini? Selama belum dicabut & belum kedaluwarsa —
+ * termasuk setelah dikirim dan setelah diimpor admin (revisi lewat tautan yang sama).
+ */
 export function clientFormAvailability(
-  form: Pick<ClientFormRow, "status" | "expires_at" | "revoked_at">,
+  form: Pick<ClientFormRow, "expires_at" | "revoked_at">,
   now: number = Date.now(),
 ): ClientFormAvailability {
   if (form.revoked_at) return "revoked";
-  if (form.status === "imported") return "imported";
   if (Date.parse(form.expires_at) <= now) return "expired";
   return "open";
+}
+
+/** Sudah diimpor dan klien belum mengubah apa pun sejak itu (draf masih sama dengan yang diimpor). */
+export function untouchedSinceImport(form: Pick<ClientFormRow, "imported_at" | "updated_at">): boolean {
+  return form.imported_at !== null && Date.parse(form.updated_at) <= Date.parse(form.imported_at);
+}
+
+/** Masa berlaku setelah impor: diperpanjang agar klien sempat merevisi, tidak pernah dipersingkat. */
+export function expiryAfterImport(currentExpiry: string, now: number = Date.now()): string {
+  const extended = Date.parse(clientFormExpiry(now));
+  return new Date(Math.max(Date.parse(currentExpiry) || 0, extended)).toISOString();
 }
 
 function guestRows(raw: unknown): ClientGuestRow[] {

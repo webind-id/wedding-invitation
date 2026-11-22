@@ -61,14 +61,13 @@ export async function clientFormByToken(token: string): Promise<ClientFormWithIn
   return data as unknown as ClientFormWithInvitation | null;
 }
 
-/** Simpan draf klien (tanpa validasi ketat). Hanya formulir yang masih berlaku yang bisa diubah. */
+/** Simpan draf klien (tanpa validasi ketat). Formulir yang belum dicabut — juga setelah diimpor (revisi). */
 export async function saveClientDraft(id: string, draft: Record<string, unknown>, guests: ClientGuestRow[]): Promise<boolean> {
   const { data, error } = await db()
     .from("client_forms")
     .update({ draft, guests, updated_at: new Date().toISOString() })
     .eq("id", id)
     .is("revoked_at", null)
-    .neq("status", "imported")
     .select("id");
   if (error) dbFail("menyimpan draf formulir", error);
   return (data ?? []).length > 0;
@@ -82,15 +81,21 @@ export async function submitClientForm(id: string, content: InvitationContent, g
     .update({ draft: content, guests, status: "submitted", submitted_at: now, updated_at: now })
     .eq("id", id)
     .is("revoked_at", null)
-    .neq("status", "imported")
     .select("id");
   if (error) dbFail("mengirim formulir", error);
   return (data ?? []).length > 0;
 }
 
-export async function markClientFormImported(id: string): Promise<void> {
+/**
+ * Tandai sudah diimpor. Tautan TETAP aktif untuk revisi: masa berlakunya diperpanjang, dan bila tamunya
+ * ikut diimpor, daftar tamu di formulir dikosongkan agar revisi berikutnya hanya berisi tamu baru
+ * (tidak tergandakan saat diimpor lagi).
+ */
+export async function markClientFormImported(id: string, opts: { expiresAt: string; clearGuests: boolean }): Promise<void> {
   const now = new Date().toISOString();
-  const { error } = await db().from("client_forms").update({ status: "imported", imported_at: now, updated_at: now }).eq("id", id);
+  const patch: Record<string, unknown> = { status: "imported", imported_at: now, updated_at: now, expires_at: opts.expiresAt };
+  if (opts.clearGuests) patch.guests = [];
+  const { error } = await db().from("client_forms").update(patch).eq("id", id);
   if (error) dbFail("menandai formulir sudah diimpor", error);
 }
 
@@ -106,7 +111,6 @@ export async function setClientGuestFile(id: string, meta: GuestFileMeta | null)
     .update({ guest_file: meta, updated_at: new Date().toISOString() })
     .eq("id", id)
     .is("revoked_at", null)
-    .neq("status", "imported")
     .select("id");
   if (error && MISSING_COLUMN.has(error.code)) return "not-ready";
   if (error) dbFail("menyimpan file daftar tamu", error);

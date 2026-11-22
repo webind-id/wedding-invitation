@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { ClientFormPanel, type PanelState } from "@/components/client-form/ClientFormPanel";
-import { clientFormAvailability, clientFormLink, prepareClientSubmission, readClientPayload, submissionSummary } from "@/lib/client-form";
+import { SubmissionDetails } from "@/components/client-form/SubmissionDetails";
+import { clientFormAvailability, clientFormLink, prepareClientSubmission, readClientPayload, submissionSummary, untouchedSinceImport } from "@/lib/client-form";
 import { guestFileInfo, readGuestFile } from "@/lib/guest-file";
 import { isUuid } from "@/lib/invitee";
 import { loadInvitation } from "@/lib/load";
@@ -28,12 +29,15 @@ export default async function ClientFormTab({ params }: { params: Promise<{ id: 
   ]);
 
   let state: PanelState;
+  let details: React.ReactNode = null;
   if (!lookup.ready) state = { kind: "not-ready" };
   else if (!lookup.form) state = { kind: "none" };
   else {
     const form = lookup.form;
     const prepared = form.status === "submitted" ? prepareClientSubmission(form.draft, form.guests, emptyContent()) : null;
-    const guestCount = readClientPayload({}, form.guests)?.guests.filter((g) => g.name || g.contact).length ?? 0;
+    const guestRows = readClientPayload({}, form.guests)?.guests ?? [];
+    const guestCount = guestRows.filter((g) => g.name || g.contact).length;
+    if (prepared) details = <SubmissionDetails content={prepared.content} guests={guestRows} fieldErrors={prepared.fieldErrors} />;
     state = {
       kind: "form",
       link: clientFormLink(origin, form.token),
@@ -43,6 +47,7 @@ export default async function ClientFormTab({ params }: { params: Promise<{ id: 
       updatedAt: form.updated_at,
       submittedAt: form.submitted_at,
       importedAt: form.imported_at,
+      revising: form.status === "imported" && !untouchedSinceImport(form),
       hasDraft: form.draft !== null,
       guestFile: guestFileInfo(readGuestFile(form.guest_file)),
       summary: prepared ? submissionSummary(prepared.content, guestCount) : null,
@@ -50,5 +55,5 @@ export default async function ClientFormTab({ params }: { params: Promise<{ id: 
     };
   }
 
-  return <ClientFormPanel invitationId={inv.id} invitationTitle={inv.title} state={state} />;
+  return <ClientFormPanel invitationId={inv.id} invitationTitle={inv.title} state={state} details={details} />;
 }

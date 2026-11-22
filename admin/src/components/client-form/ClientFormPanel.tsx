@@ -21,6 +21,8 @@ export type PanelState =
       updatedAt: string;
       submittedAt: string | null;
       importedAt: string | null;
+      /** Sudah diimpor, lalu klien mulai merevisi (draf berubah, belum dikirim ulang). */
+      revising: boolean;
       hasDraft: boolean;
       /** File daftar tamu (Excel/CSV) asli dari klien, bila diunggah. */
       guestFile: GuestFileInfo | null;
@@ -34,6 +36,8 @@ interface ClientFormPanelProps {
   invitationId: string;
   invitationTitle: string;
   state: PanelState;
+  /** Isian lengkap kiriman (komponen server SubmissionDetails). */
+  details?: React.ReactNode;
 }
 
 type Notice = { tone: "ok" | "err"; text: string } | null;
@@ -44,7 +48,7 @@ const MUSIC_LABEL: Record<SubmissionSummary["music"], string> = {
   off: "Tanpa musik",
 };
 
-export function ClientFormPanel({ invitationId, invitationTitle, state }: ClientFormPanelProps) {
+export function ClientFormPanel({ invitationId, invitationTitle, state, details }: ClientFormPanelProps) {
   const [isBusy, startBusy] = useTransition();
   const [notice, setNotice] = useState<Notice>(null);
   const [includeGuests, setIncludeGuests] = useState(true);
@@ -132,8 +136,8 @@ export function ClientFormPanel({ invitationId, invitationTitle, state }: Client
                   {state.availability === "open"
                     ? `Berlaku sampai ${formatDateTime(state.expiresAt)}`
                     : state.availability === "expired"
-                      ? `Kedaluwarsa sejak ${formatDateTime(state.expiresAt)}`
-                      : "Sudah diimpor — formulir ditutup untuk klien"}
+                      ? `Kedaluwarsa sejak ${formatDateTime(state.expiresAt)} — buat tautan baru agar klien bisa merevisi`
+                      : "Tautan sudah dicabut"}
                 </p>
               </div>
               <span
@@ -142,7 +146,17 @@ export function ClientFormPanel({ invitationId, invitationTitle, state }: Client
                   state.status === "submitted" ? "bg-clay/10 text-clay" : state.status === "imported" ? "bg-moss/15 text-moss" : "bg-ink/5 text-muted",
                 )}
               >
-                {state.status === "submitted" ? "Menunggu ditinjau" : state.status === "imported" ? "Sudah diimpor" : state.hasDraft ? "Klien sedang mengisi" : "Belum diisi"}
+                {state.status === "submitted"
+                  ? state.importedAt
+                    ? "Revisi menunggu ditinjau"
+                    : "Menunggu ditinjau"
+                  : state.status === "imported"
+                    ? state.revising
+                      ? "Klien sedang merevisi"
+                      : "Sudah diimpor"
+                    : state.hasDraft
+                      ? "Klien sedang mengisi"
+                      : "Belum diisi"}
               </span>
             </div>
 
@@ -198,7 +212,7 @@ export function ClientFormPanel({ invitationId, invitationTitle, state }: Client
 
           {state.status === "submitted" && (
             <section className="card p-5">
-              <h2 className="font-semibold">Kiriman klien</h2>
+              <h2 className="font-semibold">{state.importedAt ? "Revisi dari klien" : "Kiriman klien"}</h2>
               <p className="mt-0.5 text-xs text-muted">Dikirim {state.submittedAt ? formatDateTime(state.submittedAt) : "-"}</p>
               {state.summary ? (
                 <>
@@ -220,6 +234,16 @@ export function ClientFormPanel({ invitationId, invitationTitle, state }: Client
                       </div>
                     ))}
                   </dl>
+                  {details && (
+                    <details open className="group mt-4 rounded-xl border border-line">
+                      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold [&::-webkit-details-marker]:hidden">
+                        Isian lengkap dari klien
+                        <span className="text-xs font-normal text-muted group-open:hidden">Tampilkan</span>
+                        <span className="hidden text-xs font-normal text-muted group-open:inline">Sembunyikan</span>
+                      </summary>
+                      <div className="border-t border-line p-4">{details}</div>
+                    </details>
+                  )}
                   <label className="mt-4 flex items-center gap-2 text-sm">
                     <input type="checkbox" checked={includeGuests} onChange={(e) => setIncludeGuests(e.target.checked)} disabled={state.summary.guests === 0} />
                     Tambahkan juga {state.summary.guests} tamu ke tab Tamu (kontak yang sudah ada dilewati)
@@ -246,7 +270,8 @@ export function ClientFormPanel({ invitationId, invitationTitle, state }: Client
 
           {state.status === "imported" && state.importedAt && (
             <p className="text-sm text-muted">
-              Diimpor {formatDateTime(state.importedAt)}. Butuh revisi dari klien? Klik <b>Buat tautan baru</b> — klien melanjutkan dari isian terakhir undangan.
+              Diimpor {formatDateTime(state.importedAt)}. Tautan di atas <b>tetap aktif</b> — klien bisa merevisi lewat tautan yang sama (formulirnya
+              terisi dari isi undangan terbaru, termasuk perbaikan Anda). Revisi yang dikirim muncul di sini untuk ditinjau dan diimpor lagi.
             </p>
           )}
         </>

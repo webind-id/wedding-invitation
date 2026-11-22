@@ -6,12 +6,14 @@ import {
   clientFormAvailability,
   clientFormExpiry,
   clientFormLink,
+  expiryAfterImport,
   isClientFormToken,
   newClientFormToken,
   prepareClientSubmission,
   readClientPayload,
   restoreDraft,
   submissionSummary,
+  untouchedSinceImport,
 } from "@/lib/client-form";
 import { sampleContent } from "@/shared/sample";
 
@@ -39,17 +41,32 @@ describe("token", () => {
 });
 
 describe("availability", () => {
-  const base = { status: "open" as const, revoked_at: null, expires_at: new Date(NOW + DAY).toISOString() };
+  const base = { revoked_at: null, expires_at: new Date(NOW + DAY).toISOString() };
 
-  it("is open while active, also after the client submitted (they may still revise)", () => {
+  it("stays open while active — after submitting and after the admin imported (revisions use the same link)", () => {
     expect(clientFormAvailability(base, NOW)).toBe("open");
-    expect(clientFormAvailability({ ...base, status: "submitted" }, NOW)).toBe("open");
+    expect(clientFormAvailability({ ...base, status: "submitted" } as typeof base, NOW)).toBe("open");
+    expect(clientFormAvailability({ ...base, status: "imported" } as typeof base, NOW)).toBe("open");
   });
 
-  it("closes when revoked, expired or already imported — revoked wins", () => {
+  it("closes only when revoked or expired — revoked wins", () => {
     expect(clientFormAvailability({ ...base, expires_at: new Date(NOW - 1).toISOString() }, NOW)).toBe("expired");
-    expect(clientFormAvailability({ ...base, status: "imported" }, NOW)).toBe("imported");
-    expect(clientFormAvailability({ ...base, status: "imported", revoked_at: new Date(NOW).toISOString() }, NOW)).toBe("revoked");
+    expect(clientFormAvailability({ expires_at: new Date(NOW - 1).toISOString(), revoked_at: new Date(NOW).toISOString() }, NOW)).toBe("revoked");
+  });
+
+  it("knows whether the client touched the form since the import", () => {
+    const at = new Date(NOW).toISOString();
+    expect(untouchedSinceImport({ imported_at: null, updated_at: at })).toBe(false);
+    expect(untouchedSinceImport({ imported_at: at, updated_at: at })).toBe(true);
+    expect(untouchedSinceImport({ imported_at: at, updated_at: new Date(NOW + 1000).toISOString() })).toBe(false);
+  });
+
+  it("extends the expiry on import, never shortens it", () => {
+    const soon = new Date(NOW + DAY).toISOString();
+    expect(Date.parse(expiryAfterImport(soon, NOW)) - NOW).toBe(CLIENT_FORM_TTL_DAYS * DAY);
+    const later = new Date(NOW + 90 * DAY).toISOString();
+    expect(expiryAfterImport(later, NOW)).toBe(later);
+    expect(Date.parse(expiryAfterImport("rusak", NOW)) - NOW).toBe(CLIENT_FORM_TTL_DAYS * DAY);
   });
 
   it("expires after the configured number of days", () => {

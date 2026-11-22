@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { attempt, failure, success, type ActionResult } from "@/lib/action";
 import { requireAdmin } from "@/lib/auth";
-import { prepareClientSubmission } from "@/lib/client-form";
+import { expiryAfterImport, prepareClientSubmission } from "@/lib/client-form";
 import { isUuid } from "@/lib/invitee";
 import { readGuestFile } from "@/lib/guest-file";
 import { guestFileDownloadUrl } from "@/lib/guest-file-storage";
@@ -66,7 +66,7 @@ export async function importClientFormAction(id: string, includeGuests: boolean)
     if (includeGuests && prepared.guests.valid.length > 0) {
       guestsAdded = (await insertInvitees(id, prepared.guests.valid)).length;
     }
-    await markClientFormImported(form.id);
+    await markClientFormImported(form.id, { expiresAt: expiryAfterImport(form.expires_at), clearGuests: includeGuests });
     revalidatePath(`/undangan/${id}`, "layout");
     return success({ guestsAdded, guestsSkipped: includeGuests ? offered - guestsAdded : 0, savedAsDraft: !prepared.complete });
   });

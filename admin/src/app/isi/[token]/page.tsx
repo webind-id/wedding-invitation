@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ClientForm } from "@/components/client-form/ClientForm";
-import { clientFormAvailability, isClientFormToken, readClientPayload, restoreDraft } from "@/lib/client-form";
+import { clientFormAvailability, isClientFormToken, readClientPayload, restoreDraft, untouchedSinceImport } from "@/lib/client-form";
 import { formatDateTime } from "@/lib/format";
 import { guestFileInfo, readGuestFile } from "@/lib/guest-file";
 import { clientFormByToken } from "@/lib/repo/client-forms";
@@ -15,11 +15,10 @@ export const metadata: Metadata = {
   referrer: "no-referrer",
 };
 
-const CLOSED: Record<"invalid" | "expired" | "revoked" | "imported", { title: string; body: string }> = {
+const CLOSED: Record<"invalid" | "expired" | "revoked", { title: string; body: string }> = {
   invalid: { title: "Tautan tidak ditemukan", body: "Periksa kembali tautan yang Anda terima, atau minta tautan baru ke admin." },
   expired: { title: "Tautan sudah kedaluwarsa", body: "Masa berlaku tautan ini sudah habis. Minta tautan baru ke admin — isian yang sudah tersimpan tidak hilang." },
   revoked: { title: "Tautan sudah tidak berlaku", body: "Admin sudah membuat tautan baru. Gunakan tautan terbaru yang dikirim ke Anda." },
-  imported: { title: "Data sudah diproses", body: "Terima kasih! Data Anda sudah dipasang di undangan. Hubungi admin bila ada perubahan." },
 };
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -50,24 +49,34 @@ export default async function ClientFormPage({ params }: { params: Promise<{ tok
   const availability = clientFormAvailability(form);
   if (availability !== "open") return <Closed reason={availability} />;
 
-  const initialContent = restoreDraft(form.draft, emptyContent());
+  // Sudah diimpor & belum disentuh klien sejak itu → mulai dari isi undangan terbaru (termasuk perbaikan admin).
+  const isRevision = form.imported_at !== null;
+  const initialContent = untouchedSinceImport(form)
+    ? restoreDraft(form.invitation.content, emptyContent())
+    : restoreDraft(form.draft, emptyContent());
   const initialGuests = readClientPayload({}, form.guests)?.guests ?? [];
   const initialGuestFile = guestFileInfo(readGuestFile(form.guest_file));
 
   return (
     <Shell>
       <header className="mb-6 mt-2">
-        <h1 className="font-display text-3xl italic sm:text-4xl">Lengkapi data undangan</h1>
+        <h1 className="font-display text-3xl italic sm:text-4xl">{isRevision ? "Revisi data undangan" : "Lengkapi data undangan"}</h1>
         <p className="mt-2 text-sm text-muted">
           Untuk undangan <b className="text-ink">{form.invitation.title}</b>. Isi tiap bagian, simpan draf kapan saja, lalu kirim ke admin. Tautan
           berlaku sampai {formatDateTime(form.expires_at)}.
         </p>
+        {isRevision && (
+          <p className="mt-3 rounded-xl bg-clay/10 px-4 py-3 text-sm text-ink/80">
+            <b className="text-ink">Data Anda sudah dipasang di undangan.</b> Isian di bawah adalah isi undangan saat ini. Ubah bagian yang ingin
+            direvisi, lalu tekan <b>Kirim ke admin</b> — admin akan meninjau revisinya lagi.
+          </p>
+        )}
         <p className="mt-3 rounded-xl bg-moss/10 px-4 py-3 text-sm text-ink/80">
           <b className="text-ink">Tidak harus diisi semua.</b> Tulisan samar di setiap kolom hanyalah contoh. Kosongkan yang belum Anda tahu atau
           membingungkan — tanyakan ke admin, atau biarkan admin yang mengisinya.
         </p>
       </header>
-      <ClientForm token={token} initialContent={initialContent} initialGuests={initialGuests} initialGuestFile={initialGuestFile} wasSubmitted={form.status === "submitted"} />
+      <ClientForm token={token} initialContent={initialContent} initialGuests={initialGuests} initialGuestFile={initialGuestFile} wasSubmitted={form.status === "submitted"} isRevision={isRevision} />
     </Shell>
   );
 }
