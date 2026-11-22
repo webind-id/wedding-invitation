@@ -8,6 +8,7 @@ import { Gunungan } from "../three/Gunungan";
 import { JogloRoof } from "../three/JogloRoof";
 import { Ronce } from "../three/Ronce";
 import { Photo } from "../ui/Photo";
+import { CREDIT } from "@/shared/credit";
 
 /**
  * Panutup — "tancep kayon": seperti akhir pertunjukan wayang, dua gunungan datang dari
@@ -70,6 +71,16 @@ export function Closing() {
       <footer className="relative mt-14 text-center">
         <p className="font-serif text-3xl italic text-prada-light">{monogram}</p>
         <p className="label mt-2 text-gading/45">{formatDotDate(content.events[0].start, content.timeZone)}</p>
+        <p className="mt-6 text-[0.7rem] tracking-[0.08em] text-gading/45">
+          Dibuat oleh{" "}
+          <a href={CREDIT.siteUrl} target="_blank" rel="noopener noreferrer" className="inline-block py-1 underline underline-offset-4 transition text-gading/75 decoration-gading/30 hover:text-prada-light hover:decoration-prada-light">
+            {CREDIT.site}
+          </a>
+          <span aria-hidden="true"> · </span>
+          <a href={CREDIT.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${CREDIT.instagram}`} className="inline-block py-1 underline underline-offset-4 transition text-gading/75 decoration-gading/30 hover:text-prada-light hover:decoration-prada-light">
+            {CREDIT.instagram}
+          </a>
+        </p>
       </footer>
     </section>
   );

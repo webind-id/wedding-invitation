@@ -10,6 +10,7 @@ import { Lantern3D } from "../lantern/Lantern3D";
 import { LanternDivider } from "../lantern/LanternDivider";
 import { LanternSky } from "../lantern/LanternSky";
 import { Photo } from "../ui/Photo";
+import { CREDIT } from "@/shared/credit";
 
 interface Wish {
   id: number;
@@ -100,6 +101,16 @@ export function Closing() {
               : `${released} lampion harapan telah Anda terbangkan ✦`}
           </p>
         </div>
+        <p className="mt-14 text-[0.7rem] tracking-[0.08em] text-moon-subtle">
+          Dibuat oleh{" "}
+          <a href={CREDIT.siteUrl} target="_blank" rel="noopener noreferrer" className="inline-block py-1 underline underline-offset-4 transition text-gold-light decoration-gold-light/40 hover:text-moon hover:decoration-moon">
+            {CREDIT.site}
+          </a>
+          <span aria-hidden="true"> · </span>
+          <a href={CREDIT.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${CREDIT.instagram}`} className="inline-block py-1 underline underline-offset-4 transition text-gold-light decoration-gold-light/40 hover:text-moon hover:decoration-moon">
+            {CREDIT.instagram}
+          </a>
+        </p>
       </div>
     </section>
   );

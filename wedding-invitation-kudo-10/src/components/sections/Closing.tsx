@@ -10,6 +10,7 @@ import { EucalyptusStem } from "../rustic/EucalyptusStem";
 import { PampasGrass } from "../rustic/PampasGrass";
 import { WaxSeal } from "../rustic/WaxSeal";
 import { Photo } from "../ui/Photo";
+import { CREDIT } from "@/shared/credit";
 
 export function Closing() {
   const { content, coupleLabel, monogram, pair } = useInvitation();
@@ -96,6 +97,16 @@ export function Closing() {
               OUTDOOR &amp; GARDEN WEDDING
             </span>
           </div>
+          <p className="mt-10 font-sans text-[0.7rem] tracking-[0.08em] text-earth-muted/80">
+            Dibuat oleh{" "}
+            <a href={CREDIT.siteUrl} target="_blank" rel="noopener noreferrer" className="inline-block py-1 underline underline-offset-4 transition text-terracotta/90 decoration-terracotta/30 hover:text-terracotta hover:decoration-terracotta">
+              {CREDIT.site}
+            </a>
+            <span aria-hidden="true"> · </span>
+            <a href={CREDIT.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${CREDIT.instagram}`} className="inline-block py-1 underline underline-offset-4 transition text-terracotta/90 decoration-terracotta/30 hover:text-terracotta hover:decoration-terracotta">
+              {CREDIT.instagram}
+            </a>
+          </p>
         </div>
       </div>
     </section>

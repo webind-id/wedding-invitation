@@ -3,9 +3,8 @@
 import { FadeIn } from "../ui/FadeIn";
 import { Sprig } from "../ui/Sprig";
 import { useInvitation } from "../InvitationContext";
+import { CREDIT } from "@/shared/credit";
 
-/** Kredit pembuat — milik template, bukan konten undangan. */
-const CREDIT = "KudoStack";
 
 export function Closing() {
   const { content, pair } = useInvitation();
@@ -23,7 +22,16 @@ export function Closing() {
         </p>
       </FadeIn>
 
-      <p className="mt-16 text-[0.65rem] uppercase tracking-[0.25em] text-linen/35">Dibuat oleh {CREDIT}</p>
+      <p className="mt-16 text-[0.65rem] uppercase tracking-[0.25em] text-linen/45">
+        Dibuat oleh{" "}
+        <a href={CREDIT.siteUrl} target="_blank" rel="noopener noreferrer" className="inline-block py-1 underline underline-offset-4 transition normal-case tracking-[0.12em] text-linen/75 decoration-linen/30 hover:text-linen hover:decoration-linen">
+          {CREDIT.site}
+        </a>
+        <span aria-hidden="true"> · </span>
+        <a href={CREDIT.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${CREDIT.instagram}`} className="inline-block py-1 underline underline-offset-4 transition normal-case tracking-[0.12em] text-linen/75 decoration-linen/30 hover:text-linen hover:decoration-linen">
+          {CREDIT.instagram}
+        </a>
+      </p>
     </footer>
   );
 }

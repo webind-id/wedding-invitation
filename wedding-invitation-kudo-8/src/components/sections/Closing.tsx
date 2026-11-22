@@ -8,6 +8,7 @@ import { photoCredits } from "@/lib/scenes";
 import { useInvitation } from "../InvitationContext";
 import { Letterbox, Slate } from "../film/Frame";
 import { SceneBackdrop } from "../film/SceneBackdrop";
+import { CREDIT } from "@/shared/credit";
 
 const SLAMET = MOUNTAINS.slamet;
 const CREDITS = photoCredits();
@@ -95,6 +96,16 @@ export function Closing() {
             </p>
             <p className="mt-1 font-mono text-[0.58rem] uppercase tracking-[0.3em] text-seluloid/30">{formatCoordinate(SLAMET.lat, SLAMET.lon)}</p>
             <p className="mt-10 font-display text-lg italic text-seluloid/40">— Tamat —</p>
+            <p className="mt-8 font-mono text-[0.6rem] uppercase tracking-[0.3em] text-seluloid/40">
+              Dibuat oleh{" "}
+              <a href={CREDIT.siteUrl} target="_blank" rel="noopener noreferrer" className="inline-block py-1 underline underline-offset-4 transition normal-case tracking-[0.12em] text-seluloid/70 decoration-seluloid/30 hover:text-amber hover:decoration-amber">
+                {CREDIT.site}
+              </a>
+              <span aria-hidden="true"> · </span>
+              <a href={CREDIT.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${CREDIT.instagram}`} className="inline-block py-1 underline underline-offset-4 transition normal-case tracking-[0.12em] text-seluloid/70 decoration-seluloid/30 hover:text-amber hover:decoration-amber">
+                {CREDIT.instagram}
+              </a>
+            </p>
           </div>
         </div>
       </footer>

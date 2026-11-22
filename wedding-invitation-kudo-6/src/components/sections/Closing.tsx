@@ -7,6 +7,7 @@ import { useInvitation } from "../InvitationContext";
 import { Bloom } from "../three/Bloom";
 import { Ribbon } from "../three/Ribbon";
 import { Photo } from "../ui/Photo";
+import { CREDIT } from "@/shared/credit";
 
 /** Penutup: bunga dari kedua sisi berkumpul mengelilingi foto, lalu tanda tangan. */
 export function Closing() {
@@ -64,6 +65,16 @@ export function Closing() {
       <footer className="relative mt-8 text-center">
         <p className="font-display text-3xl italic text-champagne-deep">{monogram}</p>
         <p className="label mt-2 text-ink/45">{formatDotDate(content.events[0].start, content.timeZone)}</p>
+        <p className="mt-6 text-[0.7rem] tracking-[0.08em] text-ink/45">
+          Dibuat oleh{" "}
+          <a href={CREDIT.siteUrl} target="_blank" rel="noopener noreferrer" className="inline-block py-1 underline underline-offset-4 transition text-ink/70 decoration-ink/25 hover:text-champagne-deep hover:decoration-champagne-deep">
+            {CREDIT.site}
+          </a>
+          <span aria-hidden="true"> · </span>
+          <a href={CREDIT.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${CREDIT.instagram}`} className="inline-block py-1 underline underline-offset-4 transition text-ink/70 decoration-ink/25 hover:text-champagne-deep hover:decoration-champagne-deep">
+            {CREDIT.instagram}
+          </a>
+        </p>
       </footer>
     </section>
   );

@@ -4,9 +4,8 @@ import { photoAt } from "@/lib/photos";
 import { useInvitation } from "../InvitationContext";
 import { Photo } from "../ui/Photo";
 import { Reveal } from "../ui/Reveal";
+import { CREDIT } from "@/shared/credit";
 
-/** Kredit pembuat — milik template, bukan konten undangan. */
-const CREDIT = "KudoStack";
 
 interface CreditLine {
   role: string;
@@ -64,7 +63,16 @@ export function EndCredits() {
         </Reveal>
       </div>
 
-      <p className="mt-20 text-center text-[0.58rem] uppercase tracking-[0.35em] text-smoke/50">Dibuat oleh {CREDIT}</p>
+      <p className="mt-20 text-center text-[0.58rem] uppercase tracking-[0.35em] text-smoke/60">
+        Dibuat oleh{" "}
+        <a href={CREDIT.siteUrl} target="_blank" rel="noopener noreferrer" className="inline-block py-1 underline underline-offset-4 transition normal-case tracking-[0.12em] text-ivory/70 decoration-ivory/30 hover:text-ivory hover:decoration-ivory">
+          {CREDIT.site}
+        </a>
+        <span aria-hidden="true"> · </span>
+        <a href={CREDIT.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${CREDIT.instagram}`} className="inline-block py-1 underline underline-offset-4 transition normal-case tracking-[0.12em] text-ivory/70 decoration-ivory/30 hover:text-ivory hover:decoration-ivory">
+          {CREDIT.instagram}
+        </a>
+      </p>
     </footer>
   );
 }

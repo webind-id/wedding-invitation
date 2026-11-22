@@ -6,9 +6,8 @@ import { photoAt } from "@/lib/photos";
 import { useInvitation } from "../InvitationContext";
 import { Reveal } from "../ui/Reveal";
 import { Scene } from "../ui/Scene";
+import { CREDIT } from "@/shared/credit";
 
-/** Kredit pembuat — milik template, bukan konten undangan. */
-const CREDIT = "KudoStack";
 
 /**
  * Penutup: makin jauh digulir, layar perlahan memudar ke hitam
@@ -43,7 +42,16 @@ export function FinaleScene() {
             {first.nickname} <span className="italic text-bronze">&amp;</span> {second.nickname}
           </p>
         </Reveal>
-        <p className="absolute bottom-24 text-[0.58rem] uppercase tracking-[0.35em] text-cream/30">Dibuat oleh {CREDIT}</p>
+        <p className="absolute bottom-24 text-[0.58rem] uppercase tracking-[0.35em] text-cream/40">
+          Dibuat oleh{" "}
+          <a href={CREDIT.siteUrl} target="_blank" rel="noopener noreferrer" className="inline-block py-1 underline underline-offset-4 transition normal-case tracking-[0.12em] text-cream/75 decoration-cream/30 hover:text-cream hover:decoration-cream">
+            {CREDIT.site}
+          </a>
+          <span aria-hidden="true"> · </span>
+          <a href={CREDIT.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${CREDIT.instagram}`} className="inline-block py-1 underline underline-offset-4 transition normal-case tracking-[0.12em] text-cream/75 decoration-cream/30 hover:text-cream hover:decoration-cream">
+            {CREDIT.instagram}
+          </a>
+        </p>
       </div>
     </Scene>
   );

@@ -6,6 +6,7 @@ import { usesIslamicGreeting } from "@/lib/labels";
 import { useInvitation } from "../InvitationContext";
 import { Glyph, Ronce } from "../jawa/Ornaments";
 import { Photo } from "../ui/Photo";
+import { CREDIT } from "@/shared/credit";
 
 export function Closing() {
   const { content, pair, coupleLabel } = useInvitation();
@@ -58,7 +59,17 @@ export function Closing() {
         <p className="mb-1 font-display text-[13px] font-medium uppercase tracking-[3px] text-gold-400">
           {pair[0].nickname} · {pair[1].nickname}
         </p>
-        Undangan digital bertema adat Jawa{year ? ` · ${year}` : ""}
+        <p>Undangan digital bertema adat Jawa{year ? ` · ${year}` : ""}</p>
+        <p className="mt-1.5">
+          Dibuat oleh{" "}
+          <a href={CREDIT.siteUrl} target="_blank" rel="noopener noreferrer" className="inline-block py-1 underline underline-offset-4 transition text-gold-300 decoration-gold-400/50 hover:text-gold-400 hover:decoration-gold-400">
+            {CREDIT.site}
+          </a>
+          <span aria-hidden="true"> · </span>
+          <a href={CREDIT.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${CREDIT.instagram}`} className="inline-block py-1 underline underline-offset-4 transition text-gold-300 decoration-gold-400/50 hover:text-gold-400 hover:decoration-gold-400">
+            {CREDIT.instagram}
+          </a>
+        </p>
       </footer>
     </>
   );

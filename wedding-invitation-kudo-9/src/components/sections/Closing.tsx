@@ -7,6 +7,7 @@ import { useInvitation } from "../InvitationContext";
 import { Flower } from "../three/Flower";
 import { WisteriaCurtain } from "../three/Wisteria";
 import { Photo } from "../ui/Photo";
+import { CREDIT } from "@/shared/credit";
 
 /**
  * Penutup: foto bulat seperti bulan di atas kolam. Teratai besar di depannya mekar
@@ -78,6 +79,16 @@ export function Closing() {
       <footer className="relative mt-14 text-center">
         <p className="font-display text-3xl italic text-plum">{monogram}</p>
         <p className="label mt-2 text-ink/55">{formatDotDate(content.events[0].start, content.timeZone)}</p>
+        <p className="mt-6 text-[0.7rem] tracking-[0.08em] text-ink/50">
+          Dibuat oleh{" "}
+          <a href={CREDIT.siteUrl} target="_blank" rel="noopener noreferrer" className="inline-block py-1 underline underline-offset-4 transition text-ink/75 decoration-ink/25 hover:text-plum hover:decoration-plum">
+            {CREDIT.site}
+          </a>
+          <span aria-hidden="true"> · </span>
+          <a href={CREDIT.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${CREDIT.instagram}`} className="inline-block py-1 underline underline-offset-4 transition text-ink/75 decoration-ink/25 hover:text-plum hover:decoration-plum">
+            {CREDIT.instagram}
+          </a>
+        </p>
       </footer>
     </section>
   );

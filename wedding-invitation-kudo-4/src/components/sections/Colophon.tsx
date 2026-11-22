@@ -6,9 +6,9 @@ import { useInvitation } from "../InvitationContext";
 import { Figure } from "../ui/Figure";
 import { Opener } from "../ui/Opener";
 import { Reveal } from "../ui/Reveal";
+import { CREDIT } from "@/shared/credit";
+import type { ReactNode } from "react";
 
-/** Kredit pembuat — milik template, bukan konten undangan. */
-const CREDIT = "KudoStack";
 
 /** Sampul belakang: foto besar, pesan penutup, dan kolofon (kredit penerbitan) edisi. */
 export function Colophon() {
@@ -16,13 +16,24 @@ export function Colophon() {
   const [first, second] = pair;
   const venues = Array.from(new Set(content.events.map((e) => e.venue)));
 
-  const credits: [string, string][] = [
+  const credits: [string, ReactNode][] = [
     ["Mempelai", `${first.fullName} & ${second.fullName}`],
     [`Keluarga ${first.nickname}`, `${first.father} & ${first.mother}`],
     [`Keluarga ${second.nickname}`, `${second.father} & ${second.mother}`],
     ["Lokasi", venues.join(" · ")],
     ["Edisi", issueLabel(content.events[0].start, content.timeZone)],
-    ["Desain undangan", CREDIT],
+    [
+      "Dibuat oleh",
+      <>
+        <a href={CREDIT.siteUrl} target="_blank" rel="noopener noreferrer" className="underline decoration-ink/30 underline-offset-4 transition hover:decoration-ink">
+          {CREDIT.site}
+        </a>
+        <span aria-hidden="true"> · </span>
+        <a href={CREDIT.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${CREDIT.instagram}`} className="underline decoration-ink/30 underline-offset-4 transition hover:decoration-ink">
+          {CREDIT.instagram}
+        </a>
+      </>,
+    ],
   ];
 
   return (

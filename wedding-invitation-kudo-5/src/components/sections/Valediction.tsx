@@ -5,9 +5,8 @@ import { useInvitation } from "../InvitationContext";
 import { AlbumPhoto } from "../ui/Frames";
 import { Crest, FlourishCorners } from "../ui/Ornaments";
 import { Reveal } from "../ui/Reveal";
+import { CREDIT } from "@/shared/credit";
 
-/** Kredit pembuat — milik template, bukan konten undangan. */
-const CREDIT = "KudoStack";
 
 /** Salam penutup di atas burgundy: foto, pesan, tanda tangan kedua keluarga. */
 export function Valediction() {
@@ -43,7 +42,16 @@ export function Valediction() {
           <Crest monogram={monogram} className="w-24 opacity-80" />
         </Reveal>
 
-        <p className="mt-12 font-fell-sc text-sm tracking-[0.2em] text-antique/40">Dibuat oleh {CREDIT}</p>
+        <p className="mt-12 font-fell-sc text-sm tracking-[0.2em] text-antique/50">
+          Dibuat oleh{" "}
+          <a href={CREDIT.siteUrl} target="_blank" rel="noopener noreferrer" className="inline-block py-1 underline underline-offset-4 transition text-antique/80 decoration-antique/30 hover:text-antique hover:decoration-antique">
+            {CREDIT.site}
+          </a>
+          <span aria-hidden="true"> · </span>
+          <a href={CREDIT.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${CREDIT.instagram}`} className="inline-block py-1 underline underline-offset-4 transition text-antique/80 decoration-antique/30 hover:text-antique hover:decoration-antique">
+            {CREDIT.instagram}
+          </a>
+        </p>
       </div>
     </footer>
   );
