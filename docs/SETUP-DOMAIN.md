@@ -22,9 +22,10 @@ Penjelasan teknis lengkap (cara kerja, nama yang dicadangkan, troubleshooting) a
 | `wedding11.kudostack.my.id` | Template kudo-11 | `kudo-11` |
 | `wedding12.kudostack.my.id` | Template kudo-12 | `kudo-12` |
 | `wedding13.kudostack.my.id` | Template kudo-13 | `kudo-13` |
+| `wedding14.kudostack.my.id` | Template kudo-14 | `kudo-14` |
 | `<slug>.kudostack.my.id` | Undangan (lewat gateway) | — (Cloudflare Worker) |
 
-> **`undangan` dan `wedding1`–`wedding13` wajib dicadangkan.** Gateway menganggap setiap subdomain satu tingkat sebagai slug undangan, kecuali yang dicadangkan. Tanpa pencadangan, `wedding1.kudostack.my.id` akan dibaca sebagai undangan bernama "wedding1" dan admin/template tidak bisa dibuka. Daftar ini sudah diisi di [`gateway/wrangler.toml`](../gateway/wrangler.toml) dan dijaga tes gateway; isi juga di menu **Domain** admin (langkah 7) agar nama-nama itu tidak bisa dipakai sebagai slug.
+> **`undangan` dan `wedding1`–`wedding14` wajib dicadangkan.** Gateway menganggap setiap subdomain satu tingkat sebagai slug undangan, kecuali yang dicadangkan. Tanpa pencadangan, `wedding1.kudostack.my.id` akan dibaca sebagai undangan bernama "wedding1" dan admin/template tidak bisa dibuka. Daftar ini sudah diisi di [`gateway/wrangler.toml`](../gateway/wrangler.toml) dan dijaga tes gateway; isi juga di menu **Domain** admin (langkah 7) agar nama-nama itu tidak bisa dipakai sebagai slug.
 
 ---
 
@@ -54,10 +55,10 @@ Hal penting:
 - [`gateway/wrangler.toml`](../gateway/wrangler.toml):
   - `routes = [{ pattern = "*.kudostack.my.id/*", zone_name = "kudostack.my.id" }]`
   - `ROOT_DOMAIN = "kudostack.my.id"`
-  - `RESERVED_SUBDOMAINS = "undangan,wedding1,…,wedding13"`
+  - `RESERVED_SUBDOMAINS = "undangan,wedding1,…,wedding14"`
 - Tes di [`gateway/tests/routing.test.ts`](../gateway/tests/routing.test.ts) memastikan:
   - `arini-andra.kudostack.my.id` → undangan `arini-andra`
-  - `undangan.`, `wedding1.`–`wedding13.` (dibaca langsung dari `wrangler.toml`), `admin.`, `tpl-…`, `a.b.kudostack.my.id`, dan domain `.my.id` lain → diteruskan apa adanya
+  - `undangan.`, `wedding1.`–`wedding14.` (dibaca langsung dari `wrangler.toml`), `admin.`, `tpl-…`, `a.b.kudostack.my.id`, dan domain `.my.id` lain → diteruskan apa adanya
 
 Domain induk dan nama cadangan juga diatur dari menu **Domain** di admin (tersimpan di database).
 
@@ -74,7 +75,7 @@ Domain induk dan nama cadangan juga diatur dari menu **Domain** di admin (tersim
 ### 2. Server: jalankan admin & template
 Ikuti [`SETUP-KudoStack.md`](SETUP-KudoStack.md) (Docker + Cloudflare Tunnel). Hasil akhirnya:
 - [ ] `docker compose ps` → semua container *healthy*.
-- [ ] Public hostname tunnel sudah dibuat: `undangan` → `http://admin:3000`, `wedding1` … `wedding13` → `http://kudo:3000` … `http://kudo-13:3000`.
+- [ ] Public hostname tunnel sudah dibuat: `undangan` → `http://admin:3000`, `wedding1` … `wedding14` → `http://kudo:3000` … `http://kudo-14:3000`.
 
 ### 3. Supabase: jalankan migrasi
 Buka Supabase → **SQL Editor**, lalu jalankan berurutan:
@@ -116,13 +117,13 @@ npm run deploy
 | AAAA | `*` | `100::` | **Proxied (oranye)**, wajib agar Worker berjalan |
 
 - [ ] Record wildcard `*` sudah dibuat.
-- [ ] Record `undangan` dan `wedding1`–`wedding13` sudah ada (dibuat otomatis oleh Tunnel di langkah 2, tipe CNAME → `….cfargotunnel.com`, Proxied). Record spesifik ini mengalahkan wildcard.
+- [ ] Record `undangan` dan `wedding1`–`wedding14` sudah ada (dibuat otomatis oleh Tunnel di langkah 2, tipe CNAME → `….cfargotunnel.com`, Proxied). Record spesifik ini mengalahkan wildcard.
 
 ### 7. Admin panel
 Buka `https://undangan.kudostack.my.id` lalu login.
 - [ ] Menu **Domain**:
   - Nyalakan **Subdomain per undangan**, protokol `https`, domain induk `kudostack.my.id`.
-  - **Nama yang dicadangkan (tambahan)**: `undangan, wedding1, wedding2, wedding3, wedding4, wedding5, wedding6, wedding7, wedding8, wedding9, wedding10, wedding11, wedding12, wedding13`
+  - **Nama yang dicadangkan (tambahan)**: `undangan, wedding1, wedding2, wedding3, wedding4, wedding5, wedding6, wedding7, wedding8, wedding9, wedding10, wedding11, wedding12, wedding13, wedding14`
   - Klik **Simpan pengaturan**, lalu **Uji sekarang**. Semua pemeriksaan harus hijau.
 - [ ] Menu **Template**: isi "Alamat app template" setiap template:
 
@@ -141,6 +142,7 @@ Buka `https://undangan.kudostack.my.id` lalu login.
 | `kudo-11` | `https://wedding11.kudostack.my.id` |
 | `kudo-12` | `https://wedding12.kudostack.my.id` |
 | `kudo-13` | `https://wedding13.kudostack.my.id` |
+| `kudo-14` | `https://wedding14.kudostack.my.id` |
 
 ### 8. Uji
 - [ ] `https://wedding8.kudostack.my.id` → halaman demo template tampil (bukan "Undangan tidak ditemukan").

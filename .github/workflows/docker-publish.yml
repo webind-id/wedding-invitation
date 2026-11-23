@@ -47,6 +47,8 @@ jobs:
             image: kudo-12
           - app: wedding-invitation-kudo-13
             image: kudo-13
+          - app: wedding-invitation-kudo-14
+            image: kudo-14
 
     steps:
       - name: Checkout repository
