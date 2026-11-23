@@ -13,7 +13,6 @@ export function Closing() {
   const ref = useRef<HTMLElement>(null);
   useScrollScene(ref);
 
-  const year = content.events[0] ? new Date(content.events[0].start).getUTCFullYear() : "";
 
   return (
     <>
@@ -59,7 +58,6 @@ export function Closing() {
         <p className="mb-1 font-display text-[13px] font-medium uppercase tracking-[3px] text-gold-400">
           {pair[0].nickname} · {pair[1].nickname}
         </p>
-        <p>Undangan digital bertema adat Jawa{year ? ` · ${year}` : ""}</p>
         <p className="mt-1.5">
           Dibuat oleh{" "}
           <a href={CREDIT.siteUrl} target="_blank" rel="noopener noreferrer" className="inline-block py-1 underline underline-offset-4 transition text-gold-300 decoration-gold-400/50 hover:text-gold-400 hover:decoration-gold-400">
